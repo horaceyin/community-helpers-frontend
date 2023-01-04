@@ -1,10 +1,10 @@
 import React from "react";
 import {StyleSheet, View, Image, TouchableOpacity} from 'react-native';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import HomeScreen from "../Screens/HomeScreen";
-import HelpersListScreen from "../Screens/HelpersListScreen";
-import { COLORS } from "../theme/theme";
-import NewJobScreen from "../Screens/NewJobScreen";
+import HomeScreen from "../screens/HomeScreen";
+import HelpersListScreen from "../screens/HelpersListScreen";
+import { COLORS } from "../../constants";
+import NewJobScreen from "../screens/NewJobScreen";
 
 const Tab = createBottomTabNavigator()
 
@@ -91,7 +91,7 @@ const TabsNavigator = () => {
 
 const styles = StyleSheet.create({
   tabBar: {
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.tabBar,
     borderTopColor: "transparent",
     position: "absolute",
     padding: 0,

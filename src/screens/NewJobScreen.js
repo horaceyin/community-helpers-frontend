@@ -1,11 +1,11 @@
 import React from 'react';
 import {StyleSheet, View, Text} from 'react-native';
-import { COLORS } from '../theme/theme';
+import { COLORS } from '../../constants';
 
-const HomeScreen = () => {
+const NewJobScreen = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Home Screen</Text>
+      <Text style={styles.text}>New Job Screen</Text>
     </View>
   )
 }
@@ -13,7 +13,7 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.bg,
+    backgroundColor: COLORS.white,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -24,4 +24,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default HomeScreen
+export default NewJobScreen
