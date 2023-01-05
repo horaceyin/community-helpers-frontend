@@ -1,10 +1,8 @@
 import React from "react";
 import {StyleSheet, View, Image, TouchableOpacity} from 'react-native';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import HomeScreen from "../screens/HomeScreen";
-import HelpersListScreen from "../screens/HelpersListScreen";
 import { COLORS } from "../../constants";
-import NewJobScreen from "../screens/NewJobScreen";
+import { HomeScreen, HelpersListScreen, NewJobScreen } from "../screens";
 
 const Tab = createBottomTabNavigator()
 

@@ -1,15 +1,18 @@
-import { View, Text, Image, TextInput } from 'react-native'
+import { View, Text, Image, TextInput } from 'react-native';
 import { SHADOWS, COLORS, SIZES, assets, FONTS } from '../../constants';
-import React from 'react'
+import { useNavigation } from '@react-navigation/native';
+import React from 'react';
+import { IconButton } from './Button';
 
-const HomeHeader = ({ onSearch }) => {
+const HomeHeader = ({ onSearch, ...props }) => {
+  const navigation = useNavigation()
+
   return (
     <View style={{backgroundColor: COLORS.primary, padding: SIZES.font}}>
       <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
         <Image source={assets.myLogo} resizeMode='contain' style={{width: 90, height: 25}} />
-        <View style={{width: 45, height: 45}}>
-          <Image source={assets.person04} style={{width: '100%', height: '100%'}}/>
-        </View>
+
+        <IconButton iconSource={assets.person04} goToLogin={() => navigation.navigate('Login', props)} />
       </View>
 
       <View style={{marginVertical: SIZES.font}}>

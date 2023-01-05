@@ -27,6 +27,16 @@ export const DetailsButton = ({minWidth, fontSize, handlePress, ...props}) => {
   )
 }
 
+export const IconButton = ({iconSource, goToLogin}) => {
+  return (
+    <TouchableOpacity onPress={goToLogin} style={styles.iconButton}>
+      <View>
+        <Image source={iconSource} style={{width: '100%', height: '100%', borderRadius: '50%'}}/>
+      </View>
+    </TouchableOpacity>
+  )
+}
+
 const styles = StyleSheet.create({
   circleButtonContainer: {
     width: 40,
@@ -52,5 +62,11 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.semiBold,
     color: COLORS.white,
     textAlign: 'center'
+  },
+  iconButton: {
+    width: 45,
+    height: 45,
+    backgroundColor:COLORS.gray,
+    borderRadius: SIZES.extraLarge
   }
 })
