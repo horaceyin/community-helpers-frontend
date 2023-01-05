@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { SHADOWS, COLORS, SIZES, assets } from '../../constants';
-import { CircleButton, DetailsButton } from './Button';
+import { CircleButton, RectButton } from './Button';
 import { SubInfo, JobsTitle, JobsPrice } from './SubInfo';
 
 const JobCard = ({data}) => {
@@ -16,7 +16,7 @@ const JobCard = ({data}) => {
           resizeMode='cover'
           style={styles.cardImage}
         />
-        <CircleButton imgUrl={assets.check} top={10} right={10}/>
+        {/* <CircleButton imgUrl={assets.check} top={10} right={10}/> */}
       </View>
 
       <SubInfo />
@@ -32,7 +32,8 @@ const JobCard = ({data}) => {
         />
         <View style={{marginTop: SIZES.font, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
           <JobsPrice price={data.price}/>
-          <DetailsButton 
+          <RectButton 
+            buttonText={'Details'}
             minWidth={'15%'}
             fontSize={SIZES.font}
             handlePress={() => navigation.navigate('JobsDetails', {data})}

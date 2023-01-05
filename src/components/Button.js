@@ -2,9 +2,9 @@ import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native'
 import React from 'react'
 import { COLORS, FONTS, SHADOWS, SIZES } from '../../constants'
 
-export const CircleButton = ({imgUrl, ...props}) => {
+export const CircleButton = ({imgUrl, handlePress, ...props}) => {
   return (
-    <TouchableOpacity style={[styles.circleButtonContainer, {...props}]}>
+    <TouchableOpacity style={[styles.circleButtonContainer, {...props}]} onPress={handlePress}>
       <Image 
         source={imgUrl}
         resizeMode='contain'
@@ -13,16 +13,16 @@ export const CircleButton = ({imgUrl, ...props}) => {
     </TouchableOpacity>
   )
 }
-
-export const DetailsButton = ({minWidth, fontSize, handlePress, ...props}) => {
+//DetailsButton
+export const RectButton = ({buttonText, minWidth, fontSize, handlePress, ...props}) => {
   return (
     <TouchableOpacity
-      style={[styles.detailsButtonContainer, {minWidth: minWidth, ...props}]}
+      style={[styles.RectButtonContainer, {minWidth: minWidth, ...props}]}
       onPress={handlePress}
     >
       <Text
-        style={[styles.detailsButtonText, {fontSize: fontSize}]}
-      >Details</Text>
+        style={[styles.RectButtonText, {fontSize: fontSize}]}
+      >{ buttonText }</Text>
     </TouchableOpacity>
   )
 }
@@ -31,7 +31,7 @@ export const IconButton = ({iconSource, goToLogin}) => {
   return (
     <TouchableOpacity onPress={goToLogin} style={styles.iconButton}>
       <View>
-        <Image source={iconSource} style={{width: '100%', height: '100%', borderRadius: '50%'}}/>
+        <Image source={iconSource} style={{width: '100%', height: '100%', borderRadius: SIZES.extraLarge}}/>
       </View>
     </TouchableOpacity>
   )
@@ -53,12 +53,12 @@ const styles = StyleSheet.create({
     height: 24,
     tintColor: COLORS.gray
   },
-  detailsButtonContainer: {
+  RectButtonContainer: {
     backgroundColor: COLORS.primary,
     borderRadius: SIZES.extraLarge,
     padding: SIZES.small
   },
-  detailsButtonText: {
+  RectButtonText: {
     fontFamily: FONTS.semiBold,
     color: COLORS.white,
     textAlign: 'center'

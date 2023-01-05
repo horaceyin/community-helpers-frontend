@@ -5,12 +5,12 @@ const FakeData = [
     id: "NFT-01",
     title: "Abstracto #312",
     helpSeeker: "Putri Intan",
-    location: "Reprehenderit exercitation sint ex cillum aute ad qui aliquip ad magna excepteur nulla sit.",
+    location: "Effectual Bldg Wan Chai, Wan Chai District, Hong Kong",
     price: 4.25,
     description:
       "The action painter abstract expressionists were directly influenced by automatism. Pollock channelled this into producing gestural. The action painter abstract expressionists were directly influenced by automatism. Pollock channelled this into producing gestural. The action painter abstract expressionists were directly influenced by automatism. Pollock channelled this into producing gestural.",
     image: assets.nft01,
-    bids: [
+    categories: [
       {
         id: "BID-11",
         name: "Jessica Tan",
@@ -38,12 +38,12 @@ const FakeData = [
     id: "NFT-02",
     title: "Green Coins",
     helpSeeker: "Siti Nurhaliza",
-    location: "Reprehenderit exercitation sint ex cillum aute ad qui aliquip ad magna excepteur nulla sit.",
+    location: "Effectual Bldg Wan Chai, Wan Chai District, Hong Kong",
     price: 7.25,
     description:
       "The action painter abstract expressionists were directly influenced by automatism. Pollock channelled this into producing gestural. Nulla sed velit erat vitae leo sem inceptos diam fames arcu hendrerit, quis ultrices in eleifend posuere ipsum conubia porttitor felis.",
     image: assets.nft02,
-    bids: [
+    categories: [
       {
         id: "BID-21",
         name: "Jessica Tan",
@@ -57,12 +57,12 @@ const FakeData = [
     id: "NFT-03",
     title: "NFT coins race",
     helpSeeker: "Elisabeth aho",
-    location: "Reprehenderit exercitation sint ex cillum aute ad qui aliquip ad magna excepteur nulla sit.",
+    location: "Effectual Bldg Wan Chai, Wan Chai District, Hong Kong",
     price: 95.25,
     description:
       "The action painter abstract expressionists were directly influenced by automatism. Pollock channelled this into producing gestural. Lorem ipsum dolor sit amet consectetur adipiscing elit consequat accumsan sapien, lectus convallis malesuada odio curae habitasse dignissim nascetur. Nulla sed velit erat vitae leo sem inceptos diam fames arcu hendrerit, quis ultrices in eleifend posuere ipsum conubia porttitor felis. Lorem ipsum dolor sit amet consectetur adipiscing elit consequat accumsan sapien, lectus convallis malesuada odio curae habitasse dignissim nascetur. Nulla sed velit erat vitae leo sem inceptos diam fames arcu hendrerit, quis ultrices in eleifend posuere ipsum conubia porttitor felis.",
     image: assets.nft03,
-    bids: [
+    categories: [
       {
         id: "BID-31",
         name: "Jessica Tan",
@@ -83,12 +83,12 @@ const FakeData = [
     id: "NFT-04",
     title: "Nifty NFT",
     helpSeeker: "Putri Intan",
-    location: "Reprehenderit exercitation sint ex cillum aute ad qui aliquip ad magna excepteur nulla sit.",
+    location: "Effectual Bldg Wan Chai, Wan Chai District, Hong Kong",
     price: 54.25,
     description:
       "The action painter abstract expressionists were directly influenced by automatism. Pollock channelled this into producing gestural.Lorem ipsum dolor sit amet consectetur adipiscing elit consequat accumsan sapien, lectus convallis malesuada odio curae habitasse dignissim nascetur.",
     image: assets.nft04,
-    bids: [
+    categories: [
       {
         id: "BID-41",
         name: "Jessica Tan",
@@ -123,12 +123,12 @@ const FakeData = [
     id: "NFT-05",
     title: "Colorful circles",
     helpSeeker: "David doe",
-    location: "Reprehenderit exercitation sint ex cillum aute ad qui aliquip ad magna excepteur nulla sit.",
+    location: "Effectual Bldg Wan Chai, Wan Chai District, Hong Kong",
     price: 10.25,
     description:
       "The action painter abstract expressionists were directly influenced by automatism. Pollock channelled this into producing gestural.",
     image: assets.nft05,
-    bids: [
+    categories: [
       {
         id: "BID-51",
         name: "Jessica Tan",
@@ -142,12 +142,12 @@ const FakeData = [
     id: "NFT-06",
     title: "Black box model",
     helpSeeker: "Leo Messi",
-    location: "Reprehenderit exercitation sint ex cillum aute ad qui aliquip ad magna excepteur nulla sit.",
+    location: "Effectual Bldg Wan Chai, Wan Chai District, Hong Kong",
     price: 20.25,
     description:
       "The action painter abstract expressionists were directly influenced by automatism. Pollock channelled this into producing gestural. Lorem ipsum dolor sit amet consectetur adipiscing elit consequat accumsan sapien, lectus convallis malesuada odio curae habitasse dignissim nascetur. Nulla sed velit erat vitae leo sem inceptos diam fames arcu hendrerit, quis ultrices in eleifend posuere ipsum conubia porttitor felis.",
     image: assets.nft06,
-    bids: [
+    categories: [
       {
         id: "BID-61",
         name: "Jessica Tan",
@@ -189,12 +189,12 @@ const FakeData = [
     id: "NFT-07",
     title: "Abstracto soulful art",
     helpSeeker: "Victor de la Cruz",
-    location: "Reprehenderit exercitation sint ex cillum aute ad qui aliquip ad magna excepteur nulla sit.",
+    location: "Effectual Bldg Wan Chai, Wan Chai District, Hong Kong",
     price: 18.25,
     description:
       "The action painter abstract expressionists were directly influenced by automatism. Pollock channelled this into producing gestural. Lorem ipsum dolor sit amet consectetur adipiscing elit consequat accumsan sapien, lectus convallis malesuada odio curae habitasse dignissim nascetur. Nulla sed velit erat vitae leo sem inceptos diam fames arcu hendrerit, quis ultrices in eleifend posuere ipsum conubia porttitor felis. Ullamcorper platea penatibus ornare egestas nulla ligula hendrerit nisl suscipit sociosqu maximus, tincidunt aptent habitant purus pharetra ultrices dapibus laoreet nisi lacinia. Porta malesuada netus vel sapien conubia porttitor aliquam ut pretium ante litora molestie senectus magna egestas sociosqu, eget aliquet fames pharetra felis posuere varius fringilla quisque in arcu montes eu ullamcorper.",
     image: assets.nft07,
-    bids: [],
+    categories: [],
   },
 ];
 

@@ -28,6 +28,7 @@ const JobsTitle = ({title, subTitle, titleSize, subTitleSize, location, location
         fontFamily: FONTS.medium,
         fontSize: locationSize,
         color: COLORS.primary,
+        marginVertical: SIZES.base,
         maxWidth: '70%'
       }}>
         {location}

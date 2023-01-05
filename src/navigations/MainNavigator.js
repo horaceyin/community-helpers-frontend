@@ -23,10 +23,10 @@ const MainNavigator = () => {
     <SafeAreaView style={styles.root}>
 
       <NavigationContainer>
-        <FocusedStatusBar style='auto' />
+        {/* <FocusedStatusBar style='auto' /> */}
         <Stack.Navigator 
           initialRouteName='Splash'
-          screenOptions={{headerShown: true}}>
+          screenOptions={{headerShown: false}}>
           <Stack.Screen 
             name='Splash' 
             component={SplashScreen}/>

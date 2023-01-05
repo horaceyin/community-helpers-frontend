@@ -2,6 +2,7 @@ import badge from "../assets/icons/badge.png";
 import eth from "../assets/icons/eth.png";
 import heart from "../assets/icons/heart.png";
 import left from "../assets/icons/left.png";
+import leftArrow from "../assets/icons/left-arrow.png";
 import search from "../assets/icons/search.png";
 import check from "../assets/icons/check.png";
 import dollar from "../assets/icons/dollar-symbol.png";
@@ -26,6 +27,7 @@ export default {
   eth,
   heart,
   left,
+  leftArrow,
   search,
   check,
   dollar,

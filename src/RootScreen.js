@@ -1,16 +1,21 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import TabsNavigator from './navigations/TabsNavigator';
-import { StyleSheet, SafeAreaView, Text } from 'react-native';
+import { StyleSheet, SafeAreaView, View } from 'react-native';
 import { COLORS } from '../constants';
 import { FocusedStatusBar } from './components';
 
 const RootScreen = () => {
   return (
-    <SafeAreaView style={styles.root}>
+    // <SafeAreaView style={styles.root}>
+    //   <FocusedStatusBar style='auto'/>
+    //   <TabsNavigator/>
+    // </SafeAreaView>
+
+    <View style={styles.root}>
       <FocusedStatusBar style='auto'/>
       <TabsNavigator/>
-    </SafeAreaView>
+    </View>
   )
 }
 
