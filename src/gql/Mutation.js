@@ -1,0 +1,48 @@
+import { gql } from "@apollo/client";
+
+export const LOGIN = gql`
+  mutation Login($username: String!, $password: String!) {
+    login(loginUserInput: { username: $username, password: $password }) {
+      access_token
+      user {
+        id
+        username
+      }
+    }
+  }
+`;
+
+export const CREATE_HELP_REQUEST = gql`
+  mutation CreateHelpRequest(
+    $title: String!
+    $category: String!
+    $description: String!
+    $helpRequestDatetime: DateTime!
+  ) {
+    createHelpRequest(
+      createHelpRequestInput: {
+        title: $title
+        category: $category
+        description: $description
+        helpRequestDatetime: $helpRequestDatetime
+        # helpRequestDatetime: "2016-07-20T12:00:15.000Z"
+      }
+    ) {
+      category
+      creationDatetime
+      description
+      helpRequestDatetime
+      # helpRequestMatchings{
+      #   id
+      # }
+      # helpSeeker{
+      #   id
+      # }
+      helpSeekerId
+      helperRating
+      id
+      location
+      title
+    }
+  }
+`;

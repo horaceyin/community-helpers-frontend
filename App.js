@@ -1,8 +1,35 @@
 import { useFonts } from 'expo-font';
 import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 import { COLORS } from './constants';
+import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
 import MainNavigator from './src/navigations/MainNavigator';
+import * as SecureStore from "expo-secure-store";
 
+const httpLink = createHttpLink({
+  // uri: 'https://communityhelper.azurewebsites.net/graphql',
+  uri: 'http://192.168.0.169:3000/graphql',
+});
+
+const authLink =  setContext( async (_, { headers }) => {
+  const token = await SecureStore.getItemAsync('token');
+  console.log(`authLink: ${token}`);
+  return {
+      headers: {
+          ...headers,
+          authorization: token ? `Bearer ${token}` : "",
+      }
+  }
+});
+
+
+// Initialize Apollo Client
+const client = new ApolloClient({
+  // uri: 'https://communityhelper.azurewebsites.net/graphql',
+  // uri: 'http://192.168.0.169:3000/graphql',
+  link: authLink.concat(httpLink),
+  cache: new InMemoryCache(),
+});
 
 // entry point
 export default function App() {
@@ -22,10 +49,12 @@ export default function App() {
     //   <StatusBar style="auto" />
     //   <MainNavigator/>
     // </SafeAreaView>
+    <ApolloProvider client={client}>
     <View style={styles.container}>
       {/* <StatusBar style="auto" /> */}
       <MainNavigator/>
     </View>
+    </ApolloProvider>
   );
 }
 

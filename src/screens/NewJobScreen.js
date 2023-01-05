@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -8,15 +8,53 @@ import {
   ScrollView,
   Button,
 } from "react-native";
-import { COLORS } from '../../constants';
+import { COLORS, FONTS, SIZES } from "../../constants";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import * as SecureStore from "expo-secure-store";
+import { useMutation } from "@apollo/client";
+import { CREATE_HELP_REQUEST } from "../gql/Mutation";
+
+async function getValueFor(key) {
+  return await SecureStore.getItemAsync(key);
+}
 
 const NewJobScreen = () => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
+  const [token, setToken] = React.useState("");
+
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("");
   const [scheduledDatetime, setScheduledDatetime] = useState(
     new Date(new Date().toDateString())
   );
+
+  const [createHelpRequest, { data, loading, error }] =
+    useMutation(CREATE_HELP_REQUEST);
+
+  // useEffect(() => {
+  //   console.log('in');
+  //   // if (token !== null) {
+  //   //   alert("Please login first");
+  //   // } else {
+  //   //   createHelpRequest({
+  //   //     variables: {
+  //   //       title: title,
+  //   //       description: description,
+  //   //       category: category,
+  //   //       scheduledDatetime: scheduledDatetime,
+  //   //     },
+  //   //   })
+  //   //     .then(() => {
+  //   //       alert("Create success!");
+  //   //     })
+  //   //     .catch((e) => {
+  //   //       console.error(e);
+  //   //       alert("Create fail");
+  //   //     });
+  //   // }
+  // }, [token]);
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -58,11 +96,23 @@ const NewJobScreen = () => {
       <Text style={styles.pageTitle}>Create Help Request</Text>
       <ScrollView>
         <Text style={styles.textInputTitle}>Help Request Title</Text>
-        <TextInput style={styles.textInput} />
+        <TextInput
+          style={styles.textInput}
+          value={title}
+          onChangeText={(inputTitle) => setTitle(inputTitle)}
+        />
         <Text style={styles.textInputTitle}>Description</Text>
-        <TextInput style={styles.textInput} />
+        <TextInput
+          style={styles.textInput}
+          value={description}
+          onChangeText={(inputDescription) => setDescription(inputDescription)}
+        />
         <Text style={styles.textInputTitle}>Category</Text>
-        <TextInput style={styles.textInput} />
+        <TextInput
+          style={styles.textInput}
+          value={category}
+          onChangeText={(inputCategory) => setCategory(inputCategory)}
+        />
         <Text style={styles.textInputTitle}>Scheduled Data & Time</Text>
         {/* <TextInput style={styles.textInput} /> */}
         <View style={{ flexDirection: "row" }}>
@@ -98,7 +148,39 @@ const NewJobScreen = () => {
           onCancel={hideTimePicker}
         />
 
-        <Pressable style={styles.submitButton}>
+        <Pressable
+          style={styles.submitButton}
+          onPress={() => {
+            getValueFor('token').then((token)=>{
+              if (token) {
+                createHelpRequest({
+                  variables: {
+                    title: title,
+                    description: description,
+                    category: category,
+                    helpRequestDatetime: scheduledDatetime,
+                  },
+                })
+                  .then(() => {
+                    alert("Create success!");
+                  })
+                  .catch((e) => {
+                    console.error(e);
+                    alert("Create fail");
+                  });
+              }
+              else {
+                alert("Please login first");
+              }
+            });
+            
+
+            // getValueFor("token").then((token) => {
+            //   console.log(token ? true : false);
+            //   setToken(token);
+            // });
+          }}
+        >
           <Text style={styles.submitButtonText}>Submit</Text>
         </Pressable>
       </ScrollView>
@@ -115,24 +197,28 @@ const styles = StyleSheet.create({
     // justifyContent: 'center',
   },
   text: {
+    fontFamily: FONTS.regular,
     fontWeight: "bold",
     fontSize: 32,
     color: COLORS.body,
   },
   pageTitle: {
+    fontFamily: FONTS.bold, 
     fontWeight: "bold",
-    fontSize: 32,
+    fontSize: SIZES.extraLarge,
     color: COLORS.body,
     marginBottom: 15,
     // alignSelf: 'center',
   },
   textInputTitle: {
     // fontWeight: "bold",
-    fontSize: 20,
+    fontFamily: FONTS.regular,
+    fontSize: SIZES.large,
     color: COLORS.body,
     marginVertical: 10,
   },
   textInput: {
+    fontFamily: FONTS.regular,
     padding: 8,
     // fontSize: 18,
     backgroundColor: "#f5f5f5",
@@ -163,6 +249,7 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   datePickerText: {
+    fontFamily: FONTS.regular,
     fontSize: 20,
     lineHeight: 21,
     // fontWeight: 'bold',
@@ -181,7 +268,8 @@ const styles = StyleSheet.create({
     marginBottom: 100,
   },
   submitButtonText: {
-    fontSize: 20,
+    fontFamily: FONTS.regular,
+    fontSize: SIZES.large,
     lineHeight: 21,
     // fontWeight: 'bold',
     letterSpacing: 0.25,
