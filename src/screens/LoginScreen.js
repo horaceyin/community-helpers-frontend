@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Text, TextInput, Pressable } from "react-native";
 import { COLORS, FONTS, SIZES } from "../../constants";
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation, useLazyQuery } from "@apollo/client";
 import { LOGIN } from "../gql/Mutation";
 import { ME } from "../gql/Query";
 import * as SecureStore from "expo-secure-store";
@@ -17,18 +17,19 @@ async function deleteValueFor(key) {
 const LoginScreen = () => {
   const [login, { data, loading, error }] = useMutation(LOGIN);
 
-  const { loading: meLoading, error: meError, data: meData } = useQuery(ME);
+  const [getMe, { loading: meLoading, error: meError, data: meData }] =
+    useLazyQuery(ME);
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLogin, setIsLogin] = useState(false);
   const [loadingToken, setLoadingToken] = useState(true);
-  
 
-  useEffect(()=>{
+  useEffect(() => {
     const getToken = async () => {
-      const token = await getValueFor('token');
+      const token = await getValueFor("token");
       if (token !== null) {
+        getMe();
         setIsLogin(true);
       }
       setLoadingToken(false);
@@ -40,19 +41,33 @@ const LoginScreen = () => {
     return <Text>loading</Text>;
   }
 
+  if (loading) {
+    return <Text>loading</Text>; //while loading return this
+  }
+
   if (isLogin) {
-    // console.log('enter is login');
-    
-    if (meLoading) return <Text>loading</Text>;
-    if (error) return <Text>Error! ${error.message}</Text>;
+    console.log("enter is login");
+    if (meLoading) {
+      console.log("meLoading");
+      return <Text>loading</Text>;
+    }
+    if (meError) {
+      deleteValueFor("token").then(() => {
+        setIsLogin(false);
+      });
+      return <Text>Error! ${meError.message}</Text>;
+    }
     // console.log(meData);
     return (
       <View style={styles.container}>
-        <Text style={styles.pageTitle}>Hi, {(loading) ? "" : meData.me.username}</Text>
+        <Text style={styles.pageTitle}>
+          {/* Hi,  */}
+          Hi, {loading ? "" : meData.me.username}
+        </Text>
         <Pressable
           style={styles.logoutButton}
           onPress={() => {
-            deleteValueFor('token').then(()=>{
+            deleteValueFor("token").then(() => {
               setIsLogin(false);
             });
           }}
@@ -61,10 +76,6 @@ const LoginScreen = () => {
         </Pressable>
       </View>
     );
-  }
-
-  if (loading) {
-    return <Text>loading</Text>; //while loading return this
   }
 
   return (
@@ -94,7 +105,10 @@ const LoginScreen = () => {
             .then((result) => {
               console.log(`access_token: ${result.data.login.access_token}`);
               saveToken(result.data.login.access_token).then((result) => {
-                setIsLogin(true);
+                getMe().then((d) => {
+                  console.log(`getMe: ${d.data.me.username}`);
+                  setIsLogin(true);
+                });
                 // alert("login success");
                 // getValueFor('token').then((token)=>{
                 //   console.log(token);
@@ -180,7 +194,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     borderRadius: 10,
     // elevation: 3,
-    backgroundColor: 'red',
+    backgroundColor: "red",
     marginTop: 40,
     marginBottom: 100,
   },
