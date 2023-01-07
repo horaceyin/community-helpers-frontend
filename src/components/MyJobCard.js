@@ -1,9 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet} from 'react-native';
 import { SHADOWS, COLORS, SIZES, FONTS } from '../../constants';
 
 const MyJobCard = ({data}) => {
-    //const [jobState, setJobState] = useState()
+
+    let d = new Date(data.helpRequest.helpRequestDatetime).toDateString()
+    const date = d.split(" ")
     return (
         <View style={styles.cardContainer}>
             <View style={styles.card}>
@@ -29,13 +31,7 @@ const MyJobCard = ({data}) => {
                     fontFamily: FONTS.regular, 
                     fontSize: SIZES.medium, 
                     color: COLORS.primary
-                }}>{`${data.helpRequest.helpSeeker.username} Date: yy/mm/dd`}</Text>
-
-                {/* <Text style={{
-                    fontFamily: FONTS.regular, 
-                    fontSize: SIZES.medium, 
-                    color: COLORS.primary
-                }}>{""}</Text> */}
+                }}>{`${data.helpRequest.helpSeeker.username} Date: ${date[3]}/${date[1]}/${date[2]}`}</Text>
 
                 <Text style={{
                     fontFamily: FONTS.medium,
@@ -52,7 +48,6 @@ const MyJobCard = ({data}) => {
     );
 };
 
-// define your styles
 const styles = StyleSheet.create({
     cardContainer: {
         backgroundColor: COLORS.white,
@@ -80,5 +75,4 @@ const styles = StyleSheet.create({
     }
 });
 
-//make this component available to the app
 export default MyJobCard;
