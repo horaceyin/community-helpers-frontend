@@ -4,10 +4,11 @@ export const COLORS = {
 
   white: "#FFF",
   gray: "#74858C",
-
   dark: "#161719",
   body: "#405792",
   bg: "#ECECEC",
+  ongoing: "#f57e22",
+  done: "#42f54b",
   tabSelected: "#e32f45",
   tabNotSelected: "#748c94",
   tabButton: "#4a8ba1",

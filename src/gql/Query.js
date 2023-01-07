@@ -7,3 +7,21 @@ export const ME = gql`
     }
   }
 `;
+
+export const FIND_MATCH_BY_STATE = gql`
+  query FindByUserAndState($state: [String!]!) {
+    findByUserAndState(state: $state) {
+      id
+      userId
+      state
+      helpRequest {
+        title
+        description
+        helpRequestDatetime
+        helpSeeker{
+          username
+        }
+      }
+    }
+  }
+`;

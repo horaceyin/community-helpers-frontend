@@ -7,8 +7,9 @@ import MainNavigator from './src/navigations/MainNavigator';
 import * as SecureStore from "expo-secure-store";
 
 const httpLink = createHttpLink({
-  // uri: 'https://communityhelper.azurewebsites.net/graphql',
-  uri: 'http://192.168.0.169:3000/graphql',
+  //uri: 'https://communityhelper.azurewebsites.net/graphql',
+  //uri: 'http://192.168.0.169:3000/graphql',
+  uri: 'http://192.168.1.7:3000/graphql'
 });
 
 const authLink =  setContext( async (_, { headers }) => {

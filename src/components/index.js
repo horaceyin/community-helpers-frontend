@@ -5,7 +5,7 @@ import FocusedStatusBar from "./FocusedStatusBar";
 import HomeHeader from "./HomeHeader";
 import JobCard from "./JobCard";
 import { SubInfo } from "./SubInfo";
-
+import MyJobCard from "./MyJobCard";
 export {
   FocusedStatusBar,
   HomeHeader,
@@ -15,4 +15,5 @@ export {
   RectButton,
   DetailsCategories,
   DetailsDesc,
+  MyJobCard
 }
