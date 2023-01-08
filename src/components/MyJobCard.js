@@ -31,7 +31,7 @@ const MyJobCard = ({data}) => {
                     fontFamily: FONTS.regular, 
                     fontSize: SIZES.medium, 
                     color: COLORS.primary
-                }}>{`${data.helpRequest.helpSeeker.username} Date: ${date[3]}/${date[1]}/${date[2]}`}</Text>
+                }}>{`${data.helpRequest.helpSeeker.username}          Date: ${date[3]}/${date[1]}/${date[2]}`}</Text>
 
                 <Text style={{
                     fontFamily: FONTS.medium,
