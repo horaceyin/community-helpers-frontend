@@ -26,6 +26,7 @@ const NewJobScreen = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
+  const [price, setPrice] = useState(0);
   const [scheduledDatetime, setScheduledDatetime] = useState(
     new Date(new Date().toDateString())
   );
@@ -113,6 +114,12 @@ const NewJobScreen = () => {
           value={category}
           onChangeText={(inputCategory) => setCategory(inputCategory)}
         />
+        <Text style={styles.textInputTitle}>Price</Text>
+        <TextInput
+          style={styles.textInput}
+          value={price}
+          onChangeText={(inputPrice) => setPrice(parseFloat(inputPrice))}
+        />
         <Text style={styles.textInputTitle}>Scheduled Data & Time</Text>
         {/* <TextInput style={styles.textInput} /> */}
         <View style={{ flexDirection: "row" }}>
@@ -159,6 +166,7 @@ const NewJobScreen = () => {
                     description: description,
                     category: category,
                     helpRequestDatetime: scheduledDatetime,
+                    price: price,
                   },
                 })
                   .then(() => {

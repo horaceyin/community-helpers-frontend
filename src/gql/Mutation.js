@@ -19,6 +19,7 @@ export const CREATE_HELP_REQUEST = gql`
     $category: String!
     $description: String!
     $helpRequestDatetime: DateTime!
+    $price: Float!
   ) {
     createHelpRequest(
       createHelpRequestInput: {
@@ -26,6 +27,7 @@ export const CREATE_HELP_REQUEST = gql`
         category: $category
         description: $description
         helpRequestDatetime: $helpRequestDatetime
+        price: $price
         # helpRequestDatetime: "2016-07-20T12:00:15.000Z"
       }
     ) {
