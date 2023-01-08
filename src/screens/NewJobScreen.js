@@ -118,6 +118,7 @@ const NewJobScreen = () => {
         <TextInput
           style={styles.textInput}
           value={price}
+          keyboardType="decimal-pad"
           onChangeText={(inputPrice) => setPrice(parseFloat(inputPrice))}
         />
         <Text style={styles.textInputTitle}>Scheduled Data & Time</Text>
