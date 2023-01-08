@@ -1,8 +1,8 @@
-import React from 'react';
+import {React, useState}from 'react';
 import { View, Text, StyleSheet} from 'react-native';
 import { SHADOWS, COLORS, SIZES, FONTS } from '../../constants';
-
 const MyJobCard = ({data}) => {
+    const [text, setText] = useState(data.helpRequest.description.slice(0, 100))
 
     let d = new Date(data.helpRequest.helpRequestDatetime).toDateString()
     const date = d.split(" ")
@@ -40,7 +40,7 @@ const MyJobCard = ({data}) => {
                     marginVertical: SIZES.base,
                     maxWidth: '70%'
                 }}>
-                    {data.helpRequest.description}
+                    {text + " ..."}
                 </Text>
 
             </View>
