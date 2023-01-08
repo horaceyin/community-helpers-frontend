@@ -1,8 +1,9 @@
-import React from "react";
+import React, {useContext} from "react";
 import {StyleSheet, View, Image, TouchableOpacity} from 'react-native';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { COLORS } from "../../constants";
 import { HomeScreen, HelpersListScreen, NewJobScreen } from "../screens";
+import { AppContext } from "../../AppContext";
 
 const Tab = createBottomTabNavigator()
 
@@ -22,6 +23,7 @@ const getIconColor = focused => ({
 })
 
 const TabsNavigator = () => {
+  const { isLogin } = useContext(AppContext)
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -48,6 +50,7 @@ const TabsNavigator = () => {
         }}
         />
 
+      {isLogin &&
       <Tab.Screen name="NewJobs" 
         component={NewJobScreen}
         options={{
@@ -64,7 +67,8 @@ const TabsNavigator = () => {
           tabBarItemStyle: {
             height: 0
           }
-        }}/>
+        }}
+      />}
 
       <Tab.Screen name="HelpersList" 
         component={HelpersListScreen}
@@ -95,7 +99,8 @@ const styles = StyleSheet.create({
     padding: 0,
     left: 16,
     right: 16,
-    bottom: 16, //can be 32
+    //bottom: 16, //can be 32
+    bottom: 0, //can be 32
     height: 56,
     borderRadius: 16,
     shadowColor: COLORS.dark,
@@ -118,7 +123,7 @@ const styles = StyleSheet.create({
     top: 12
   },
   tabBarButtonContainer: {
-    top: -20,
+    // top: -20,
     alignItems: "center",
     justifyContent: "center",//
     shadowColor: COLORS.dark,

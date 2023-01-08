@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SplashScreen from '../SplashScreen';
@@ -6,9 +6,11 @@ import RootScreen from '../RootScreen';
 import { LoginScreen, JobsDetails } from '../screens';
 import { FocusedStatusBar } from '../components';
 import { assets, COLORS, FONTS, SHADOWS, SIZES } from '../../constants';
-import { SafeAreaView, StyleSheet } from 'react-native';
+import { SafeAreaView, StyleSheet, ActivityIndicator, View } from 'react-native';
+import { AppContext } from '../../AppContext';
 
 const Stack = createNativeStackNavigator()
+
 
 const theme = {
   ...DefaultTheme,
@@ -19,9 +21,15 @@ const theme = {
 }
 
 const MainNavigator = () => {
+  const {isLoading} = useContext(AppContext)
+
+  if (isLoading) return (
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <ActivityIndicator size={'large'} />
+    </View>
+  )
   return (
     <SafeAreaView style={styles.root}>
-
       <NavigationContainer>
         {/* <FocusedStatusBar style='auto' /> */}
         <Stack.Navigator 
@@ -37,7 +45,7 @@ const MainNavigator = () => {
             name='JobsDetails' 
             component={JobsDetails}/>
           <Stack.Screen 
-            name='Login' 
+            name='Login'
             component={LoginScreen}/>
         </Stack.Navigator>
       </NavigationContainer>

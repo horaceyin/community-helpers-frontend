@@ -5,16 +5,17 @@ import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink } from '@ap
 import { setContext } from '@apollo/client/link/context';
 import MainNavigator from './src/navigations/MainNavigator';
 import * as SecureStore from "expo-secure-store";
+import { AppProvider } from './AppContext';
+import { BASE_URL, tokenName } from './config';
 
 const httpLink = createHttpLink({
-  //uri: 'https://communityhelper.azurewebsites.net/graphql',
-  //uri: 'http://192.168.0.169:3000/graphql',
-  uri: 'http://192.168.1.7:3000/graphql'
+  uri: BASE_URL,
+  // uri: 'http://192.168.0.169:3000/graphql',
 });
 
 const authLink =  setContext( async (_, { headers }) => {
-  const token = await SecureStore.getItemAsync('token');
-  console.log(`authLink: ${token}`);
+  const token = await SecureStore.getItemAsync(tokenName);
+  //console.log(`authLink: ${token}`);
   return {
       headers: {
           ...headers,
@@ -22,7 +23,6 @@ const authLink =  setContext( async (_, { headers }) => {
       }
   }
 });
-
 
 // Initialize Apollo Client
 const client = new ApolloClient({
@@ -46,15 +46,13 @@ export default function App() {
   if (!appLoaded) return null
 
   return (
-    // <SafeAreaView style={styles.container}>
-    //   <StatusBar style="auto" />
-    //   <MainNavigator/>
-    // </SafeAreaView>
     <ApolloProvider client={client}>
-    <View style={styles.container}>
-      {/* <StatusBar style="auto" /> */}
-      <MainNavigator/>
-    </View>
+    <AppProvider>
+        <View style={styles.container}>
+          {/* <StatusBar style="auto" /> */}
+          <MainNavigator/>
+        </View>
+    </AppProvider>
     </ApolloProvider>
   );
 }

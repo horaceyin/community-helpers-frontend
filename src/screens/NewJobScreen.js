@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
     lineHeight: 21,
     // fontWeight: 'bold',
     letterSpacing: 0.25,
-    color: "white",
+    color: COLORS.white,
   },
   submitButton: {
     alignItems: "center",
@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
     lineHeight: 21,
     // fontWeight: 'bold',
     letterSpacing: 0.25,
-    color: "white",
+    color: COLORS.white,
   },
 });
 

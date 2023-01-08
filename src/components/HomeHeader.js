@@ -1,30 +1,33 @@
 import { View, Text, Image, TextInput } from 'react-native';
 import { SHADOWS, COLORS, SIZES, assets, FONTS } from '../../constants';
 import { useNavigation } from '@react-navigation/native';
-import React from 'react';
+import React, {useEffect, useContext} from 'react';
 import { IconButton } from './Button';
+import { AppContext } from '../../AppContext';
 
 const HomeHeader = ({ onSearch, ...props }) => {
-  const navigation = useNavigation()
 
+  const { userInfo, isLogin } = useContext(AppContext)
+
+  const navigation = useNavigation()
   return (
     <View style={{backgroundColor: COLORS.primary, padding: SIZES.font}}>
       <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-        <Image source={assets.myLogo} resizeMode='contain' style={{width: 90, height: 25}} />
+        <Image source={assets.placeholder} resizeMode='contain' style={{width: 90, height: 25}} />
 
-        <IconButton iconSource={assets.person04} goToLogin={() => navigation.navigate('Login', props)} />
+        <IconButton iconSource={ isLogin ? assets.person04 : assets.fakeUser } goToLogin={() => navigation.navigate('Login', props)} />
       </View>
 
       <View style={{marginVertical: SIZES.font}}>
         <Text style={{fontFamily: FONTS.regular, fontSize: SIZES.small, color: COLORS.white}}>
-          Hello, Horace
+          Hello, {userInfo ? userInfo.displayName : 'Anonymous'}
         </Text>
         <Text style={{fontFamily: FONTS.bold, fontSize: SIZES.large, color: COLORS.white, marginTop: SIZES.base / 2}}>
-          Mission:
+          Requests:
         </Text>
       </View>
 
-      <View style={{marginTop: SIZES.font}}>
+      {/* <View style={{marginTop: SIZES.font}}>
         <View style={{
           width: '100%',
           backgroundColor: COLORS.gray,
@@ -41,7 +44,7 @@ const HomeHeader = ({ onSearch, ...props }) => {
 
           <TextInput placeholder='Search jobs' style={{flex: 1}} onChange={onSearch} />
         </View>
-      </View>
+      </View> */}
     </View>
   )
 }

@@ -1,5 +1,5 @@
 import assets from "./assets";
 import { COLORS, SHADOWS, SIZES, FONTS } from "./theme";
-import { FakeData } from "./dummy";
+import { FakeData, RecommendedData } from "./dummy";
 
-export { assets, COLORS, SHADOWS, SIZES, FONTS, FakeData };
+export { assets, COLORS, SHADOWS, SIZES, FONTS, FakeData, RecommendedData };

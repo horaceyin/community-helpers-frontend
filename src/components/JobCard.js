@@ -19,7 +19,7 @@ const JobCard = ({data}) => {
         {/* <CircleButton imgUrl={assets.check} top={10} right={10}/> */}
       </View>
 
-      <SubInfo />
+      <SubInfo jobsDate={data.jobsDate} jobsTime={data.jobsTime} />
 
       <View style={{width: '100%', padding: SIZES.font}}>
         <JobsTitle

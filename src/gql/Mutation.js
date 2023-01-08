@@ -7,6 +7,7 @@ export const LOGIN = gql`
       user {
         id
         username
+        displayName
       }
     }
   }
@@ -46,3 +47,12 @@ export const CREATE_HELP_REQUEST = gql`
     }
   }
 `;
+
+export const UPDATE_HELP_REQUEST = gql`
+  mutation UpdateHelpRequestMatching($updateHelpRequestMatchingInput: UpdateHelpRequestMatchingInput!) {
+    updateHelpRequestMatching(updateHelpRequestMatchingInput: $updateHelpRequestMatchingInput) {
+      id
+      state
+    }
+  }
+`

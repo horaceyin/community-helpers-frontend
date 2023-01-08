@@ -10,7 +10,14 @@ const DetailsCategories = ({category}) => {
       marginVertical: SIZES.base, 
       paddingHorizontal: SIZES.base
     }}>
-      <Text style={{fontFamily: FONTS.regular, fontSize: SIZES.small, color: COLORS.primary}}>Details Category</Text>
+      <Text style={{
+        fontFamily: FONTS.regular, 
+        fontSize: SIZES.small, 
+        color: COLORS.white, 
+        backgroundColor:COLORS.secondary, 
+        maxWidth: 100,
+        textAlign: 'center'
+      }}>{category}</Text>
     </View>
   )
 }

@@ -65,7 +65,7 @@ const CircleImgContainer = () => {
   )
 }
 
-const JobsDate = () => {
+const JobsDate = ({ jobsDate, jobsTime }) => {
   return (
     <View style={styles.jobsDate}>
       <Text style={{
@@ -81,17 +81,27 @@ const JobsDate = () => {
         fontSize: SIZES.medium,
         color: COLORS.primary
       }}>
-        dd/mm/yyyy
+        {/* dd/mm/yyyy */}
+        {jobsDate}
+      </Text>
+
+      <Text style={{
+        fontFamily: FONTS.semiBold,
+        fontSize: SIZES.medium,
+        color: COLORS.primary
+      }}>
+        {/* dd/mm/yyyy */}
+        {jobsTime}
       </Text>
     </View>
   )
 }
 
-const SubInfo = () => {
+const SubInfo = ({ jobsDate, jobsTime }) => {
   return (
     <View style={styles.subInfo}>
-      <CircleImgContainer/>
-      <JobsDate/>
+      {/* <CircleImgContainer/> */}
+      <JobsDate jobsDate={jobsDate} jobsTime={jobsTime} />
     </View>
   )
 }
@@ -108,7 +118,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: SIZES.font,
     marginTop: -SIZES.extraLarge,
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    //justifyContent: 'space-between'
+    justifyContent: 'flex-end'
   },
   circleImgContainer: {
     flexDirection: 'row'
