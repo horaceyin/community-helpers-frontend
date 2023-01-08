@@ -53,8 +53,7 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.white,
         borderRadius: SIZES.font,
         margin: SIZES.base,
-        marginBottom: SIZES.extraLarge,
-        ...SHADOWS.dark
+        ...SHADOWS.medium
       },
     card: {
         width: '100%',

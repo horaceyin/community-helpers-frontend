@@ -31,7 +31,7 @@ const HelpersListScreen = () => {
     refetch()
     setTimeout(()=>{
       setRefresh(false)
-    }, 2000)
+    }, 1000)
   }
 
   useEffect(()=>{
@@ -64,7 +64,16 @@ const HelpersListScreen = () => {
     }
 
     if(jobError) {
-      return <Text>Error! ${jobError.message}</Text>;
+      return (
+        <View style={styles.viewContainer}>
+          <Text style={styles.pageTitle}>
+            My Jobs
+          </Text>
+          <Text style={styles.pageContent}>
+            Login in to see your job
+          </Text>
+        </View>
+      );
     }
 
     return (
@@ -95,6 +104,13 @@ const styles = StyleSheet.create({
     fontSize: 32,
     color: COLORS.body,
     marginBottom: 15,
+  },
+  pageContent: {
+    fontFamily: FONTS.bold,
+    fontSize: 25,
+    color: COLORS.gray,
+    marginTop: 50,
+    alignSelf: "center"
   },
 });
 
