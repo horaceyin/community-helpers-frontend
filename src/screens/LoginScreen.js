@@ -7,6 +7,8 @@ import { ME } from "../gql/Query";
 import * as SecureStore from "expo-secure-store";
 import { AppContext } from "../../AppContext";
 import { FocusedStatusBar } from "../components";
+import { appLogout, appLogin, selectIsLogin, selectUserInfo, selectUserToken } from "../features/AuthSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 // async function getValueFor(key) {
 //   return await SecureStore.getItemAsync(key);
@@ -18,7 +20,13 @@ import { FocusedStatusBar } from "../components";
 
 const LoginScreen = ({navigation, route}) => {
 
-  const { isLogin, appLogin, loginLoading, appLogout, userToken, userInfo } = useContext(AppContext)
+//  const { isLogin, appLogin, loginLoading, appLogout, userToken, userInfo } = useContext(AppContext)
+  const dispatch = useDispatch();
+  const isLogin = useSelector(selectIsLogin);
+  const userInfo = useSelector(selectUserInfo);
+  const userToken = useSelector(selectUserToken);
+
+  const { appLogin, loginLoading } = useContext(AppContext);
   
   //const [login, { data, loading, error }] = useMutation(LOGIN);
 
@@ -87,8 +95,9 @@ const LoginScreen = ({navigation, route}) => {
           //   });
           // }}
           onPress={async () => {
-            appLogout()
-            navigation.replace('Root')
+            //or sync?? no await ??
+            await dispatch(appLogout());
+            navigation.replace('Root');
           }}
         >
           <Text style={styles.logoutButtonText}>Logout</Text>
@@ -144,7 +153,8 @@ const LoginScreen = ({navigation, route}) => {
         //     });
         // }}
         onPress={() => {
-          appLogin(username, password)
+          dispatch(appLogin({username, password}));
+          //appLogin(username, password)
           //navigation.replace('Root')
         }}
       >

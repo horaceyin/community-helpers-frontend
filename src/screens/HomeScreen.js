@@ -8,11 +8,20 @@ import { AppContext } from '../../AppContext';
 import { FIND_MATCH_BY_STATE_IN_HOME, FIND_ALL_JOBS_IN_HOME } from '../gql/Query';
 import { getPendingJobsVar } from '../../config';
 
+import { selectIsLogin, selectUserInfo, selectUserToken } from "../features/AuthSlice";
+import { useSelector } from "react-redux";
+
+
 //getPendingJob({variables: {state: ["pending"]}});
 const randomPics = [assets.english, assets.fixItem, assets.food, assets.myImages, assets.tv]
 
 const HomeScreen = () => {
-  const {isLogin, userToken, userInfo, isFetching, setIsFetching} = useContext(AppContext)
+  const isLogin = useSelector(selectIsLogin);
+  const userToken = useSelector(selectUserToken);
+  const userInfo = useSelector(selectUserInfo);
+
+  // const {isLogin, userToken, userInfo, isFetching, setIsFetching} = useContext(AppContext);
+  const {isFetching, setIsFetching} = useContext(AppContext);
   const [data, setData] = useState([])
 
   const createDataArray = (backendData, state) => {
@@ -89,22 +98,29 @@ const HomeScreen = () => {
 
   function getUsersPendingJobs() {
     if(userToken && userInfo && isLogin) {
+      // check if the lazy query called before
       if(pendingJobCalled){
         pendingJobRefetch()
 
       }
       else getPendingJob({variables: {state: ["pending"]}})
     }else{
+      // check if the lazy query called before
       if(allJobCalled) allJobRefetch()
       else getAllJob()
     }
     setIsFetching(false)
   }
   
+  // useEffect(() => {
+  //   //console.log("&&&&&&&&&&")
+  //   getUsersPendingJobs()
+  // }, [isLogin, userToken, userInfo, isFetching])
+
   useEffect(() => {
     //console.log("&&&&&&&&&&")
     getUsersPendingJobs()
-  }, [isLogin, userToken, userInfo, isFetching])
+  }, [isLogin, userToken, userInfo])
 
   return (
     <View style={styles.viewContainer}>

@@ -8,6 +8,9 @@ import * as SecureStore from "expo-secure-store";
 import { AppProvider } from './AppContext';
 import { BASE_URL, tokenName } from './config';
 
+import { store } from './src/store';
+import { Provider } from 'react-redux';
+
 const httpLink = createHttpLink({
   uri: BASE_URL,
   // uri: 'http://192.168.0.169:3000/graphql',
@@ -46,13 +49,15 @@ export default function App() {
   if (!appLoaded) return null
 
   return (
-    <ApolloProvider client={client}>
+    <ApolloProvider client={client}> 
+    <Provider store={store}>
     <AppProvider>
         <View style={styles.container}>
           {/* <StatusBar style="auto" /> */}
           <MainNavigator/>
         </View>
     </AppProvider>
+    </Provider>
     </ApolloProvider>
   );
 }

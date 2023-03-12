@@ -5,6 +5,8 @@ import { CircleButton, SubInfo, FocusedStatusBar, RectButton, DetailsCategories,
 import { useMutation } from "@apollo/client";
 import { AppContext } from '../../AppContext'
 import { UPDATE_HELP_REQUEST } from '../gql/Mutation';
+import { selectIsLogin, selectUserToken } from '../features/AuthSlice';
+import { useSelector } from 'react-redux';
 
 
 const DetailsHeader = ({data, navigation}) => (
@@ -28,7 +30,12 @@ const DetailsHeader = ({data, navigation}) => (
 )
 
 const JobsDetails = ({ route, navigation }) => {
-  const {isLogin, userToken, setIsFetching } = useContext(AppContext)
+  // const {isLogin, userToken, setIsFetching } = useContext(AppContext)
+  const {setIsFetching } = useContext(AppContext)
+
+  const isLogin = useSelector(selectIsLogin);
+  const userToken = useSelector(selectUserToken);
+
   const [updateRequest, { data: updatedRequest, loading, error }] = useMutation(UPDATE_HELP_REQUEST);
   const data = route.params.data
   //console.log(data)

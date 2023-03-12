@@ -7,6 +7,9 @@ import { LOGIN } from "./src/gql/Mutation";
 import { tokenName, userInfoName } from './config';
 import { FakeData } from './constants';
 
+import { useDispatch } from 'react-redux';
+import { checkSignIn } from './src/features/AuthSlice';
+
 export const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
@@ -22,9 +25,12 @@ export const AppProvider = ({ children }) => {
 
   const appLogin = async (username, password) => {
     // make it loading
-    loginMutation({
-      variables: {username: username, password: password}
-    }).then(async (result) => {
+
+    try{
+      let result = await loginMutation({
+        variables: {username: username, password: password}
+      })
+      
       let user_token = result.data.login.access_token
       let user_info = result.data.login.user
 
@@ -34,11 +40,31 @@ export const AppProvider = ({ children }) => {
       await SecureStore.setItemAsync(tokenName, user_token)
       await SecureStore.setItemAsync(userInfoName, JSON.stringify(user_info))
 
-      setIsLogin(true)
-    }).catch((e) => {
-      //console.log(`Error msg: ${e}`)
-      alert('login fail')
-    })
+      setIsLogin(true);
+    }
+    catch(e){
+      console.log(`Error msg: ${e}`);
+      alert('login fail');
+    }
+
+
+    // loginMutation({
+    //   variables: {username: username, password: password}
+    // }).then(async (result) => {
+    //   let user_token = result.data.login.access_token
+    //   let user_info = result.data.login.user
+
+    //   setUserInfo(user_info)
+    //   setUserToken(user_token)
+
+    //   await SecureStore.setItemAsync(tokenName, user_token)
+    //   await SecureStore.setItemAsync(userInfoName, JSON.stringify(user_info))
+
+    //   setIsLogin(true)
+    // }).catch((e) => {
+    //   console.log(`Error msg: ${e}`);
+    //   alert('login fail');
+    // })
   }
 
   const appLogout = async () => {
@@ -50,34 +76,39 @@ export const AppProvider = ({ children }) => {
     //console.log("kk", userToken, userInfo)
   }
 
-  const isLoggedIn = async () => {
-    try {
-      setIsLoading(true)
-      let token = await SecureStore.getItemAsync(tokenName);
-      let userInfo = await SecureStore.getItemAsync(userInfoName);
+  // const isLoggedIn = async () => {
+  //   try {
+  //     setIsLoading(true)
+  //     let token = await SecureStore.getItemAsync(tokenName);
+  //     let userInfo = await SecureStore.getItemAsync(userInfoName);
 
-      userInfo = JSON.parse(userInfo)
-      //console.log(token, userInfo, "$$$$$$$$$$$$$$$")
+  //     userInfo = JSON.parse(userInfo)
+  //     //console.log(token, userInfo, "$$$$$$$$$$$$$$$")
 
-      if (userInfo && token) {
-        setUserToken(token)
-        setUserInfo(userInfo)
-        setIsLogin(true)
-      }
-      else{
-        setUserToken(null)
-        setUserInfo(null)
-        setIsLogin(false)
-      }
-      setIsLoading(false)
-    }
-    catch(e) {
-      console.log(`isLoggedIn msg: ${e}`)
-    }
-  }
+  //     if (userInfo && token) {
+  //       setUserToken(token)
+  //       setUserInfo(userInfo)
+  //       setIsLogin(true)
+  //     }
+  //     else{
+  //       setUserToken(null)
+  //       setUserInfo(null)
+  //       setIsLogin(false)
+  //     }
+  //     setIsLoading(false)
+  //   }
+  //   catch(e) {
+  //     console.log(`isLoggedIn msg: ${e}`)
+  //   }
+  // }
+
+
+  const dispatch = useDispatch()
 
   useEffect(() => {
-    isLoggedIn()
+    // console.log("^&^&^&")
+    dispatch(checkSignIn());
+    // isLoggedIn()
   }, [])
 
   //children get isLogin, userToken, userInfo
