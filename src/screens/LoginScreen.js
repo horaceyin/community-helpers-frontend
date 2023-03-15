@@ -7,7 +7,7 @@ import { ME } from "../gql/Query";
 import * as SecureStore from "expo-secure-store";
 import { AppContext } from "../../AppContext";
 import { FocusedStatusBar } from "../components";
-import { appLogout, appLogin, selectIsLogin, selectUserInfo, selectUserToken } from "../features/AuthSlice";
+import { appLogout, appLogin, selectIsLogin, selectUserInfo, selectUserToken, selectLoginIsLoading } from "../features/AuthSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 // async function getValueFor(key) {
@@ -25,8 +25,9 @@ const LoginScreen = ({navigation, route}) => {
   const isLogin = useSelector(selectIsLogin);
   const userInfo = useSelector(selectUserInfo);
   const userToken = useSelector(selectUserToken);
+  const loginIsLoading = useSelector(selectLoginIsLoading);
 
-  const { appLogin, loginLoading } = useContext(AppContext);
+  // const { appLogin, loginLoading } = useContext(AppContext);
   
   //const [login, { data, loading, error }] = useMutation(LOGIN);
 
@@ -57,7 +58,7 @@ const LoginScreen = ({navigation, route}) => {
 
   // }, [isLogin])
 
-  if (loginLoading) {
+  if (loginIsLoading) {
     // return <Text>loading...</Text>; //while loading return this
     return (
       <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>

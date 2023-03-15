@@ -11,6 +11,7 @@ const initialState = {
     userToken: null,
     userInfo: null,
 
+    loginIsLoading: false,
     isLoading: false,
     isFetching: false
 };
@@ -91,10 +92,14 @@ export const authSlice = createSlice({
             .addCase(checkSignIn.rejected, (state, action) => {
                 console.log(`Fetch user token and info error: ${action.error}`);
             })
+            .addCase(appLogin.pending, (state, action) => {
+                state.loginIsLoading = true;
+            })
             .addCase(appLogin.fulfilled, (state, action) => {
                 state.userToken = user_token;
                 state.userInfo = user_info;
                 state.isLogin = action.payload;
+                state.loginIsLoading = false;
             })
             .addCase(appLogout.fulfilled, (state, action) => {
                 console.log("1111111111")
@@ -106,6 +111,8 @@ export const authSlice = createSlice({
 });
 
 export const selectIsLogin = state => state.auth.isLogin;
+
+export const selectLoginIsLoading = state => state.loginIsLoading;
 
 export const selectUserToken = state => state.auth.userToken;
 
