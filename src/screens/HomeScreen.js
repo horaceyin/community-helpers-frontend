@@ -8,20 +8,22 @@ import { AppContext } from '../../AppContext';
 import { FIND_MATCH_BY_STATE_IN_HOME, FIND_ALL_JOBS_IN_HOME } from '../gql/Query';
 import { getPendingJobsVar } from '../../config';
 
-import { selectIsLogin, selectUserInfo, selectUserToken } from "../features/AuthSlice";
-import { useSelector } from "react-redux";
+import { selectIsLogin, selectUserInfo, selectUserToken, setIsFetching } from "../features/AuthSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 
 //getPendingJob({variables: {state: ["pending"]}});
 const randomPics = [assets.english, assets.fixItem, assets.food, assets.myImages, assets.tv]
 
 const HomeScreen = () => {
+  const dispatch = useDispatch();
   const isLogin = useSelector(selectIsLogin);
   const userToken = useSelector(selectUserToken);
   const userInfo = useSelector(selectUserInfo);
+  const isFetching = useSelector(state => state.auth.isFetching);
 
   // const {isLogin, userToken, userInfo, isFetching, setIsFetching} = useContext(AppContext);
-  const {isFetching, setIsFetching} = useContext(AppContext);
+  // const {isFetching, setIsFetching} = useContext(AppContext);
   const [data, setData] = useState([])
 
   const createDataArray = (backendData, state) => {
@@ -109,7 +111,8 @@ const HomeScreen = () => {
       if(allJobCalled) allJobRefetch()
       else getAllJob()
     }
-    setIsFetching(false)
+    // setIsFetching(false)
+    dispatch(setIsFetching(false));
   }
   
   // useEffect(() => {
@@ -137,7 +140,7 @@ const HomeScreen = () => {
             <RefreshControl 
               refreshing={isFetching}
               onRefresh={() => {
-                setIsFetching(true)
+                dispatch(setIsFetching(true));
               }}
               title="Pull to refresh"
               tintColor="#fff"

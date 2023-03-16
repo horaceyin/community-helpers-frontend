@@ -12,7 +12,8 @@ const initialState = {
     userInfo: null,
 
     loginIsLoading: false,
-    isLoading: false,
+
+    isLoading: true,
     isFetching: false
 };
 
@@ -22,26 +23,28 @@ export const checkSignIn = createAsyncThunk(
         console.log("$#$$#$#$#$#$#")
         let token = await SecureStore.getItemAsync(tokenName);
         let userInfo = await SecureStore.getItemAsync(userInfoName);
+        userInfo = JSON.parse(userInfo);
         return {token, userInfo};
     }
 );
 
-const [loginMutation, { data, loading: loginLoading, error }] = useMutation(LOGIN);
-
 export const appLogin = createAsyncThunk(
     'auth/appLogin',
-    async ({ username, password }, {dispatch, getState}) => {
+    async ({ loginMutation, username, password }, {dispatch, getState}) => {
         try{
+            console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`")
             let result = await loginMutation({
                 variables: {username: username, password: password}
             });
+
+            console.log(result, "!@!@!@!@!")
 
             let user_token = result.data.login.access_token;
             let user_info = result.data.login.user;
 
             await SecureStore.setItemAsync(tokenName, user_token)
             await SecureStore.setItemAsync(userInfoName, JSON.stringify(user_info))
-            return true;
+            return {user_token, user_info};
 
         }catch(e){
             console.log(`Login error: ${e}`);
@@ -64,9 +67,9 @@ export const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        // setIsLogin: (state, action) => {
-        //     state.isLogin = action.payload;
-        // }
+        setIsFetching: (state, action) => {
+            state.isFetching = action.payload;
+        }
     },
     extraReducers(builder) {
         builder
@@ -86,7 +89,7 @@ export const authSlice = createSlice({
                     state.userInfo = null;
                     state.isLogin = false;
                 }
-                state.isLoading = false
+                state.isLoading = false;
                 console.log(token, userInfo, "FFFFFFFF");
             })
             .addCase(checkSignIn.rejected, (state, action) => {
@@ -96,9 +99,10 @@ export const authSlice = createSlice({
                 state.loginIsLoading = true;
             })
             .addCase(appLogin.fulfilled, (state, action) => {
+                let {user_token, user_info} = action.payload;
                 state.userToken = user_token;
                 state.userInfo = user_info;
-                state.isLogin = action.payload;
+                state.isLogin = true;
                 state.loginIsLoading = false;
             })
             .addCase(appLogout.fulfilled, (state, action) => {
@@ -110,9 +114,13 @@ export const authSlice = createSlice({
     }
 });
 
+export const { setIsFetching } = authSlice.actions; 
+
+export const selectIsLoading = state => state.auth.isLoading;
+
 export const selectIsLogin = state => state.auth.isLogin;
 
-export const selectLoginIsLoading = state => state.loginIsLoading;
+export const selectLoginIsLoading = state => state.auth.loginIsLoading;
 
 export const selectUserToken = state => state.auth.userToken;
 

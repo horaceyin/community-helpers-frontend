@@ -8,6 +8,8 @@ import { FocusedStatusBar } from '../components';
 import { assets, COLORS, FONTS, SHADOWS, SIZES } from '../../constants';
 import { SafeAreaView, StyleSheet, ActivityIndicator, View } from 'react-native';
 import { AppContext } from '../../AppContext';
+import { useSelector } from 'react-redux';
+import { selectIsLoading } from '../features/AuthSlice';
 
 const Stack = createNativeStackNavigator()
 
@@ -21,13 +23,13 @@ const theme = {
 }
 
 const MainNavigator = () => {
-  const {isLoading} = useContext(AppContext)
+  // const {isLoading} = useSelector(selectIsLoading);
 
-  if (isLoading) return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <ActivityIndicator size={'large'} />
-    </View>
-  )
+  // if (isLoading) return (
+  //   <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+  //     <ActivityIndicator size={'large'} />
+  //   </View>
+  // )
   return (
     <SafeAreaView style={styles.root}>
       <NavigationContainer>

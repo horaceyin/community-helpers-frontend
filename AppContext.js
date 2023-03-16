@@ -19,53 +19,53 @@ export const AppProvider = ({ children }) => {
   const [userInfo, setUserInfo] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isFetching, setIsFetching] = useState(false)
-  const [loginMutation, { data, loading: loginLoading, error }] = useMutation(LOGIN);
+  // const [loginMutation, { data, loading: loginLoading, error }] = useMutation(LOGIN);
   //const [randomRequests, setRandomRequests] = useState(FakeData)
   
 
-  const appLogin = async (username, password) => {
-    // make it loading
+  // const appLogin = async (username, password) => {
+  //   // make it loading
 
-    try{
-      let result = await loginMutation({
-        variables: {username: username, password: password}
-      })
+  //   try{
+  //     let result = await loginMutation({
+  //       variables: {username: username, password: password}
+  //     })
       
-      let user_token = result.data.login.access_token
-      let user_info = result.data.login.user
+  //     let user_token = result.data.login.access_token
+  //     let user_info = result.data.login.user
 
-      setUserInfo(user_info)
-      setUserToken(user_token)
+  //     setUserInfo(user_info)
+  //     setUserToken(user_token)
 
-      await SecureStore.setItemAsync(tokenName, user_token)
-      await SecureStore.setItemAsync(userInfoName, JSON.stringify(user_info))
+  //     await SecureStore.setItemAsync(tokenName, user_token)
+  //     await SecureStore.setItemAsync(userInfoName, JSON.stringify(user_info))
 
-      setIsLogin(true);
-    }
-    catch(e){
-      console.log(`Error msg: ${e}`);
-      alert('login fail');
-    }
+  //     setIsLogin(true);
+  //   }
+  //   catch(e){
+  //     console.log(`Error msg: ${e}`);
+  //     alert('login fail');
+  //   }
 
 
-    // loginMutation({
-    //   variables: {username: username, password: password}
-    // }).then(async (result) => {
-    //   let user_token = result.data.login.access_token
-    //   let user_info = result.data.login.user
+  //   // loginMutation({
+  //   //   variables: {username: username, password: password}
+  //   // }).then(async (result) => {
+  //   //   let user_token = result.data.login.access_token
+  //   //   let user_info = result.data.login.user
 
-    //   setUserInfo(user_info)
-    //   setUserToken(user_token)
+  //   //   setUserInfo(user_info)
+  //   //   setUserToken(user_token)
 
-    //   await SecureStore.setItemAsync(tokenName, user_token)
-    //   await SecureStore.setItemAsync(userInfoName, JSON.stringify(user_info))
+  //   //   await SecureStore.setItemAsync(tokenName, user_token)
+  //   //   await SecureStore.setItemAsync(userInfoName, JSON.stringify(user_info))
 
-    //   setIsLogin(true)
-    // }).catch((e) => {
-    //   console.log(`Error msg: ${e}`);
-    //   alert('login fail');
-    // })
-  }
+  //   //   setIsLogin(true)
+  //   // }).catch((e) => {
+  //   //   console.log(`Error msg: ${e}`);
+  //   //   alert('login fail');
+  //   // })
+  // }
 
   const appLogout = async () => {
     setUserToken(null)

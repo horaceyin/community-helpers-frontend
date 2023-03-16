@@ -10,6 +10,7 @@ import { BASE_URL, tokenName } from './config';
 
 import { store } from './src/store';
 import { Provider } from 'react-redux';
+import { AppGuard } from './src/features/AppGuard';
 
 const httpLink = createHttpLink({
   uri: BASE_URL,
@@ -50,14 +51,14 @@ export default function App() {
 
   return (
     <ApolloProvider client={client}> 
-    <Provider store={store}>
-    <AppProvider>
-        <View style={styles.container}>
-          {/* <StatusBar style="auto" /> */}
-          <MainNavigator/>
-        </View>
-    </AppProvider>
-    </Provider>
+      <Provider store={store}>
+        <AppGuard>
+          <View style={styles.container}>
+            {/* <StatusBar style="auto" /> */}
+            <MainNavigator/>
+          </View>
+        </AppGuard>
+      </Provider>
     </ApolloProvider>
   );
 }

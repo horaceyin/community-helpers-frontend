@@ -5,8 +5,8 @@ import { CircleButton, SubInfo, FocusedStatusBar, RectButton, DetailsCategories,
 import { useMutation } from "@apollo/client";
 import { AppContext } from '../../AppContext'
 import { UPDATE_HELP_REQUEST } from '../gql/Mutation';
-import { selectIsLogin, selectUserToken } from '../features/AuthSlice';
-import { useSelector } from 'react-redux';
+import { selectIsLogin, selectUserToken, setIsFetching } from '../features/AuthSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 
 const DetailsHeader = ({data, navigation}) => (
@@ -31,7 +31,9 @@ const DetailsHeader = ({data, navigation}) => (
 
 const JobsDetails = ({ route, navigation }) => {
   // const {isLogin, userToken, setIsFetching } = useContext(AppContext)
-  const {setIsFetching } = useContext(AppContext)
+  const dispatch = useDispatch();
+  const isFetching = useSelector(state => state.auth,isFetching);
+  // const {setIsFetching } = useContext(AppContext)
 
   const isLogin = useSelector(selectIsLogin);
   const userToken = useSelector(selectUserToken);
@@ -61,7 +63,7 @@ const JobsDetails = ({ route, navigation }) => {
           handlePress={() => updateRequest({
             variables: { updateHelpRequestMatchingInput: {id: data.id,  state: "ongoing"} }
           }).then((data) => {
-            setIsFetching(true)
+            dispatch(setIsFetching(true));
             navigation.replace('Root')
           })}
         />}

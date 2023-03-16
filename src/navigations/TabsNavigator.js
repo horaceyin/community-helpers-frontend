@@ -4,6 +4,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { COLORS } from "../../constants";
 import { HomeScreen, HelpersListScreen, NewJobScreen } from "../screens";
 import { AppContext } from "../../AppContext";
+import { useSelector } from "react-redux";
+import { selectIsLogin } from "../features/AuthSlice";
 
 const Tab = createBottomTabNavigator()
 
@@ -23,7 +25,7 @@ const getIconColor = focused => ({
 })
 
 const TabsNavigator = () => {
-  const { isLogin } = useContext(AppContext)
+  const { isLogin } = useSelector(selectIsLogin);
   return (
     <Tab.Navigator
       initialRouteName="Home"
