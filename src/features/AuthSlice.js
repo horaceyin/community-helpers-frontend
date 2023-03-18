@@ -14,7 +14,9 @@ const initialState = {
     loginIsLoading: false,
 
     isLoading: true,
-    isFetching: false
+    isFetching: false,
+
+    loginError: null
 };
 
 export const checkSignIn = createAsyncThunk(
@@ -30,27 +32,30 @@ export const checkSignIn = createAsyncThunk(
 
 export const appLogin = createAsyncThunk(
     'auth/appLogin',
-    async ({ loginMutation, username, password }, {dispatch, getState}) => {
+    async ({ loginMutation, loginResult, username, password }, thunkAPI) => {
         try{
             console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`")
             let result = await loginMutation({
                 variables: {username: username, password: password}
             });
 
-            console.log(result, "!@!@!@!@!")
-
-            let user_token = result.data.login.access_token;
-            let user_info = result.data.login.user;
-
-            await SecureStore.setItemAsync(tokenName, user_token)
-            await SecureStore.setItemAsync(userInfoName, JSON.stringify(user_info))
-            return {user_token, user_info};
+            if(!loginResult.error){
+                console.log(loginResult.data, "!@!@!@!@!")
+                let user_token = result.data.login.access_token;
+                let user_info = result.data.login.user;
+    
+                await SecureStore.setItemAsync(tokenName, user_token)
+                await SecureStore.setItemAsync(userInfoName, JSON.stringify(user_info))
+                return {user_token, user_info};
+            }
+            else{
+                thunkAPI.rejectWithValue(loginResult.error);
+            }
 
         }catch(e){
-            console.log(`Login error: ${e}`);
+            console.log(`Login error: ${e},,,,,,,,,,,,,,,${loginResult.error}`);
+            thunkAPI.rejectWithValue(loginResult.error);
         }
-        
-        console.log(username, password, "-==-=-=-=-=-=")
     }
 );
 
@@ -105,8 +110,11 @@ export const authSlice = createSlice({
                 state.isLogin = true;
                 state.loginIsLoading = false;
             })
+            .addCase(appLogin.rejected, (state, action) => {
+                state.loginError = action.payload
+                console.log("********************************",action.payload.error)
+            })
             .addCase(appLogout.fulfilled, (state, action) => {
-                console.log("1111111111")
                 state.userInfo = null;
                 state.userToken = null;
                 state.isLogin = action.payload;

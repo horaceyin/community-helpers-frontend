@@ -27,7 +27,7 @@ const LoginScreen = ({navigation, route}) => {
   const userToken = useSelector(selectUserToken);
   const loginIsLoading = useSelector(selectLoginIsLoading);
 
-  const [loginMutation, { data, loading: loginLoading, error }] = useMutation(LOGIN);
+  const [loginMutation, loginResult] = useMutation(LOGIN);
 
   // const { appLogin, loginLoading } = useContext(AppContext);
   
@@ -156,7 +156,7 @@ const LoginScreen = ({navigation, route}) => {
         //     });
         // }}
         onPress={() => {
-          dispatch(appLogin({loginMutation, username, password}));
+          dispatch(appLogin({loginMutation, loginResult, username, password}));
           //appLogin(username, password)
           //navigation.replace('Root')
         }}
