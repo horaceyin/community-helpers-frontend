@@ -2,59 +2,56 @@
 import * as SecureStore from "expo-secure-store";
 import { tokenName, userInfoName } from '../../config';
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { useMutation } from "@apollo/client";
-import { LOGIN } from "../gql/Mutation";
 
 
 const initialState = {
     isLogin: false,
     userToken: null,
     userInfo: null,
-
     loginIsLoading: false,
-
     isLoading: true,
     isFetching: false,
-
     loginError: null
 };
 
 export const checkSignIn = createAsyncThunk(
     'auth/checkSignIn',
-    async (_, {dispatch, getState}) => {
-        console.log("$#$$#$#$#$#$#")
-        let token = await SecureStore.getItemAsync(tokenName);
-        let userInfo = await SecureStore.getItemAsync(userInfoName);
-        userInfo = JSON.parse(userInfo);
-        return {token, userInfo};
+    async (_, {thunkAPI}) => {
+        try{
+            let token = await SecureStore.getItemAsync(tokenName);
+            let userInfo = await SecureStore.getItemAsync(userInfoName);
+            userInfo = JSON.parse(userInfo);
+            return {token, userInfo};
+        }
+        catch(error){
+            let fetchTokenErrorMsg = 'Fail to fetch user token and info';
+            return thunkAPI.rejectWithValue(fetchTokenErrorMsg);
+        }
     }
 );
 
 export const appLogin = createAsyncThunk(
     'auth/appLogin',
-    async ({ loginMutation, loginResult, username, password }, thunkAPI) => {
+    async ({ loginMutation, navigation, username, password }, thunkAPI) => {
         try{
-            console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`")
             let result = await loginMutation({
                 variables: {username: username, password: password}
             });
+            
+            let user_token = result.data.login.access_token;
+            let user_info = result.data.login.user;
 
-            if(!loginResult.error){
-                console.log(loginResult.data, "!@!@!@!@!")
-                let user_token = result.data.login.access_token;
-                let user_info = result.data.login.user;
-    
-                await SecureStore.setItemAsync(tokenName, user_token)
-                await SecureStore.setItemAsync(userInfoName, JSON.stringify(user_info))
-                return {user_token, user_info};
-            }
-            else{
-                thunkAPI.rejectWithValue(loginResult.error);
-            }
+            await SecureStore.setItemAsync(tokenName, user_token);
+            await SecureStore.setItemAsync(userInfoName, JSON.stringify(user_info));
 
-        }catch(e){
-            console.log(`Login error: ${e},,,,,,,,,,,,,,,${loginResult.error}`);
-            thunkAPI.rejectWithValue(loginResult.error);
+            navigation.replace('Root');
+
+            return {user_token, user_info};
+
+        }
+        catch(error){
+            let loginErrorMsg = 'Wrong user name or password, try again.';
+            return thunkAPI.rejectWithValue(loginErrorMsg);
         }
     }
 );
@@ -74,6 +71,9 @@ export const authSlice = createSlice({
     reducers: {
         setIsFetching: (state, action) => {
             state.isFetching = action.payload;
+        },
+        resetLoginState: (state) => {
+            state.loginError = null;
         }
     },
     extraReducers(builder) {
@@ -95,24 +95,26 @@ export const authSlice = createSlice({
                     state.isLogin = false;
                 }
                 state.isLoading = false;
-                console.log(token, userInfo, "FFFFFFFF");
             })
             .addCase(checkSignIn.rejected, (state, action) => {
-                console.log(`Fetch user token and info error: ${action.error}`);
+                console.log(`${JSON.stringify(action.payload)}`);
+                alert(`${JSON.stringify(action.payload)}`);
             })
             .addCase(appLogin.pending, (state, action) => {
                 state.loginIsLoading = true;
+                state.loginError = null;
             })
             .addCase(appLogin.fulfilled, (state, action) => {
                 let {user_token, user_info} = action.payload;
                 state.userToken = user_token;
                 state.userInfo = user_info;
                 state.isLogin = true;
+                state.loginError = null;
                 state.loginIsLoading = false;
             })
             .addCase(appLogin.rejected, (state, action) => {
-                state.loginError = action.payload
-                console.log("********************************",action.payload.error)
+                state.loginError = action.payload;
+                state.loginIsLoading = false;
             })
             .addCase(appLogout.fulfilled, (state, action) => {
                 state.userInfo = null;
@@ -122,7 +124,7 @@ export const authSlice = createSlice({
     }
 });
 
-export const { setIsFetching } = authSlice.actions; 
+export const { setIsFetching, resetLoginState } = authSlice.actions; 
 
 export const selectIsLoading = state => state.auth.isLoading;
 

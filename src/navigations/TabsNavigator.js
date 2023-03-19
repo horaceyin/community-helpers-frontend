@@ -1,9 +1,8 @@
-import React, {useContext} from "react";
+// import React, {useContext} from "react";
 import {StyleSheet, View, Image, TouchableOpacity} from 'react-native';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { COLORS } from "../../constants";
 import { HomeScreen, HelpersListScreen, NewJobScreen } from "../screens";
-import { AppContext } from "../../AppContext";
 import { useSelector } from "react-redux";
 import { selectIsLogin } from "../features/AuthSlice";
 
