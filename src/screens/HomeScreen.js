@@ -1,110 +1,84 @@
 import React, {useState, useEffect, useContext} from 'react';
-import {StyleSheet, View, Text, FlatList, RefreshControl} from 'react-native';
+import {StyleSheet, View, Text, FlatList, RefreshControl, ActivityIndicator} from 'react-native';
 import { COLORS, FakeData, RecommendedData, assets } from '../../constants';
 import { HomeHeader, JobCard } from '../components';
-import * as SecureStore from "expo-secure-store";
 import { useMutation, useLazyQuery } from "@apollo/client";
-import { AppContext } from '../../AppContext';
 import { FIND_MATCH_BY_STATE_IN_HOME, FIND_ALL_JOBS_IN_HOME } from '../gql/Query';
-import { getPendingJobsVar } from '../../config';
 
-//getPendingJob({variables: {state: ["pending"]}});
+import { selectIsLogin, selectUserInfo, selectUserToken } from "../features/AuthSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { createDataArray } from '../../utilities';
+
+//should be fetched the real from backend
 const randomPics = [assets.english, assets.fixItem, assets.food, assets.myImages, assets.tv]
 
 const HomeScreen = () => {
-  const {isLogin, userToken, userInfo, isFetching, setIsFetching} = useContext(AppContext)
-  const [data, setData] = useState([])
+  const isLogin = useSelector(selectIsLogin);
+  const userToken = useSelector(selectUserToken);
+  const userInfo = useSelector(selectUserInfo);
 
-  const createDataArray = (backendData, state) => {
-    //console.log(backendData[0].helpRequestMatchings)
-    var result = backendData.map(data => {
-      var job = null;
-      const retJob = {}
+  const [isFetching, setIsFetching] = useState(false);
+  const [getRequestsLoading, setGetRequestsLoading] = useState(false);
 
-      retJob.id = data.id
+  const [data, setData] = useState([]);
 
-      if (state) job = data.helpRequest
-      else {
-        for (var i=0; i < data.helpRequestMatchings.length; i++){
-          if (data.helpRequestMatchings[i].state == "ongoing") return null
-        }
-        job = data
-      }
+  const fetchJobOnCompleted = (data, state, jobsPics) => {
+    let retData = createDataArray(data, state, jobsPics);
+    setData(retData);
+    setGetRequestsLoading(false);
+  };
 
-      //retJob.id = job.id
-      retJob.image = randomPics[Math.floor(Math.random() * randomPics.length)]
-      retJob.description = job.description
-      retJob.helpSeeker = job.helpSeeker.displayName
-      retJob.location = job.location
-      retJob.price = job.price
-      retJob.title = job.title
-      retJob.categories = job.category.split(",")
-
-      const jobDateAndTime = formatDate(new Date(job.helpRequestDatetime)).split("$")
-      retJob.jobsDate = jobDateAndTime[0]
-      retJob.jobsTime = jobDateAndTime[1]
-
-      return retJob
-    })
-    result = result.filter(job => job != null)
-    console.log(result, "555")
-    return result
-  }
-
-  function padTo2Digits(num) {
-    return num.toString().padStart(2, '0');
-  }
-
-  function formatDate(date) {
-    return (
-      [
-        padTo2Digits(date.getDate()),
-        padTo2Digits(date.getMonth() + 1),
-        date.getFullYear()
-      ].join('-') +
-      '$' +
-      [
-        padTo2Digits(date.getHours()),
-        padTo2Digits(date.getMinutes()),
-        padTo2Digits(date.getSeconds()),
-      ].join(':')
-    );
-  }
 
   const [getPendingJob, { loading: jobLoading, error: jobError, data: jobData, refetch: pendingJobRefetch, called: pendingJobCalled}] = useLazyQuery(FIND_MATCH_BY_STATE_IN_HOME, {
     onCompleted: (data)=>{
-      let retData = createDataArray(data.findByUserAndState, 1)
-      console.log(JSON.stringify(data), "$$$$")
-      setData(retData)
+      fetchJobOnCompleted(data.findByUserAndState, true, randomPics);
+      // console.log(JSON.stringify(data), "$$$$")
     }
   });
 
   const [getAllJob, { loading: allJobLoading, error: allJobError, data: allJobData, refetch: allJobRefetch, called: allJobCalled}] = useLazyQuery(FIND_ALL_JOBS_IN_HOME, {
     onCompleted: (data) => {
-      let retData = createDataArray(data.helpRequests, 0)
-      console.log(retData, "&&&&&&&&&&&&&&")
-      setData(retData)
+      fetchJobOnCompleted(data.helpRequests, false, randomPics);
     }
   })
 
-  function getUsersPendingJobs() {
-    if(userToken && userInfo && isLogin) {
-      if(pendingJobCalled){
-        pendingJobRefetch()
+  const getRequests = async () => {
+    setData([]);
+    setGetRequestsLoading(true);
 
+    if(userToken && userInfo && isLogin) {
+      // check if the lazy query called before
+      if(pendingJobCalled) {
+        let result = await pendingJobRefetch();
+        // like onCompleted
+        fetchJobOnCompleted(result.data.findByUserAndState, true, randomPics);
       }
-      else getPendingJob({variables: {state: ["pending"]}})
-    }else{
-      if(allJobCalled) allJobRefetch()
-      else getAllJob()
+      else 
+        getPendingJob({variables: {state: ["pending"]}});
     }
-    setIsFetching(false)
+    else{
+      // check if the lazy query called before
+      if(allJobCalled) {
+        let result = await allJobRefetch();
+        // like onCompleted
+        fetchJobOnCompleted(result.data.helpRequests, false, randomPics);
+      }
+      else 
+        getAllJob()
+    }
   }
-  
+
+  const onRefresh = () => {
+    getRequests();
+  }
+
   useEffect(() => {
-    //console.log("&&&&&&&&&&")
-    getUsersPendingJobs()
-  }, [isLogin, userToken, userInfo, isFetching])
+    getRequests();
+  }, [isLogin, userToken, userInfo])
+
+  useEffect(() => {
+    setIsFetching(getRequestsLoading || jobLoading || allJobLoading);
+  }, [getRequestsLoading, jobLoading, allJobLoading])
 
   return (
     <View style={styles.viewContainer}>
@@ -117,13 +91,16 @@ const HomeScreen = () => {
           keyExtractor={item => item.id}
           showsVerticalScrollIndicator={false}
           ListHeaderComponent={ <HomeHeader /> }
+          // ListEmptyComponent={ 
+          //   <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          //     <ActivityIndicator size={'large'}/>
+          //   </View>
+          //  }
           refreshControl={
             <RefreshControl 
               refreshing={isFetching}
-              onRefresh={() => {
-                setIsFetching(true)
-              }}
-              title="Pull to refresh"
+              onRefresh={onRefresh}
+              // title="Pull to refresh"
               tintColor="#fff"
               titleColor="#fff"
             />

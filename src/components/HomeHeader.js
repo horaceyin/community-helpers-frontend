@@ -4,10 +4,14 @@ import { useNavigation } from '@react-navigation/native';
 import React, {useEffect, useContext} from 'react';
 import { IconButton } from './Button';
 import { AppContext } from '../../AppContext';
+import { useSelector } from 'react-redux';
+import { selectIsLogin, selectUserInfo } from '../features/AuthSlice';
 
 const HomeHeader = ({ onSearch, ...props }) => {
 
-  const { userInfo, isLogin } = useContext(AppContext)
+  // const { userInfo, isLogin } = useContext(AppContext)
+  const userInfo = useSelector(selectUserInfo);
+  const isLogin = useSelector(selectIsLogin);
 
   const navigation = useNavigation()
   return (

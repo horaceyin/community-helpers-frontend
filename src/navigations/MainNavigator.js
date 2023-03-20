@@ -7,10 +7,8 @@ import { LoginScreen, JobsDetails } from '../screens';
 import { FocusedStatusBar } from '../components';
 import { assets, COLORS, FONTS, SHADOWS, SIZES } from '../../constants';
 import { SafeAreaView, StyleSheet, ActivityIndicator, View } from 'react-native';
-import { AppContext } from '../../AppContext';
 
 const Stack = createNativeStackNavigator()
-
 
 const theme = {
   ...DefaultTheme,
@@ -21,13 +19,6 @@ const theme = {
 }
 
 const MainNavigator = () => {
-  const {isLoading} = useContext(AppContext)
-
-  if (isLoading) return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <ActivityIndicator size={'large'} />
-    </View>
-  )
   return (
     <SafeAreaView style={styles.root}>
       <NavigationContainer>

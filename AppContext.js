@@ -7,83 +7,114 @@ import { LOGIN } from "./src/gql/Mutation";
 import { tokenName, userInfoName } from './config';
 import { FakeData } from './constants';
 
+import { useDispatch } from 'react-redux';
+import { checkSignIn } from './src/features/AuthSlice';
+
 export const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
 
-  const [isLogin, setIsLogin] = useState(false)
-  const [userToken, setUserToken] = useState(null)
-  const [userInfo, setUserInfo] = useState(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [isFetching, setIsFetching] = useState(false)
-  const [loginMutation, { data, loading: loginLoading, error }] = useMutation(LOGIN);
-  //const [randomRequests, setRandomRequests] = useState(FakeData)
+  // const [isLogin, setIsLogin] = useState(false)
+  // const [userToken, setUserToken] = useState(null)
+  // const [userInfo, setUserInfo] = useState(null)
+  // const [isLoading, setIsLoading] = useState(false)
+  // const [isFetching, setIsFetching] = useState(false)
+  // const [loginMutation, { data, loading: loginLoading, error }] = useMutation(LOGIN);
+  // const [randomRequests, setRandomRequests] = useState(FakeData)
   
 
-  const appLogin = async (username, password) => {
-    // make it loading
-    loginMutation({
-      variables: {username: username, password: password}
-    }).then(async (result) => {
-      let user_token = result.data.login.access_token
-      let user_info = result.data.login.user
+  // const appLogin = async (username, password) => {
+  //   // make it loading
 
-      setUserInfo(user_info)
-      setUserToken(user_token)
+  //   try{
+  //     let result = await loginMutation({
+  //       variables: {username: username, password: password}
+  //     })
+      
+  //     let user_token = result.data.login.access_token
+  //     let user_info = result.data.login.user
 
-      await SecureStore.setItemAsync(tokenName, user_token)
-      await SecureStore.setItemAsync(userInfoName, JSON.stringify(user_info))
+  //     setUserInfo(user_info)
+  //     setUserToken(user_token)
 
-      setIsLogin(true)
-    }).catch((e) => {
-      //console.log(`Error msg: ${e}`)
-      alert('login fail')
-    })
-  }
+  //     await SecureStore.setItemAsync(tokenName, user_token)
+  //     await SecureStore.setItemAsync(userInfoName, JSON.stringify(user_info))
 
-  const appLogout = async () => {
-    setUserToken(null)
-    setUserInfo(null)
-    await SecureStore.deleteItemAsync(tokenName);
-    await SecureStore.deleteItemAsync(userInfoName);
-    setIsLogin(false)
-    //console.log("kk", userToken, userInfo)
-  }
+  //     setIsLogin(true);
+  //   }
+  //   catch(e){
+  //     console.log(`Error msg: ${e}`);
+  //     alert('login fail');
+  //   }
 
-  const isLoggedIn = async () => {
-    try {
-      setIsLoading(true)
-      let token = await SecureStore.getItemAsync(tokenName);
-      let userInfo = await SecureStore.getItemAsync(userInfoName);
 
-      userInfo = JSON.parse(userInfo)
-      //console.log(token, userInfo, "$$$$$$$$$$$$$$$")
+  //   loginMutation({
+  //     variables: {username: username, password: password}
+  //   }).then(async (result) => {
+  //     let user_token = result.data.login.access_token
+  //     let user_info = result.data.login.user
 
-      if (userInfo && token) {
-        setUserToken(token)
-        setUserInfo(userInfo)
-        setIsLogin(true)
-      }
-      else{
-        setUserToken(null)
-        setUserInfo(null)
-        setIsLogin(false)
-      }
-      setIsLoading(false)
-    }
-    catch(e) {
-      console.log(`isLoggedIn msg: ${e}`)
-    }
-  }
+  //     setUserInfo(user_info)
+  //     setUserToken(user_token)
 
-  useEffect(() => {
-    isLoggedIn()
-  }, [])
+  //     await SecureStore.setItemAsync(tokenName, user_token)
+  //     await SecureStore.setItemAsync(userInfoName, JSON.stringify(user_info))
 
-  //children get isLogin, userToken, userInfo
-  return (
-    <AppContext.Provider value={{ isLogin, appLogin, loginLoading, appLogout, userToken, setUserToken, userInfo, isLoading, isFetching, setIsFetching }}>
-      {children}
-    </AppContext.Provider>
-  )
-}
+  //     setIsLogin(true)
+  //   }).catch((e) => {
+  //     console.log(`Error msg: ${e}`);
+  //     alert('login fail');
+  //   })
+  // }
+
+  // const appLogout = async () => {
+  //   setUserToken(null)
+  //   setUserInfo(null)
+  //   await SecureStore.deleteItemAsync(tokenName);
+  //   await SecureStore.deleteItemAsync(userInfoName);
+  //   setIsLogin(false)
+  //   //console.log("kk", userToken, userInfo)
+  // }
+
+  // const isLoggedIn = async () => {
+  //   try {
+  //     setIsLoading(true)
+  //     let token = await SecureStore.getItemAsync(tokenName);
+  //     let userInfo = await SecureStore.getItemAsync(userInfoName);
+
+  //     userInfo = JSON.parse(userInfo)
+  //     //console.log(token, userInfo, "$$$$$$$$$$$$$$$")
+
+  //     if (userInfo && token) {
+  //       setUserToken(token)
+  //       setUserInfo(userInfo)
+  //       setIsLogin(true)
+  //     }
+  //     else{
+  //       setUserToken(null)
+  //       setUserInfo(null)
+  //       setIsLogin(false)
+  //     }
+  //     setIsLoading(false)
+  //   }
+  //   catch(e) {
+  //     console.log(`isLoggedIn msg: ${e}`)
+  //   }
+  // }
+
+
+  // const dispatch = useDispatch()
+
+  // useEffect(() => {
+  //   // console.log("^&^&^&")
+  //   dispatch(checkSignIn());
+  //   // isLoggedIn()
+  // }, [])
+
+  // //children get isLogin, userToken, userInfo
+  // return (
+  //   <AppContext.Provider value={{ isLogin, appLogin, loginLoading, appLogout, userToken, setUserToken, userInfo, isLoading, isFetching, setIsFetching }}>
+  //     {children}
+  //   </AppContext.Provider>
+  // )
+};

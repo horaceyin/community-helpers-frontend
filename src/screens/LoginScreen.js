@@ -3,53 +3,31 @@ import { StyleSheet, View, Text, TextInput, Pressable, ActivityIndicator, Toucha
 import { COLORS, FONTS, SIZES } from "../../constants";
 import { useMutation, useLazyQuery } from "@apollo/client";
 import { LOGIN } from "../gql/Mutation";
-import { ME } from "../gql/Query";
-import * as SecureStore from "expo-secure-store";
-import { AppContext } from "../../AppContext";
 import { FocusedStatusBar } from "../components";
-
-// async function getValueFor(key) {
-//   return await SecureStore.getItemAsync(key);
-// }
-
-// async function deleteValueFor(key) {
-//   return await SecureStore.deleteItemAsync(key);
-// }
+import { appLogout, appLogin, selectIsLogin, selectUserInfo, selectUserToken, selectLoginIsLoading, resetLoginState } from "../features/AuthSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const LoginScreen = ({navigation, route}) => {
 
-  const { isLogin, appLogin, loginLoading, appLogout, userToken, userInfo } = useContext(AppContext)
-  
-  //const [login, { data, loading, error }] = useMutation(LOGIN);
+  const dispatch = useDispatch();
+  const isLogin = useSelector(selectIsLogin);
+  const userInfo = useSelector(selectUserInfo);
+  const userToken = useSelector(selectUserToken);
+  const loginIsLoading = useSelector(selectLoginIsLoading);
+  const loginError = useSelector(state => state.auth.loginError);
 
-  //const [getMe, { loading: meLoading, error: meError, data: meData }] = useLazyQuery(ME);
+  const [loginMutation, loginResult] = useMutation(LOGIN);
 
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  //const [isLogin, setIsLogin] = useState(false);
-  //const [loadingToken, setLoadingToken] = useState(true);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
-  // useEffect(() => {
-  //   const getToken = async () => {
-  //     const token = await getValueFor("token");
-  //     if (token !== null) {
-  //       getMe();
-  //       setIsLogin(true);
-  //     }
-  //     setLoadingToken(false);
-  //   };
-  //   getToken();
-  // }, []);
+  useEffect(() => {
+    setUsername('');
+    setPassword('');
+    dispatch(resetLoginState());
+  }, [])
 
-  // if (loadingToken) {
-  //   return <Text>loading</Text>;
-  // }
-
-  // useEffect(() => {
-
-  // }, [isLogin])
-
-  if (loginLoading) {
+  if (loginIsLoading) {
     // return <Text>loading...</Text>; //while loading return this
     return (
       <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
@@ -60,42 +38,21 @@ const LoginScreen = ({navigation, route}) => {
 
   if (isLogin) {
     console.log("enter is login");
-    // if (meLoading) {
-    //   console.log("meLoading");
-    //   return <Text>loading</Text>;
-    // }
-    // if (meError) {
-    //   deleteValueFor("token").then(() => {
-    //     setIsLogin(false);
-    //   });
-    //   return <Text>Error! ${meError.message}</Text>;
-    // }
-    // console.log(meData);
     return (
       <View style={styles.container}>
         <Text style={styles.pageTitle}>
           <FocusedStatusBar barStyle='dark-content' backgroundColor='transparent' />
-          {/* Hi,  */}
-          {/* Hi, {loading ? "" : meData.me.username} */}
           Hi, {userInfo && userInfo.displayName}
         </Text>
         <Pressable
           style={styles.logoutButton}
-          // onPress={() => {
-          //   deleteValueFor("token").then(() => {
-          //     setIsLogin(false);
-          //   });
-          // }}
-          onPress={async () => {
-            appLogout()
-            navigation.replace('Root')
+          onPress={() => {
+            dispatch(appLogout());
+            navigation.replace('Root');
           }}
         >
           <Text style={styles.logoutButtonText}>Logout</Text>
         </Pressable>
-        {/* <TouchableOpacity style={styles.loginButton} onPress={navigation.goBack()}>
-          <Text style={styles.loginButtonText}>Go Back</Text>
-        </TouchableOpacity> */}
       </View>
     );
   }
@@ -119,46 +76,16 @@ const LoginScreen = ({navigation, route}) => {
       />
       <Pressable
         style={styles.loginButton}
-        // onPress={() => {
-        //   console.log(`username: ${username}`);
-        //   console.log(`password: ${password}`);
-        //   login({
-        //     variables: { username: username, password: password },
-        //   })
-        //     .then((result) => {
-        //       console.log(`access_token: ${result.data.login.access_token}`);
-        //       saveToken(result.data.login.access_token).then((result) => {
-        //         getMe().then((d) => {
-        //           console.log(`getMe: ${d.data.me.username}`);
-        //           setIsLogin(true);
-        //         });
-        //         // alert("login success");
-        //         // getValueFor('token').then((token)=>{
-        //         //   console.log(token);
-        //         // });
-        //       });
-        //     })
-        //     .catch((e) => {
-        //       console.error(e);
-        //       alert("login fail");
-        //     });
-        // }}
         onPress={() => {
-          appLogin(username, password)
-          //navigation.replace('Root')
+          dispatch(appLogin({loginMutation, navigation, username, password}));
         }}
       >
         <Text style={styles.loginButtonText}>Login</Text>
       </Pressable>
-      {/* <Text>My displayName: {userInfo && userInfo.displayName} </Text>
-      <Text>My token: {userToken} </Text> */}
+      <Text style={styles.errorText}>{loginError && loginError}</Text>
     </View>
   );
 };
-
-// async function saveToken(token) {
-//   await SecureStore.setItemAsync("token", token);
-// }
 
 const styles = StyleSheet.create({
   container: {
@@ -196,6 +123,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5",
     // width
   },
+  errorText: {
+    fontFamily: FONTS.semiBold,
+    fontSize: SIZES.medium,
+    color: COLORS.error
+  },
   loginButton: {
     alignItems: "center",
     justifyContent: "center",
@@ -205,7 +137,7 @@ const styles = StyleSheet.create({
     // elevation: 3,
     backgroundColor: COLORS.body,
     marginTop: 40,
-    marginBottom: 100,
+    marginBottom: 20,
   },
   loginButtonText: {
     fontFamily: FONTS.regular,

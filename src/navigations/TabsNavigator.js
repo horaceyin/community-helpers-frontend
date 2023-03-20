@@ -1,11 +1,12 @@
-import React, {useContext} from "react";
+// import React, {useContext} from "react";
 import {StyleSheet, View, Image, TouchableOpacity} from 'react-native';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { COLORS } from "../../constants";
 import { HomeScreen, HelpersListScreen, NewJobScreen } from "../screens";
-import { AppContext } from "../../AppContext";
+import { useSelector } from "react-redux";
+import { selectIsLogin } from "../features/AuthSlice";
 
-const Tab = createBottomTabNavigator()
+const Tab = createBottomTabNavigator();
 
 const MyTabBarButton = ({children, onPress}) => (
   <TouchableOpacity
@@ -16,14 +17,14 @@ const MyTabBarButton = ({children, onPress}) => (
       {children}
     </View>
   </TouchableOpacity>
-)
+);
 
 const getIconColor = focused => ({
   tintColor: focused ? COLORS.tabSelected : COLORS.tabNotSelected
-})
+});
 
 const TabsNavigator = () => {
-  const { isLogin } = useContext(AppContext)
+  const isLogin = useSelector(selectIsLogin);
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -70,6 +71,7 @@ const TabsNavigator = () => {
         }}
       />}
 
+      {isLogin &&
       <Tab.Screen name="HelpersList" 
         component={HelpersListScreen}
         options={{
@@ -85,11 +87,11 @@ const TabsNavigator = () => {
             height: 0
           }
         }}
-        />
+        />}
 
     </Tab.Navigator>
   )
-}
+};
 
 const styles = StyleSheet.create({
   tabBar: {
@@ -145,6 +147,6 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32
   }
-})
+});
 
 export default TabsNavigator;
