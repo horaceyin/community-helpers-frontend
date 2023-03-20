@@ -30,11 +30,6 @@ const DetailsHeader = ({data, navigation}) => (
 )
 
 const JobsDetails = ({ route, navigation }) => {
-  // const {isLogin, userToken, setIsFetching } = useContext(AppContext)
-  const dispatch = useDispatch();
-  const isFetching = useSelector(state => state.auth,isFetching);
-  // const {setIsFetching } = useContext(AppContext)
-
   const isLogin = useSelector(selectIsLogin);
   const userToken = useSelector(selectUserToken);
 
@@ -63,7 +58,6 @@ const JobsDetails = ({ route, navigation }) => {
           handlePress={() => updateRequest({
             variables: { updateHelpRequestMatchingInput: {id: data.id,  state: "ongoing"} }
           }).then((data) => {
-            dispatch(setIsFetching(true));
             navigation.replace('Root')
           })}
         />}

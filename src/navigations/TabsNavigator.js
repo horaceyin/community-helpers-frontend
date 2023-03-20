@@ -6,7 +6,7 @@ import { HomeScreen, HelpersListScreen, NewJobScreen } from "../screens";
 import { useSelector } from "react-redux";
 import { selectIsLogin } from "../features/AuthSlice";
 
-const Tab = createBottomTabNavigator()
+const Tab = createBottomTabNavigator();
 
 const MyTabBarButton = ({children, onPress}) => (
   <TouchableOpacity
@@ -17,14 +17,14 @@ const MyTabBarButton = ({children, onPress}) => (
       {children}
     </View>
   </TouchableOpacity>
-)
+);
 
 const getIconColor = focused => ({
   tintColor: focused ? COLORS.tabSelected : COLORS.tabNotSelected
-})
+});
 
 const TabsNavigator = () => {
-  const { isLogin } = useSelector(selectIsLogin);
+  const isLogin = useSelector(selectIsLogin);
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -71,6 +71,7 @@ const TabsNavigator = () => {
         }}
       />}
 
+      {isLogin &&
       <Tab.Screen name="HelpersList" 
         component={HelpersListScreen}
         options={{
@@ -86,11 +87,11 @@ const TabsNavigator = () => {
             height: 0
           }
         }}
-        />
+        />}
 
     </Tab.Navigator>
   )
-}
+};
 
 const styles = StyleSheet.create({
   tabBar: {
@@ -146,6 +147,6 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32
   }
-})
+});
 
 export default TabsNavigator;

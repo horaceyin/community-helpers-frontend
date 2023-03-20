@@ -3,14 +3,12 @@ import * as SecureStore from "expo-secure-store";
 import { tokenName, userInfoName } from '../../config';
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-
 const initialState = {
     isLogin: false,
     userToken: null,
     userInfo: null,
     loginIsLoading: false,
     isLoading: true,
-    isFetching: false,
     loginError: null
 };
 
@@ -69,9 +67,6 @@ export const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        setIsFetching: (state, action) => {
-            state.isFetching = action.payload;
-        },
         resetLoginState: (state) => {
             state.loginError = null;
         }
@@ -124,7 +119,7 @@ export const authSlice = createSlice({
     }
 });
 
-export const { setIsFetching, resetLoginState } = authSlice.actions; 
+export const { resetLoginState } = authSlice.actions; 
 
 export const selectIsLoading = state => state.auth.isLoading;
 
