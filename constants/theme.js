@@ -1,10 +1,12 @@
 export const COLORS = {
   primary: "#001F2D",
+  lightPrimary: "#f1f4ff",
   secondary: "#4D626C",
   error: "#ff0033",
   white: "#FFF",
   gray: "#74858C",
   dark: "#161719",
+  darkText: "#626262",
   body: "#405792",
   bg: "#ECECEC",
   ongoing: "#f57e22",
@@ -28,7 +30,10 @@ export const SIZES = {
   medium: 16,
   large: 18,
   extraLarge: 24,
+  xxLarge: 32,
 };
+
+export const SPACING = 10;
 
 export const FONTS = {
   bold: "InterBold",

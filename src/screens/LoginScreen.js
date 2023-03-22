@@ -1,39 +1,63 @@
 import React, { useEffect, useState, useContext } from "react";
-import { StyleSheet, View, Text, TextInput, Pressable, ActivityIndicator, TouchableOpacity } from "react-native";
-import { COLORS, FONTS, SIZES } from "../../constants";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  ActivityIndicator,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
+import { COLORS, FONTS, SHADOWS, SIZES, SPACING } from "../../constants";
 import { useMutation, useLazyQuery } from "@apollo/client";
 import { LOGIN } from "../gql/Mutation";
-import { FocusedStatusBar } from "../components";
-import { appLogout, appLogin, selectIsLogin, selectUserInfo, selectUserToken, selectLoginIsLoading, resetLoginState } from "../features/AuthSlice";
+import { FocusedStatusBar, RectButton, RoundTextInput } from "../components";
+import {
+  appLogout,
+  appLogin,
+  selectIsLogin,
+  selectUserInfo,
+  selectUserToken,
+  selectLoginIsLoading,
+  resetLoginState,
+} from "../features/AuthSlice";
 import { useDispatch, useSelector } from "react-redux";
 
-const LoginScreen = ({navigation, route}) => {
+const loginScreenConfig = {
+  loginButtonText: "Login",
+  registerButtonText: "Register",
+  buttonWidth: "48%",
+  usernamePlaceholder: "Username",
+  passwordPlaceholder: "Password",
+};
 
+const LoginScreen = ({ navigation, route }) => {
   const dispatch = useDispatch();
   const isLogin = useSelector(selectIsLogin);
   const userInfo = useSelector(selectUserInfo);
   const userToken = useSelector(selectUserToken);
   const loginIsLoading = useSelector(selectLoginIsLoading);
-  const loginError = useSelector(state => state.auth.loginError);
+  const loginError = useSelector((state) => state.auth.loginError);
 
   const [loginMutation, loginResult] = useMutation(LOGIN);
 
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
-    setUsername('');
-    setPassword('');
+    setUsername("");
+    setPassword("");
     dispatch(resetLoginState());
-  }, [])
+  }, []);
 
   if (loginIsLoading) {
     // return <Text>loading...</Text>; //while loading return this
     return (
-      <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
-        <ActivityIndicator size={'large'} />
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size={"large"} />
       </View>
-    )
+    );
   }
 
   if (isLogin) {
@@ -41,14 +65,17 @@ const LoginScreen = ({navigation, route}) => {
     return (
       <View style={styles.container}>
         <Text style={styles.pageTitle}>
-          <FocusedStatusBar barStyle='dark-content' backgroundColor='transparent' />
+          <FocusedStatusBar
+            barStyle="dark-content"
+            backgroundColor="transparent"
+          />
           Hi, {userInfo && userInfo.displayName}
         </Text>
         <Pressable
           style={styles.logoutButton}
           onPress={() => {
             dispatch(appLogout());
-            navigation.replace('Root');
+            navigation.replace("Root");
           }}
         >
           <Text style={styles.logoutButtonText}>Logout</Text>
@@ -58,50 +85,109 @@ const LoginScreen = ({navigation, route}) => {
   }
 
   return (
-    <View style={styles.container}>
-      <FocusedStatusBar barStyle='dark-content' backgroundColor='transparent' />
-      <Text style={styles.pageTitle}>Login</Text>
-      <Text style={styles.textInputTitle}>Username</Text>
-      <TextInput
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View style={styles.container}>
+        <View>
+          <FocusedStatusBar
+            barStyle="dark-content"
+            backgroundColor="transparent"
+          />
+          <View style={styles.titleContainer}>
+            <Text style={styles.pageTitle}>Welcome</Text>
+            <Text style={styles.pageSubTitle}>
+              Sign in to get recommended requests !
+            </Text>
+          </View>
+          {/* <Text style={styles.textInputTitle}>Username</Text> */}
+          <RoundTextInput
+            placeholder={loginScreenConfig.usernamePlaceholder}
+            value={username}
+            onChangeText={(inputUsername) => setUsername(inputUsername)}
+          />
+          {/* <TextInput
         style={styles.textInput}
         value={username}
         onChangeText={(inputUsername) => setUsername(inputUsername)}
-      />
-      <Text style={styles.textInputTitle}>Password</Text>
-      <TextInput
+      /> */}
+          {/* <Text style={styles.textInputTitle}>Password</Text> */}
+          <RoundTextInput
+            placeholder={loginScreenConfig.passwordPlaceholder}
+            secureTextEntry={true}
+            value={password}
+            onChangeText={(inputPassword) => setPassword(inputPassword)}
+          />
+          {/* <TextInput
         secureTextEntry={true}
         style={styles.textInput}
         value={password}
         onChangeText={(inputPassword) => setPassword(inputPassword)}
-      />
-      <Pressable
+      /> */}
+          <Text style={styles.errorText}>{loginError && loginError}</Text>
+        </View>
+        <View style={styles.buttonContainer}>
+          <RectButton
+            buttonText={loginScreenConfig.loginButtonText}
+            handlePress={() =>
+              dispatch(
+                appLogin({ loginMutation, navigation, username, password })
+              )
+            }
+            extraContainerStyle={styles.loginButtonExtraStyle}
+            extraTextStyle={styles.loginButtonTextExtraStyle}
+          />
+          <RectButton
+            buttonText={loginScreenConfig.registerButtonText}
+            handlePress={() => navigation.navigate("Registration")}
+            extraContainerStyle={styles.registerButtonExtraStyle}
+            extraTextStyle={styles.registerButtonTextExtraStyle}
+          />
+        </View>
+        {/* <Pressable
         style={styles.loginButton}
         onPress={() => {
-          dispatch(appLogin({loginMutation, navigation, username, password}));
+          dispatch(appLogin({ loginMutation, navigation, username, password }));
         }}
       >
         <Text style={styles.loginButtonText}>Login</Text>
-      </Pressable>
-      <Text style={styles.errorText}>{loginError && loginError}</Text>
-    </View>
+      </Pressable> */}
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: "column",
+    justifyContent: "space-between",
     backgroundColor: COLORS.white,
-    // alignItems: 'left',
-    padding: 25,
-    // justifyContent: 'center',
+    padding: SPACING * 2,
+  },
+  titleContainer: {
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginVertical: SPACING * 2,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginVertical: SPACING * 2,
   },
   pageTitle: {
     fontFamily: FONTS.bold,
     // fontWeight: "bold",
-    fontSize: 32,
+    fontSize: SIZES.xxLarge,
     color: COLORS.body,
-    marginBottom: 15,
+    marginVertical: SPACING * 2,
     // alignSelf: 'center',
+  },
+  pageSubTitle: {
+    fontFamily: FONTS.semiBold,
+    fontSize: SIZES.medium,
+    color: COLORS.secondary,
+    paddingHorizontal: SPACING * 4,
+    textAlign: "center",
   },
   text: {
     fontFamily: FONTS.regular,
@@ -121,12 +207,29 @@ const styles = StyleSheet.create({
     padding: 8,
     fontSize: SIZES.regular,
     backgroundColor: "#f5f5f5",
-    // width
   },
   errorText: {
     fontFamily: FONTS.semiBold,
     fontSize: SIZES.medium,
-    color: COLORS.error
+    color: COLORS.error,
+  },
+  loginButtonExtraStyle: {
+    minWidth: loginScreenConfig.buttonWidth,
+    backgroundColor: COLORS.primary,
+    borderRadius: SPACING,
+    ...SHADOWS.dark,
+  },
+  loginButtonTextExtraStyle: {
+    fontSize: SIZES.large,
+  },
+  registerButtonExtraStyle: {
+    minWidth: loginScreenConfig.buttonWidth,
+    backgroundColor: COLORS.bg,
+    borderRadius: SPACING,
+  },
+  registerButtonTextExtraStyle: {
+    fontSize: SIZES.large,
+    color: COLORS.primary,
   },
   loginButton: {
     alignItems: "center",

@@ -198,15 +198,6 @@ const FakeData = [
   },
 ];
 
-
-
-
-
-
-
-
-
-
 const RecommendedData = [
   {
     id: "NFT-01",
@@ -405,4 +396,127 @@ const RecommendedData = [
   },
 ];
 
-export { FakeData, RecommendedData };
+const interests = [
+  {
+    title: "Sports",
+    data: [
+      {
+        key: "Sports",
+        list: [
+          "Basketball",
+          "Football",
+          "Tennis",
+          "Soccer",
+          "Golf",
+          "Swimming",
+          "Baseball",
+          "Hockey",
+          "Cycling",
+          "Martial Arts",
+        ],
+      },
+    ],
+  },
+  {
+    title: "Music",
+    data: [
+      {
+        key: "Music",
+        list: [
+          "Pop",
+          "Hip Hop",
+          "Rock",
+          "Classical",
+          "Jazz",
+          "Country",
+          "R&B",
+          "Electronic",
+          "Reggae",
+          "Folk",
+        ],
+      },
+    ],
+  },
+  {
+    title: "Movies",
+    data: [
+      {
+        key: "Movies",
+        list: [
+          "Action",
+          "Comedy",
+          "Drama",
+          "Horror",
+          "Romance",
+          "Sci-Fi",
+          "Thriller",
+          "Western",
+          "Animation",
+          "Documentary",
+        ],
+      },
+    ],
+  },
+  {
+    title: "Books",
+    data: [
+      {
+        key: "Books",
+        list: [
+          "Fiction",
+          "Non-fiction",
+          "Biography",
+          "Autobiography",
+          "Mystery",
+          "Romance",
+          "Science Fiction",
+          "Thriller",
+          "Historical Fiction",
+          "Young Adult",
+        ],
+      },
+    ],
+  },
+  {
+    title: "Food",
+    data: [
+      {
+        key: "Food",
+        list: [
+          "Italian",
+          "Chinese",
+          "Mexican",
+          "Japanese",
+          "Indian",
+          "Thai",
+          "Greek",
+          "Vietnamese",
+          "French",
+          "Korean",
+        ],
+      },
+    ],
+  },
+  {
+    title: "Travel",
+    data: [
+      {
+        key: "Travel",
+        list: [
+          "Beaches",
+          "Mountains",
+          "Cities",
+          "Countryside",
+          "Islands",
+          "National Parks",
+          "Historical Sites",
+          "Cruise",
+          "Adventure",
+          "Backpacking",
+        ],
+      },
+    ],
+  },
+];
+
+export { FakeData, RecommendedData, interests };
