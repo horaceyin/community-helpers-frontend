@@ -34,10 +34,10 @@ const RegistrationScreen = ({ navigation }) => {
             placeholder={registrationScreenConfig.usernamePlaceholder}
           />
           <RoundTextInput
-            placeholder={registrationScreenConfig.eamilPlaceholder}
+            placeholder={registrationScreenConfig.passwordPlaceholder}
           />
           <RoundTextInput
-            placeholder={registrationScreenConfig.passwordPlaceholder}
+            placeholder={registrationScreenConfig.eamilPlaceholder}
           />
           <RoundTextInput
             placeholder={registrationScreenConfig.confirmPasswordPlaceholder}

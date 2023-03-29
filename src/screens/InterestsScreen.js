@@ -18,7 +18,7 @@ const interestsScreenConfig = {
 };
 
 const InterestsScreen = ({ navigation }) => {
-  const [selectedInterests, setSelectedInterests] = useState([[]]);
+  const [selectedInterests, setSelectedInterests] = useState([]);
 
   const renderSectionHeader = ({ section }) => {
     return (
@@ -35,7 +35,7 @@ const InterestsScreen = ({ navigation }) => {
         selectedInterests.filter((item) => item !== interest)
       );
     } else {
-      //   setSelectedInterests([...selectedInterests, interest]);
+      setSelectedInterests([...selectedInterests, interest]);
     }
   };
 
@@ -46,10 +46,10 @@ const InterestsScreen = ({ navigation }) => {
         buttonText={item}
         handlePress={() => handleInterestPress(item)}
         extraContainerStyle={{
-          backgroundColor: isSelected ? "#2196F3" : "#E0E0E0",
+          backgroundColor: isSelected ? "#8CACD4" : "#E0E0E0",
           ...styles.bubbleButton,
         }}
-        extraTextStyle={{ color: isSelected ? "#FFFFFF" : "#000000" }}
+        extraTextStyle={{ color: isSelected ? "#FFFFFF" : COLORS.primary }}
       />
     );
   };
@@ -128,11 +128,11 @@ const styles = StyleSheet.create({
   },
   sectionFlatList: {
     flexDirection: "row",
+    justifyContent: "flex-start",
     flexWrap: "wrap",
     padding: SPACING,
   },
   bubbleButton: {
-    backgroundColor: COLORS.bg,
     minWidth: "20%",
     marginVertical: SPACING,
     marginHorizontal: SPACING * 0.5,
