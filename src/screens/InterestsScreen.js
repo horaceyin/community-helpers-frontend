@@ -13,8 +13,9 @@ import { RectButton } from "../components";
 const interestsScreenConfig = {
   pageTitle: "Select your interests",
   pageSubTitle: "Choose at least three interests to get started",
+  clearButtonText: "Clear",
   nextButtonText: "Next",
-  nextButtonWidth: "30%",
+  nextButtonWidth: "40%",
 };
 
 const InterestsScreen = ({ navigation }) => {
@@ -37,19 +38,22 @@ const InterestsScreen = ({ navigation }) => {
     } else {
       setSelectedInterests([...selectedInterests, interest]);
     }
+    console.log(selectedInterests);
   };
 
   const renderInterestItem = ({ item, index }) => {
     const isSelected = selectedInterests.includes(item);
+    const backgroundColor = isSelected ? "#8CACD4" : "#E0E0E0";
+    const color = isSelected ? "#FFFFFF" : COLORS.primary;
     return (
       <RectButton
         buttonText={item}
         handlePress={() => handleInterestPress(item)}
         extraContainerStyle={{
-          backgroundColor: isSelected ? "#8CACD4" : "#E0E0E0",
+          backgroundColor: backgroundColor,
           ...styles.bubbleButton,
         }}
-        extraTextStyle={{ color: isSelected ? "#FFFFFF" : COLORS.primary }}
+        extraTextStyle={{ color: color }}
       />
     );
   };
@@ -59,7 +63,7 @@ const InterestsScreen = ({ navigation }) => {
       <FlatList
         data={item.list}
         style={styles.sectionFlatList}
-        keyExtractor={(item, index) => item + index}
+        keyExtractor={(item) => item}
         renderItem={renderInterestItem}
       />
     );
@@ -75,14 +79,26 @@ const InterestsScreen = ({ navigation }) => {
       </View>
       <SectionList
         sections={interests}
-        keyExtractor={(item, index) => item + index}
+        keyExtractor={(item) => item.key}
         renderItem={renderInterestSection}
         renderSectionHeader={renderSectionHeader}
       />
-      <RectButton
-        buttonText={interestsScreenConfig.nextButtonText}
-        extraContainerStyle={styles.nextButtonExtraStyle}
-      />
+      <View style={styles.bottomButtonContainer}>
+        <RectButton
+          handlePress={() => setSelectedInterests([])}
+          buttonText={interestsScreenConfig.clearButtonText}
+          extraContainerStyle={styles.nextButtonExtraStyle}
+          extraTextStyle={styles.districtButtonTextExtraStyle}
+        />
+        <RectButton
+          handlePress={() =>
+            navigation.navigate("District", { selectedInterests })
+          }
+          buttonText={interestsScreenConfig.nextButtonText}
+          extraContainerStyle={styles.nextButtonExtraStyle}
+          extraTextStyle={styles.districtButtonTextExtraStyle}
+        />
+      </View>
     </View>
   );
 };
@@ -92,10 +108,10 @@ export default InterestsScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "flex-end",
+    justifyContent: "center",
     alignItems: "center",
     backgroundColor: COLORS.white,
-    padding: SPACING * 2,
+    paddingHorizontal: SPACING * 2,
   },
   titleContainer: {
     justifyContent: "space-between",
@@ -137,12 +153,24 @@ const styles = StyleSheet.create({
     marginVertical: SPACING,
     marginHorizontal: SPACING * 0.5,
   },
+  bottomButtonContainer: {
+    flexDirection: "row",
+    width: "100%",
+    justifyContent: "space-between",
+    marginVertical: SPACING,
+  },
   nextButtonExtraStyle: {
-    alignSelf: "flex-end",
+    // alignSelf: "flex-end",
     minWidth: interestsScreenConfig.nextButtonWidth,
     backgroundColor: COLORS.primary,
     borderRadius: SPACING,
-    marginVertical: SPACING,
     ...SHADOWS.light,
+  },
+  districtButtonTextExtraStyle: {
+    fontSize: SIZES.large,
+  },
+  row: {
+    flex: 1,
+    justifyContent: "space-evenly",
   },
 });

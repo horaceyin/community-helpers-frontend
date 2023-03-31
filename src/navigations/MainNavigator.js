@@ -3,7 +3,6 @@ import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SplashScreen from "../SplashScreen";
 import RootScreen from "../RootScreen";
-import { LoginScreen, JobsDetails, InterestsScreen } from "../screens";
 import { FocusedStatusBar } from "../components";
 import { assets, COLORS, FONTS, SHADOWS, SIZES } from "../../constants";
 import {
@@ -12,7 +11,13 @@ import {
   ActivityIndicator,
   View,
 } from "react-native";
-import RegistrationScreen from "../screens/RegistrationScreen";
+import {
+  LoginScreen,
+  JobsDetails,
+  RegistrationScreen,
+  InterestsScreen,
+  DistrictScreen,
+} from "../screens/";
 
 const Stack = createNativeStackNavigator();
 
@@ -39,6 +44,7 @@ const MainNavigator = () => {
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Registration" component={RegistrationScreen} />
           <Stack.Screen name="Interests" component={InterestsScreen} />
+          <Stack.Screen name="District" component={DistrictScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaView>

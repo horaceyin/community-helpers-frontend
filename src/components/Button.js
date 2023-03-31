@@ -12,7 +12,7 @@ export const CircleButton = ({ imgUrl, handlePress, ...props }) => {
     </TouchableOpacity>
   );
 };
-//DetailsButton
+//DetailsButton or RectButton template
 export const RectButton = ({
   buttonText,
   minWidth,

@@ -16,7 +16,7 @@ const registrationScreenConfig = {
   confirmPasswordPlaceholder: "Confirm Password",
   eamilPlaceholder: "Email",
   nextButtonText: "Next",
-  buttonWidth: "48%",
+  buttonWidth: "50%",
 };
 
 const RegistrationScreen = ({ navigation }) => {
@@ -43,17 +43,15 @@ const RegistrationScreen = ({ navigation }) => {
             placeholder={registrationScreenConfig.confirmPasswordPlaceholder}
           />
         </View>
-        <View>
-          <RectButton
-            buttonText={registrationScreenConfig.nextButtonText}
-            handlePress={() => {
-              //post to backend to create an account
-              navigation.push("Interests");
-            }}
-            extraContainerStyle={styles.nextButtonExtraStyle}
-            extraTextStyle={styles.nextButtonTextExtraStyle}
-          />
-        </View>
+        <RectButton
+          buttonText={registrationScreenConfig.nextButtonText}
+          handlePress={() => {
+            //post to backend to create an account
+            navigation.navigate("Interests");
+          }}
+          extraContainerStyle={styles.nextButtonExtraStyle}
+          extraTextStyle={styles.nextButtonTextExtraStyle}
+        />
       </View>
     </TouchableWithoutFeedback>
   );
@@ -66,7 +64,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-between",
     backgroundColor: COLORS.white,
-    padding: SPACING * 2,
+    paddingHorizontal: SPACING * 2,
   },
   titleContainer: {
     justifyContent: "space-between",
@@ -88,8 +86,10 @@ const styles = StyleSheet.create({
   },
   nextButtonExtraStyle: {
     minWidth: registrationScreenConfig.buttonWidth,
+    alignSelf: "center",
     backgroundColor: COLORS.primary,
     borderRadius: SPACING,
+    marginVertical: SPACING,
     ...SHADOWS.light,
   },
   nextButtonTextExtraStyle: {
