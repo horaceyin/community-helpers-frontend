@@ -4,11 +4,14 @@ import {
   View,
   TouchableWithoutFeedback,
   Keyboard,
+  ScrollView,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { COLORS, FONTS, SHADOWS, SIZES, SPACING } from "../../constants";
 import { RoundTextInput } from "../components";
 import { RectButton } from "../components/Button";
+import { TextInput, HelperText, useTheme } from "react-native-paper";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const registrationScreenConfig = {
   usernamePlaceholder: "Username",
@@ -18,8 +21,35 @@ const registrationScreenConfig = {
   nextButtonText: "Next",
   buttonWidth: "50%",
 };
-
 const RegistrationScreen = ({ navigation }) => {
+  const [email, setEmail] = useState("");
+  const [isEmailValid, setIsEmailValid] = useState(true);
+
+  const [birthday, setBirthday] = useState(undefined);
+  const [birthdayUTC, setBirthdayUTC] = useState(undefined);
+  const [daypickerOpen, setDaypickerOpen] = useState(false);
+
+  // const [scheduledDatetime, setScheduledDatetime] = useState(
+  //   new Date(new Date().toDateString())
+  // );
+
+  const handleEmailInput = (text) => {
+    setEmail(text);
+    const regex = /\S+@\S+\.\S+/;
+    setIsEmailValid(regex.test(text));
+  };
+
+  const onDateConfirmHandler = (date) => {
+    setDaypickerOpen(false);
+    setBirthdayUTC(date);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    const birthday = `${year}-${month}-${day}`;
+    setBirthday(birthday);
+  };
+
+  const theme = useTheme();
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={styles.container}>
@@ -30,28 +60,110 @@ const RegistrationScreen = ({ navigation }) => {
               Create an account to get recommended requests !
             </Text>
           </View>
-          <RoundTextInput
-            placeholder={registrationScreenConfig.usernamePlaceholder}
-          />
-          <RoundTextInput
-            placeholder={registrationScreenConfig.passwordPlaceholder}
-          />
-          <RoundTextInput
-            placeholder={registrationScreenConfig.eamilPlaceholder}
-          />
-          <RoundTextInput
-            placeholder={registrationScreenConfig.confirmPasswordPlaceholder}
+          <ScrollView
+            style={[
+              styles.scrollView,
+              { backgroundColor: theme.colors.accent },
+            ]}
+          >
+            <TextInput
+              mode="outlined"
+              label={"Username"}
+              autoComplete={"username"}
+              autoCapitalize={"none"}
+              textContentType={"username"}
+            />
+            <TextInput
+              mode="outlined"
+              label={"Password"}
+              autoComplete={"off"}
+              autoCapitalize={"none"}
+              secureTextEntry={true}
+            />
+            <TextInput
+              mode="outlined"
+              label={"Confirm password"}
+              autoComplete={"off"}
+              autoCapitalize={"none"}
+              secureTextEntry={true}
+            />
+            <TextInput
+              // style={{ marginBottom: 20 }}
+              mode="outlined"
+              label={"Email"}
+              autoComplete={"email"}
+              textContentType={"emailAddress"}
+              autoCapitaliz={"none"}
+              onChangeText={handleEmailInput}
+              error={!isEmailValid}
+            />
+            <HelperText type="error" visible={!isEmailValid}>
+              Please enter a valid email address
+            </HelperText>
+            <TextInput
+              mode="outlined"
+              label={"Date of Birth (YYYY-MM-DD)"}
+              disabled={true}
+              value={birthday ? birthday : ""}
+              right={
+                <TextInput.Icon
+                  icon="calendar-today"
+                  forceTextInputFocus={false}
+                  onPress={() => setDaypickerOpen(true)}
+                />
+              }
+            />
+            <DateTimePickerModal
+              style={styles.datePicker}
+              mode={"date"}
+              date={new Date()}
+              isVisible={daypickerOpen}
+              onConfirm={onDateConfirmHandler}
+              onCancel={() => setDaypickerOpen(false)}
+            />
+            {/* <DatePickerModal
+              style={styles.datePicker}
+              locale="en"
+              date={birthday}
+              mode="single"
+              visible={daypickerOpen}
+              onDismiss={() => setDaypickerOpen(false)}
+              onConfirm={onDateConfirmHandler}
+              inputEnabled={false}
+              label="Select a date"
+            /> */}
+            <TextInput mode="outlined" label={"test"} placeholder={"HI"} />
+            <TextInput mode="outlined" label={"test"} placeholder={"HI"} />
+            <TextInput mode="outlined" label={"test"} placeholder={"HI"} />
+            <TextInput mode="outlined" label={"test"} placeholder={"HI"} />
+            <TextInput mode="outlined" label={"test"} placeholder={"HI"} />
+            <TextInput mode="outlined" label={"test"} placeholder={"HI"} />
+            <TextInput mode="outlined" label={"test"} placeholder={"HI"} />
+            <RoundTextInput
+              placeholder={registrationScreenConfig.usernamePlaceholder}
+            />
+            <RoundTextInput
+              placeholder={registrationScreenConfig.passwordPlaceholder}
+            />
+            <RoundTextInput
+              placeholder={registrationScreenConfig.eamilPlaceholder}
+            />
+            <RoundTextInput
+              placeholder={registrationScreenConfig.confirmPasswordPlaceholder}
+            />
+          </ScrollView>
+        </View>
+        <View style={styles.buttonContainer}>
+          <RectButton
+            buttonText={registrationScreenConfig.nextButtonText}
+            handlePress={() => {
+              //post to backend to create an account
+              navigation.navigate("Interests");
+            }}
+            extraContainerStyle={styles.nextButtonExtraStyle}
+            extraTextStyle={styles.nextButtonTextExtraStyle}
           />
         </View>
-        <RectButton
-          buttonText={registrationScreenConfig.nextButtonText}
-          handlePress={() => {
-            //post to backend to create an account
-            navigation.navigate("Interests");
-          }}
-          extraContainerStyle={styles.nextButtonExtraStyle}
-          extraTextStyle={styles.nextButtonTextExtraStyle}
-        />
       </View>
     </TouchableWithoutFeedback>
   );
@@ -65,6 +177,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     backgroundColor: COLORS.white,
     paddingHorizontal: SPACING * 2,
+  },
+  scrollView: {
+    height: "70%",
   },
   titleContainer: {
     justifyContent: "space-between",
@@ -84,9 +199,17 @@ const styles = StyleSheet.create({
     marginHorizontal: SPACING * 4,
     textAlign: "center",
   },
+  datePicker: {
+    borderRadius: SPACING * 2,
+    backgroundColor: COLORS.error,
+  },
+  buttonContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+  },
   nextButtonExtraStyle: {
     minWidth: registrationScreenConfig.buttonWidth,
-    alignSelf: "center",
     backgroundColor: COLORS.primary,
     borderRadius: SPACING,
     marginVertical: SPACING,
