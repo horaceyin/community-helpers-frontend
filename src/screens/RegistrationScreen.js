@@ -5,7 +5,7 @@ import {
   Keyboard,
   ScrollView,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { COLORS, FONTS, SHADOWS, SIZES, SPACING } from "../../constants";
 import { RoundTextInput } from "../components";
 import { RectButton } from "../components/Button";
@@ -16,8 +16,14 @@ import {
   RadioButton,
   IconButton,
   Text,
+  ActivityIndicator,
+  MD2Colors,
 } from "react-native-paper";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { useMutation } from "@apollo/client";
+import { SIGN_UP, LOGIN } from "../gql/Mutation";
+import { useDispatch, useSelector } from "react-redux";
+import { appLogin, selectLoginIsLoading } from "../features/AuthSlice";
 
 const registrationScreenConfig = {
   usernamePlaceholder: "Username",
@@ -26,8 +32,16 @@ const registrationScreenConfig = {
   eamilPlaceholder: "Email",
   nextButtonText: "Next",
   buttonWidth: "50%",
+  activityIndicatorSize: 36,
 };
 const RegistrationScreen = ({ navigation }) => {
+  const [signUpMutation, signUpResult] = useMutation(SIGN_UP);
+  const [loginMutation, loginResult] = useMutation(LOGIN);
+  const dispatch = useDispatch();
+  const loginIsLoading = useSelector(selectLoginIsLoading);
+  const theme = useTheme();
+
+  //component state
   const [username, setUsername] = useState(undefined);
   const [isUsernameValid, setIsUsernameValid] = useState(true);
   const [isUsernameFormatValid, setIsUsernameFormatValid] = useState(true);
@@ -43,11 +57,11 @@ const RegistrationScreen = ({ navigation }) => {
   const [isEmailValid, setIsEmailValid] = useState(true);
   const [isEmailFormatValid, setIsEmailFormatValid] = useState(true);
 
-  const [birthday, setBirthday] = useState(undefined);
-  const [birthdayUTC, setBirthdayUTC] = useState(undefined);
-
   const [tel, setTel] = useState(undefined);
   const [isTelValid, setIsTelValid] = useState(true);
+
+  const [birthday, setBirthday] = useState(undefined);
+  const [birthdayUTC, setBirthdayUTC] = useState(undefined);
 
   const [daypickerOpen, setDaypickerOpen] = useState(false);
 
@@ -55,9 +69,50 @@ const RegistrationScreen = ({ navigation }) => {
 
   const [displayName, setDisplayName] = useState(undefined);
 
+  const [allPass, setAllPass] = useState(false);
+
+  const [nextButtonDisabled, setNextButtonDisabled] = useState(true);
+
+  useEffect(() => {
+    if (
+      username &&
+      isUsernameFormatValid &&
+      password &&
+      isPasswordFormatValid &&
+      confirmPassword &&
+      isConfirmPasswordMatch &&
+      email &&
+      isEmailFormatValid &&
+      tel &&
+      isTelValid &&
+      birthday &&
+      birthdayUTC &&
+      displayName
+    ) {
+      setNextButtonDisabled(false);
+    } else {
+      setNextButtonDisabled(true);
+    }
+  }, [
+    username,
+    isUsernameFormatValid,
+    password,
+    isPasswordFormatValid,
+    confirmPassword,
+    isConfirmPasswordMatch,
+    email,
+    isEmailFormatValid,
+    tel,
+    isTelValid,
+    birthday,
+    birthdayUTC,
+    displayName,
+  ]);
+
   const handleUsernameInput = (text) => {
     setUsername(text);
-    const regex = /^[a-zA-Z0-9]+$/;
+    setIsUsernameValid(true);
+    const regex = /^[a-zA-Z0-9_-]+$/;
     setIsUsernameFormatValid(regex.test(text));
 
     if (text === "") {
@@ -106,6 +161,7 @@ const RegistrationScreen = ({ navigation }) => {
 
   const handleEmailInput = (text) => {
     setEmail(text);
+    setIsEmailValid(true);
     const regex = /\S+@\S+\.\S+/;
     setIsEmailFormatValid(regex.test(text));
 
@@ -147,7 +203,69 @@ const RegistrationScreen = ({ navigation }) => {
     }
   };
 
-  const theme = useTheme();
+  const handleNextButtonPress = async () => {
+    setNextButtonDisabled(true);
+    console.log(
+      username,
+      password,
+      confirmPassword,
+      email,
+      tel,
+      birthday,
+      birthdayUTC,
+      gender,
+      displayName
+    );
+
+    console.log(
+      isUsernameFormatValid,
+      isPasswordFormatValid,
+      isConfirmPasswordMatch,
+      isEmailFormatValid
+    );
+
+    // navigation.navigate("Interests");
+    try {
+      //test case: username=test_horace, pw=Pass123
+      let res = await signUpMutation({
+        variables: {
+          newUserInput: {
+            username: username,
+            password: password,
+            email: email,
+            phone: tel,
+            dateOfBirth: birthdayUTC,
+            gender: gender,
+            displayName: displayName,
+          },
+        },
+      });
+      console.log(res);
+      //login if signup success
+
+      if (res.data.signUp) {
+        // dispatch({type: 'SET_USER', user: res.data.signUp})
+        dispatch(appLogin({ loginMutation, username, password }));
+      }
+      // if (res.data.signUp) {
+      //   res = await loginMutation({
+      //     variables: {
+      //       username: username,
+      //       password: password,
+      //     },
+      //   });
+      //   console.log(res);
+      //   if (res.data.login) {
+      //     navigation.navigate("Interests");
+      //   }
+      // }
+    } catch (error) {
+      setIsUsernameValid(false);
+      setNextButtonDisabled(false);
+      console.log(error);
+    }
+  };
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={styles.container}>
@@ -341,15 +459,22 @@ const RegistrationScreen = ({ navigation }) => {
           </ScrollView>
         </View>
         <View style={styles.buttonContainer}>
+          <ActivityIndicator
+            animating={signUpResult.loading || loginIsLoading}
+            color={MD2Colors.deepOrangeA400}
+            size={registrationScreenConfig.activityIndicatorSize}
+          />
           <RectButton
             buttonText={registrationScreenConfig.nextButtonText}
-            handlePress={() => {
-              //post to backend to create an account
-              console.log(password, confirmPassword, gender);
-              // navigation.navigate("Interests");
-            }}
+            handlePress={() => handleNextButtonPress()}
+            // //post to backend to create an account
+            // console.log(password, confirmPassword, gender);
+            // navigation.navigate("Interests");
             extraContainerStyle={styles.nextButtonExtraStyle}
             extraTextStyle={styles.nextButtonTextExtraStyle}
+            disabled={nextButtonDisabled}
+            RectButtonContainerDisabled={styles.nextButtonContainerDisabled}
+            RectButtonTextDisabled={styles.nextButtonTextDisabled}
           />
         </View>
       </View>
@@ -419,9 +544,26 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
     borderRadius: SPACING,
     marginVertical: SPACING,
+    marginHorizontal: SPACING * 2,
+    marginRight: registrationScreenConfig.activityIndicatorSize + SPACING * 2,
     ...SHADOWS.light,
   },
   nextButtonTextExtraStyle: {
     fontSize: SIZES.large,
+  },
+  nextButtonContainerDisabled: {
+    minWidth: registrationScreenConfig.buttonWidth,
+    backgroundColor: MD2Colors.blueGrey500,
+    borderRadius: SPACING,
+    marginVertical: SPACING,
+    marginHorizontal: SPACING * 2,
+    ...SHADOWS.light,
+    opacity: 0.5,
+  },
+  nextButtonTextDisabled: {
+    color: MD2Colors.black,
+    fontSize: SIZES.large,
+    fontWeight: "bold",
+    opacity: 0.5,
   },
 });

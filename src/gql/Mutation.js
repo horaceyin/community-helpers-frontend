@@ -8,6 +8,12 @@ export const LOGIN = gql`
         id
         username
         displayName
+        avatar
+        email
+        phone
+        address
+        city
+        country
       }
     }
   }
@@ -51,10 +57,29 @@ export const CREATE_HELP_REQUEST = gql`
 `;
 
 export const UPDATE_HELP_REQUEST = gql`
-  mutation UpdateHelpRequestMatching($updateHelpRequestMatchingInput: UpdateHelpRequestMatchingInput!) {
-    updateHelpRequestMatching(updateHelpRequestMatchingInput: $updateHelpRequestMatchingInput) {
+  mutation UpdateHelpRequestMatching(
+    $updateHelpRequestMatchingInput: UpdateHelpRequestMatchingInput!
+  ) {
+    updateHelpRequestMatching(
+      updateHelpRequestMatchingInput: $updateHelpRequestMatchingInput
+    ) {
       id
       state
     }
   }
-`
+`;
+
+export const SIGN_UP = gql`
+  mutation CreateNewUser($newUserInput: LoginUserInput!) {
+    signup(loginUserInput: $newUserInput) {
+      id
+      username
+      displayName
+      email
+      address
+      city
+      country
+      phone
+    }
+  }
+`;

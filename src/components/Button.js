@@ -25,13 +25,16 @@ export const RectButton = ({
       style={[
         styles.RectButtonContainer,
         { minWidth: minWidth, ...props.extraContainerStyle },
+        props.disabled && { ...props.RectButtonContainerDisabled },
       ]}
       onPress={handlePress}
+      disabled={props.disabled}
     >
       <Text
         style={[
           styles.RectButtonText,
           { fontSize: fontSize, ...props.extraTextStyle },
+          props.disabled ? props.RectButtonTextDisabled : null,
         ]}
       >
         {buttonText}

@@ -12,8 +12,8 @@ const districtScreenConfig = {
 
 const DistrictScreen = ({ route, navigation }) => {
   const [selectedDistrict, setSelectedDistrict] = useState(null);
-  const myData = route.params.selectedInterests;
-  console.log(myData);
+  // const myData = route.params.selectedInterests;
+  // console.log(myData);
 
   const renderDistrictItem = ({ item }) => {
     const backgroundColor = selectedDistrict === item ? "#8CACD4" : "#E0E0E0";
