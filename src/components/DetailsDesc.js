@@ -2,11 +2,16 @@ import { View, Text } from 'react-native'
 import {React, useState} from 'react'
 import { JobsPrice, JobsTitle } from './SubInfo'
 import { COLORS, FONTS, SIZES } from '../../constants'
+import { LikeDislikeButton } from './Button';
+
 
 const DetailsDesc = ({ data }) => {
   const sliceSize = 50
   const [text, setText] = useState(data.description.slice(0, sliceSize))
   const [readMore, setReadMore] = useState(false)
+  var [ isLikePress, setIsLikePress ] = useState(false);
+  var [ isDislikePress, setIsDislikePress ] = useState(false);
+
   return (
     <>
       <View style={{width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -20,7 +25,22 @@ const DetailsDesc = ({ data }) => {
         />
         <JobsPrice price={data.price} />
       </View>
-      
+      <View style={{marginTop: SIZES.large, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
+        <LikeDislikeButton 
+          minWidth={'30%'}
+          isLikePress={isLikePress}
+          isDislikePress={isDislikePress}
+          handleLikePress={() => {
+            if (!isLikePress && !isDislikePress)
+              setIsLikePress(true) // Handle like here
+          }} 
+          handleDislikePress={() => {
+            if (!isLikePress && !isDislikePress)
+              setIsDislikePress(true) // Handle dislike here
+            }} 
+        />  
+      </View>
+
       <View style={{marginVertical: SIZES.extraLarge * 1.5}}>
         <Text style={{fontSize: SIZES.font, fontFamily: FONTS.semiBold, color: COLORS.primary}}>Description</Text>
         <View style={{marginTop: SIZES.base}}>

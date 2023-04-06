@@ -15,6 +15,7 @@ export const COLORS = {
   tabBar: "#ECECEC",
   plusSelected: "#748c94",
   plusNotSelected: "#d27f26",
+  green: "#3dff71",
 };
 
 //plusNotSelected: ff9c23

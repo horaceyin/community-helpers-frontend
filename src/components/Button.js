@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native'
 import React from 'react'
 import { COLORS, FONTS, SHADOWS, SIZES } from '../../constants'
+import { AntDesign } from '@expo/vector-icons'
 
 export const CircleButton = ({imgUrl, handlePress, ...props}) => {
   return (
@@ -24,6 +25,23 @@ export const RectButton = ({buttonText, minWidth, fontSize, handlePress, ...prop
         style={[styles.RectButtonText, {fontSize: fontSize}]}
       >{ buttonText }</Text>
     </TouchableOpacity>
+  )
+}
+
+//LikeDislikeButton
+export const LikeDislikeButton = ({buttonText, minWidth, fontSize, isLikePress, isDislikePress, handleLikePress, handleDislikePress, ...props}) => {
+  return (
+    <View
+      style={[styles.likeDislikeButtonContainer, {minWidth: minWidth, ...props}]}
+    >
+      <TouchableOpacity onPress={handleLikePress}>
+        <AntDesign style={styles.likeDislikeButtonText} name={isLikePress?"like1":"like2"} size={SIZES.extraLarge} color={COLORS.gray} />
+      </TouchableOpacity>
+      <Text style={styles.likeDislikeButtonText} >|</Text>
+      <TouchableOpacity onPress={handleDislikePress}>
+        <AntDesign style={styles.likeDislikeButtonText} name={isDislikePress?"dislike1":"dislike2"} size={SIZES.extraLarge} color={COLORS.gray} />
+      </TouchableOpacity>
+    </View>
   )
 }
 
@@ -68,5 +86,23 @@ const styles = StyleSheet.create({
     height: 45,
     backgroundColor:COLORS.gray,
     borderRadius: SIZES.extraLarge
-  }
+  },
+  likeDislikeButtonContainer: {
+    // backgroundColor: COLORS.green,
+
+    borderColor: COLORS.primary, 
+    borderWidth: 1.5,
+    borderRadius: SIZES.large,
+    padding: 5,
+    marginEnd: SIZES.base,
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    justifyContent: 'space-around'
+  },
+  likeDislikeButtonText: {
+    fontFamily: FONTS.semiBold,
+    color: COLORS.primary,
+    size: 24,
+    textAlign: 'center'
+  },
 })

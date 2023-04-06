@@ -2,10 +2,14 @@ import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { SHADOWS, COLORS, SIZES, assets } from '../../constants';
-import { CircleButton, RectButton } from './Button';
+import { CircleButton, RectButton, LikeDislikeButton } from './Button';
 import { SubInfo, JobsTitle, JobsPrice } from './SubInfo';
+import { AntDesign } from '@expo/vector-icons';
 
 const JobCard = ({data}) => {
+  var [ isLikePress, setIsLikePress ] = React.useState(false);
+  var [ isDislikePress, setIsDislikePress ] = React.useState(false);
+
   const navigation = useNavigation()
 
   return (
@@ -39,6 +43,21 @@ const JobCard = ({data}) => {
             handlePress={() => navigation.navigate('JobsDetails', {data})}
           />
         </View>
+        <View style={{marginTop: SIZES.font, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
+          <LikeDislikeButton 
+            minWidth={'30%'}
+            isLikePress={isLikePress}
+            isDislikePress={isDislikePress}
+            handleLikePress={() => {
+              if (!isLikePress && !isDislikePress)
+                setIsLikePress(true) // Handle like here
+            }} 
+            handleDislikePress={() => {
+              if (!isLikePress && !isDislikePress)
+                setIsDislikePress(true) // Handle dislike here
+              }} 
+          />
+        </View>
       </View>
     </View>
   )
@@ -61,6 +80,9 @@ const styles = StyleSheet.create({
     height: '100%',
     borderTopLeftRadius: SIZES.font,
     borderTopRightRadius: SIZES.font
+  },
+  likeButton: {
+
   }
 })
 
