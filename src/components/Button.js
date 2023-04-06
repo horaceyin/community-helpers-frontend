@@ -25,7 +25,7 @@ export const RectButton = ({
       style={[
         styles.RectButtonContainer,
         { minWidth: minWidth, ...props.extraContainerStyle },
-        props.disabled && { ...props.RectButtonContainerDisabled },
+        props.disabled && { ...props.RectButtonContainerDisabledStyle },
       ]}
       onPress={handlePress}
       disabled={props.disabled}

@@ -3,17 +3,46 @@ import React, { useState } from "react";
 import { SIZES, SPACING, FONTS, COLORS, SHADOWS } from "../../constants";
 import { district } from "../../constants";
 import { RectButton } from "../components";
+import { ActivityIndicator, MD2Colors } from "react-native-paper";
+import { useMutation } from "@apollo/client";
+import { UPDATE_USER } from "../gql/Mutation";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUserInfo } from "../features/AuthSlice";
 
 const districtScreenConfig = {
   pageTitle: "Select your district",
   doneButtonWidth: "50%",
   doneButtonText: "Done",
+  activityIndicatorSize: 36,
 };
 
 const DistrictScreen = ({ route, navigation }) => {
   const [selectedDistrict, setSelectedDistrict] = useState(null);
   // const myData = route.params.selectedInterests;
   // console.log(myData);
+  const userInfo = useSelector(selectUserInfo);
+  const [updateUserMutation, updateUserResult] = useMutation(UPDATE_USER, {
+    errorPolicy: "all",
+  });
+
+  const handleDoneButtonPress = async () => {
+    let result = await updateUserMutation({
+      variables: {
+        updateUserInput: {
+          district: { set: selectedDistrict },
+        },
+        userId: userInfo.id,
+      },
+      onCompleted: (result) => {
+        console.log("first");
+        navigation.reset({ index: 0, routes: [{ name: "Interests" }] });
+      },
+      onError: (error) => {
+        console.log(error);
+      },
+    });
+    // navigation.replace("Interests");
+  };
 
   const renderDistrictItem = ({ item }) => {
     const backgroundColor = selectedDistrict === item ? "#8CACD4" : "#E0E0E0";
@@ -45,11 +74,21 @@ const DistrictScreen = ({ route, navigation }) => {
         numColumns={3}
         columnWrapperStyle={styles.row}
       />
-      <RectButton
-        buttonText={districtScreenConfig.doneButtonText}
-        extraContainerStyle={styles.doneButtonExtraStyle}
-        extraTextStyle={styles.districtButtonTextExtraStyle}
-      />
+      <View style={styles.buttonContainer}>
+        <ActivityIndicator
+          animating={updateUserResult.loading}
+          color={MD2Colors.deepOrangeA400}
+          size={districtScreenConfig.activityIndicatorSize}
+        />
+        <RectButton
+          buttonText={districtScreenConfig.doneButtonText}
+          extraContainerStyle={styles.doneButtonExtraStyle}
+          extraTextStyle={styles.districtButtonTextExtraStyle}
+          disabled={selectedDistrict ? false : true}
+          RectButtonContainerDisabledStyle={styles.nextButtonContainerDisabled}
+          handlePress={handleDoneButtonPress}
+        />
+      </View>
     </View>
   );
 };
@@ -80,12 +119,19 @@ const styles = StyleSheet.create({
   flatListStyle: {
     // backgroundColor: COLORS.error,
   },
+  buttonContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+  },
   doneButtonExtraStyle: {
     // alignSelf: "flex-end",
     minWidth: districtScreenConfig.doneButtonWidth,
     backgroundColor: COLORS.primary,
     borderRadius: SPACING,
     marginVertical: SPACING,
+    marginHorizontal: SPACING * 2,
+    marginRight: districtScreenConfig.activityIndicatorSize + SPACING * 2,
     ...SHADOWS.light,
   },
   districtButton: {
@@ -100,5 +146,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-evenly",
     paddingVertical: SPACING,
+  },
+  nextButtonContainerDisabled: {
+    minWidth: districtScreenConfig.doneButtonWidth,
+    backgroundColor: MD2Colors.blueGrey500,
+    borderRadius: SPACING,
+    marginHorizontal: SPACING * 2,
+    ...SHADOWS.light,
+    opacity: 0.5,
   },
 });

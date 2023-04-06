@@ -13,13 +13,23 @@ const initialState = {
 
 export const checkSignIn = createAsyncThunk(
   "auth/checkSignIn",
-  async (_, { thunkAPI }) => {
+  async ({ navigation }, { thunkAPI }) => {
     try {
       let token = await SecureStore.getItemAsync(tokenName);
       let userInfo = await SecureStore.getItemAsync(userInfoName);
       userInfo = JSON.parse(userInfo);
+
+      if (token === null && userInfo === null) return { token, userInfo };
+
+      if (!userInfo.district) {
+        navigation.reset({ index: 0, routes: [{ name: "District" }] });
+      } else if (!userInfo.interests) {
+        navigation.reset({ index: 0, routes: [{ name: "Interests" }] });
+      }
+
       return { token, userInfo };
     } catch (error) {
+      console.log("🚀 ~ file: AuthSlice.js:32 ~ error msg:", error);
       let fetchTokenErrorMsg = "Fail to fetch user token and info";
       return thunkAPI.rejectWithValue(fetchTokenErrorMsg);
     }
@@ -40,18 +50,18 @@ export const appLogin = createAsyncThunk(
       await SecureStore.setItemAsync(tokenName, user_token);
       await SecureStore.setItemAsync(userInfoName, JSON.stringify(user_info));
 
-      if (!user_info.country || !user_info.city || !user_info.address) {
-        // navigation.replace("District");
-        navigation.reset({ index: 0, routes: [{ name: "Address" }] });
-      }
-      // else if (!user_info.interests) {
-      //   navigation.reset({ index: 0, routes: [{ name: "Interests" }] });
+      // if (!user_info.district) {
+      //   // navigation.replace("District");
+      //   navigation.reset({ index: 0, routes: [{ name: "District" }] });
       // }
-      else {
-        navigation.replace("Root");
-      }
+      // // else if (!user_info.interests) {
+      // //   navigation.reset({ index: 0, routes: [{ name: "Interests" }] });
+      // // }
+      // else {
+      //   navigation.replace("Root");
+      // }
 
-      // navigation.replace("Root");
+      navigation.replace("Root");
 
       return { user_token, user_info };
     } catch (error) {
@@ -97,8 +107,9 @@ export const authSlice = createSlice({
         console.log("🚀 ~ file: checkSignIn.fulfilled ~ action");
       })
       .addCase(checkSignIn.rejected, (state, action) => {
-        console.log(`${JSON.stringify(action.payload)}`);
-        alert(`${JSON.stringify(action.payload)}`);
+        // action.payload = "Fail to fetch user token and info"
+        console.log(`${JSON.stringify(action.error.message)}`);
+        alert(`${JSON.stringify(action.error.message)}`);
         console.log("🚀 ~ file: checkSignIn.rejected ~ action");
       })
       .addCase(appLogin.pending, (state, action) => {

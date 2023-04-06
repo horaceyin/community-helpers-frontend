@@ -9,6 +9,11 @@ import {
   interests,
 } from "../../constants";
 import { RectButton } from "../components";
+import { ActivityIndicator, MD2Colors } from "react-native-paper";
+import { useMutation } from "@apollo/client";
+import { UPDATE_USER } from "../gql/Mutation";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUserInfo } from "../features/AuthSlice";
 
 const interestsScreenConfig = {
   pageTitle: "Select your interests",
@@ -16,10 +21,36 @@ const interestsScreenConfig = {
   clearButtonText: "Clear",
   nextButtonText: "Next",
   nextButtonWidth: "40%",
+  activityIndicatorSize: 36,
 };
 
 const InterestsScreen = ({ navigation }) => {
   const [selectedInterests, setSelectedInterests] = useState([]);
+
+  const userInfo = useSelector(selectUserInfo);
+  const [updateUserMutation, updateUserResult] = useMutation(UPDATE_USER, {
+    errorPolicy: "all",
+  });
+
+  const handleNextButtonPress = async () => {
+    // let result = await updateUserMutation({
+    //   variables: {
+    //     updateUserInput: {
+    //       interests: { set: selectedInterests },
+    //     },
+    //     userId: userInfo.id,
+    //   },
+    //   onCompleted: (result) => {
+    //     navigation.reset({ index: 0, routes: [{ name: "Root" }] });
+    //   },
+    //   onError: (error) => {
+    //     console.log(error);
+    //   },
+    // });
+
+    // navigation.reset({ index: 0, routes: [{ name: "Root" }] });
+    navigation.replace("Root");
+  };
 
   const renderSectionHeader = ({ section }) => {
     return (
@@ -90,13 +121,18 @@ const InterestsScreen = ({ navigation }) => {
           extraContainerStyle={styles.nextButtonExtraStyle}
           extraTextStyle={styles.districtButtonTextExtraStyle}
         />
+        <ActivityIndicator
+          animating={updateUserResult.loading}
+          color={MD2Colors.deepOrangeA400}
+          size={interestsScreenConfig.activityIndicatorSize}
+        />
         <RectButton
-          handlePress={() =>
-            navigation.navigate("District", { selectedInterests })
-          }
+          handlePress={handleNextButtonPress}
           buttonText={interestsScreenConfig.nextButtonText}
           extraContainerStyle={styles.nextButtonExtraStyle}
           extraTextStyle={styles.districtButtonTextExtraStyle}
+          disabled={selectedInterests.length < 3}
+          RectButtonContainerDisabledStyle={styles.nextButtonContainerDisabled}
         />
       </View>
     </View>
@@ -172,5 +208,13 @@ const styles = StyleSheet.create({
   row: {
     flex: 1,
     justifyContent: "space-evenly",
+  },
+  nextButtonContainerDisabled: {
+    minWidth: interestsScreenConfig.nextButtonWidth,
+    backgroundColor: MD2Colors.blueGrey500,
+    borderRadius: SPACING,
+    // marginHorizontal: SPACING * 2,
+    ...SHADOWS.light,
+    opacity: 0.5,
   },
 });

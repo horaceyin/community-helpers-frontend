@@ -18,7 +18,7 @@ export const FIND_MATCH_BY_STATE = gql`
         title
         description
         helpRequestDatetime
-        helpSeeker{
+        helpSeeker {
           username
         }
       }
@@ -38,7 +38,7 @@ export const FIND_MATCH_BY_STATE_IN_HOME = gql`
         location
         category
         helpRequestDatetime
-        helpSeeker{
+        helpSeeker {
           displayName
         }
       }

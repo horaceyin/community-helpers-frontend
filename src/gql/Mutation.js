@@ -12,8 +12,8 @@ export const LOGIN = gql`
         email
         phone
         address
-        city
-        country
+        district
+        interests
       }
     }
   }
@@ -80,6 +80,22 @@ export const SIGN_UP = gql`
       city
       country
       phone
+    }
+  }
+`;
+
+export const UPDATE_USER = gql`
+  mutation UpdateUser($updateUserInput: UpdateUserInput!, $userId: Float!) {
+    updateUser(updateUserInput: $updateUserInput, userId: $userId) {
+      id
+      username
+      displayName
+      avatar
+      email
+      phone
+      address
+      district
+      interests
     }
   }
 `;

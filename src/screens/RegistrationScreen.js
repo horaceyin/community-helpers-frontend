@@ -60,6 +60,8 @@ const RegistrationScreen = ({ navigation }) => {
   const [tel, setTel] = useState(undefined);
   const [isTelValid, setIsTelValid] = useState(true);
 
+  const [address, setAddress] = useState("");
+
   const [birthday, setBirthday] = useState(undefined);
   const [birthdayUTC, setBirthdayUTC] = useState(undefined);
 
@@ -186,6 +188,10 @@ const RegistrationScreen = ({ navigation }) => {
     }
   };
 
+  const handleAddressInput = (text) => {
+    setAddress(text);
+  };
+
   const onDateConfirmHandler = (date) => {
     setDaypickerOpen(false);
     setBirthdayUTC(date);
@@ -234,6 +240,7 @@ const RegistrationScreen = ({ navigation }) => {
             password: password,
             email: email,
             phone: tel,
+            address: address,
             dateOfBirth: birthdayUTC,
             gender: gender,
             displayName: displayName,
@@ -364,6 +371,15 @@ const RegistrationScreen = ({ navigation }) => {
               {!isTelValid && "Please enter a valid phone number (8 digits)"}
               {tel === "" && "Please enter a phone number"}
             </HelperText>
+
+            <TextInput
+              mode="outlined"
+              label={"Address (Optional)"}
+              textContentType={"fullStreetAddress"}
+              onChangeText={handleAddressInput}
+            />
+            <HelperText />
+
             <View>
               <TextInput
                 mode="outlined"
@@ -473,7 +489,9 @@ const RegistrationScreen = ({ navigation }) => {
             extraContainerStyle={styles.nextButtonExtraStyle}
             extraTextStyle={styles.nextButtonTextExtraStyle}
             disabled={nextButtonDisabled}
-            RectButtonContainerDisabled={styles.nextButtonContainerDisabled}
+            RectButtonContainerDisabledStyle={
+              styles.nextButtonContainerDisabled
+            }
             RectButtonTextDisabled={styles.nextButtonTextDisabled}
           />
         </View>
@@ -555,7 +573,6 @@ const styles = StyleSheet.create({
     minWidth: registrationScreenConfig.buttonWidth,
     backgroundColor: MD2Colors.blueGrey500,
     borderRadius: SPACING,
-    marginVertical: SPACING,
     marginHorizontal: SPACING * 2,
     ...SHADOWS.light,
     opacity: 0.5,
