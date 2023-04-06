@@ -85,7 +85,7 @@ export const SIGN_UP = gql`
 `;
 
 export const UPDATE_USER = gql`
-  mutation UpdateUser($updateUserInput: UpdateUserInput!, $userId: Float!) {
+  mutation UpdateUser($updateUserInput: UserUpdateInput!, $userId: Float!) {
     updateUser(updateUserInput: $updateUserInput, userId: $userId) {
       id
       username
