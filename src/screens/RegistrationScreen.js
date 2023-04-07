@@ -122,15 +122,12 @@ const RegistrationScreen = ({ navigation }) => {
       setIsUsernameFormatValid(true);
       setIsUsernameValid(true);
     }
-
-    //to do: send https
-    //http to backend to check if username exists
   };
 
   const handlePasswordInput = (text) => {
     setPassword(text);
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$/;
-    // if (text === "" || (text === "" && confirmPassword === "")) {
+
     if (text === "") {
       setPassword(undefined);
       setIsPasswordFormatValid(true);
@@ -153,7 +150,6 @@ const RegistrationScreen = ({ navigation }) => {
     if (text === "") {
       setConfirmPassword(undefined);
     }
-    // if (text === password || (text === "" && password === "")) {
     if (text === password || (text === "" && password === undefined)) {
       setIsConfirmPasswordMatch(true);
     } else {
@@ -172,9 +168,6 @@ const RegistrationScreen = ({ navigation }) => {
       setIsEmailFormatValid(true);
       setIsEmailValid(true);
     }
-
-    //to do: send https
-    //http to backend to check if email exists
   };
 
   const handleTelInput = (text) => {
@@ -230,47 +223,30 @@ const RegistrationScreen = ({ navigation }) => {
       isEmailFormatValid
     );
 
-    // navigation.navigate("Interests");
-    try {
-      //test case: username=test_horace, pw=Pass123
-      let res = await signUpMutation({
-        variables: {
-          newUserInput: {
-            username: username,
-            password: password,
-            email: email,
-            phone: tel,
-            address: address,
-            dateOfBirth: birthdayUTC,
-            gender: gender,
-            displayName: displayName,
-          },
+    await signUpMutation({
+      variables: {
+        newUserInput: {
+          username: username,
+          password: password,
+          email: email,
+          phone: tel,
+          address: address,
+          dateOfBirth: birthdayUTC,
+          gender: gender,
+          displayName: displayName,
+          district: null,
+          interests: [],
         },
-      });
-      console.log(res);
-      //login if signup success
-
-      if (res.data.signUp) {
-        // dispatch({type: 'SET_USER', user: res.data.signUp})
-        dispatch(appLogin({ loginMutation, username, password }));
-      }
-      // if (res.data.signUp) {
-      //   res = await loginMutation({
-      //     variables: {
-      //       username: username,
-      //       password: password,
-      //     },
-      //   });
-      //   console.log(res);
-      //   if (res.data.login) {
-      //     navigation.navigate("Interests");
-      //   }
-      // }
-    } catch (error) {
-      setIsUsernameValid(false);
-      setNextButtonDisabled(false);
-      console.log(error);
-    }
+      },
+      onError: (error) => {
+        setIsUsernameValid(false);
+        setNextButtonDisabled(false);
+        console.log(`Apollo error: ${error.message}`);
+      },
+      onCompleted: (data) => {
+        dispatch(appLogin({ loginMutation, navigation, username, password }));
+      },
+    });
   };
 
   return (
@@ -283,19 +259,13 @@ const RegistrationScreen = ({ navigation }) => {
               Create an account to get recommended requests !
             </Text>
           </View>
-          <ScrollView
-            style={[
-              styles.scrollView,
-              // { backgroundColor: theme.colors.accent },
-            ]}
-          >
+          <ScrollView style={styles.scrollView}>
             <TextInput
               mode="outlined"
               label={"Username"}
               autoComplete={"username"}
               autoCapitalize={"none"}
               textContentType={"username"}
-              // value={username}
               onChangeText={handleUsernameInput}
               error={
                 username === "" || !isUsernameValid || !isUsernameFormatValid
@@ -415,7 +385,6 @@ const RegistrationScreen = ({ navigation }) => {
                 <View style={styles.RadioButtonGroupContainer}>
                   <View style={styles.radioButtonContainer}>
                     <RadioButton value="male" />
-                    {/* <Avatar.Icon icon="gender-male" size={24} /> */}
                     <IconButton
                       icon="gender-male"
                       size={30}
@@ -483,9 +452,6 @@ const RegistrationScreen = ({ navigation }) => {
           <RectButton
             buttonText={registrationScreenConfig.nextButtonText}
             handlePress={() => handleNextButtonPress()}
-            // //post to backend to create an account
-            // console.log(password, confirmPassword, gender);
-            // navigation.navigate("Interests");
             extraContainerStyle={styles.nextButtonExtraStyle}
             extraTextStyle={styles.nextButtonTextExtraStyle}
             disabled={nextButtonDisabled}

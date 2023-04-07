@@ -28,28 +28,30 @@ const InterestsScreen = ({ navigation }) => {
   const [selectedInterests, setSelectedInterests] = useState([]);
 
   const userInfo = useSelector(selectUserInfo);
+  const [errorLoading, setErrorLoading] = useState(false);
   const [updateUserMutation, updateUserResult] = useMutation(UPDATE_USER, {
     errorPolicy: "all",
   });
 
   const handleNextButtonPress = async () => {
-    // let result = await updateUserMutation({
-    //   variables: {
-    //     updateUserInput: {
-    //       interests: { set: selectedInterests },
-    //     },
-    //     userId: userInfo.id,
-    //   },
-    //   onCompleted: (result) => {
-    //     navigation.reset({ index: 0, routes: [{ name: "Root" }] });
-    //   },
-    //   onError: (error) => {
-    //     console.log(error);
-    //   },
-    // });
+    await updateUserMutation({
+      variables: {
+        updateUserInput: {
+          interests: { set: selectedInterests },
+        },
+        userId: userInfo.id,
+      },
+      onCompleted: (result) => {
+        setErrorLoading(false);
+        navigation.reset({ index: 0, routes: [{ name: "Root" }] });
+      },
+      onError: (error) => {
+        setErrorLoading(true);
+        console.log(`Apollo error: ${error.message}`);
+      },
+    });
 
-    // navigation.reset({ index: 0, routes: [{ name: "Root" }] });
-    navigation.replace("Root");
+    navigation.reset({ index: 0, routes: [{ name: "Root" }] });
   };
 
   const renderSectionHeader = ({ section }) => {

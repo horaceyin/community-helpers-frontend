@@ -3,7 +3,17 @@ import { gql } from "@apollo/client";
 export const ME = gql`
   query Me {
     me {
+      id
       username
+      displayName
+      avatar
+      email
+      address
+      phone
+      district
+      interests
+      city
+      country
     }
   }
 `;

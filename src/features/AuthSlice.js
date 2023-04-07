@@ -13,67 +13,63 @@ const initialState = {
 
 export const checkSignIn = createAsyncThunk(
   "auth/checkSignIn",
-  async ({ navigation }, { thunkAPI }) => {
-    try {
-      let token = await SecureStore.getItemAsync(tokenName);
-      let userInfo = await SecureStore.getItemAsync(userInfoName);
-      userInfo = JSON.parse(userInfo);
+  async ({ navigation, getMyInfo }, { thunkAPI }) => {
+    let token = await SecureStore.getItemAsync(tokenName);
+    let userInfo = null;
+    let tokenExpiredMsg = "Token expired. Please login again";
 
-      if (token === null && userInfo === null) return { token, userInfo };
+    if (token === null) return { token, userInfo };
 
-      if (!userInfo.district) {
-        navigation.reset({ index: 0, routes: [{ name: "District" }] });
-      } else if (!userInfo.interests) {
-        navigation.reset({ index: 0, routes: [{ name: "Interests" }] });
-      }
+    await getMyInfo({
+      onError: (error) => {
+        token = null;
+      },
+      onCompleted: (result) => {
+        userInfo = result.me;
+        if (userInfo.interests) {
+          console.log(userInfo, "!!");
+        }
+        if (!userInfo.district) {
+          navigation.reset({ index: 0, routes: [{ name: "District" }] });
+        } else if (userInfo.interests.length === 0) {
+          navigation.reset({ index: 0, routes: [{ name: "Interests" }] });
+        }
+      },
+    });
 
-      return { token, userInfo };
-    } catch (error) {
-      console.log("🚀 ~ file: AuthSlice.js:32 ~ error msg:", error);
-      let fetchTokenErrorMsg = "Fail to fetch user token and info";
-      return thunkAPI.rejectWithValue(fetchTokenErrorMsg);
-    }
+    if (!token) await SecureStore.deleteItemAsync(tokenName);
+
+    return { token, userInfo, tokenExpiredMsg };
   }
 );
 
 export const appLogin = createAsyncThunk(
   "auth/appLogin",
   async ({ loginMutation, navigation, username, password }, thunkAPI) => {
-    try {
-      let result = await loginMutation({
-        variables: { username: username, password: password },
-      });
+    let user_token = null;
+    let loginErrorMsg = "Wrong user name or password, try again.";
 
-      let user_token = result.data.login.access_token;
-      let user_info = result.data.login.user;
+    await loginMutation({
+      variables: { username: username, password: password },
+      onError: (error) => {
+        console.log(`Apollo error: ${error.message}`);
+      },
+      onCompleted: async (result) => {
+        user_token = result.login.access_token;
+        await SecureStore.setItemAsync(tokenName, user_token);
+      },
+    });
 
-      await SecureStore.setItemAsync(tokenName, user_token);
-      await SecureStore.setItemAsync(userInfoName, JSON.stringify(user_info));
-
-      // if (!user_info.district) {
-      //   // navigation.replace("District");
-      //   navigation.reset({ index: 0, routes: [{ name: "District" }] });
-      // }
-      // // else if (!user_info.interests) {
-      // //   navigation.reset({ index: 0, routes: [{ name: "Interests" }] });
-      // // }
-      // else {
-      //   navigation.replace("Root");
-      // }
-
+    if (user_token) {
       navigation.replace("Root");
-
-      return { user_token, user_info };
-    } catch (error) {
-      let loginErrorMsg = "Wrong user name or password, try again.";
-      return thunkAPI.rejectWithValue(loginErrorMsg);
+      return { user_token };
     }
+    return thunkAPI.rejectWithValue(loginErrorMsg);
   }
 );
 
 export const appLogout = createAsyncThunk("auth/appLogout", async () => {
   await SecureStore.deleteItemAsync(tokenName);
-  await SecureStore.deleteItemAsync(userInfoName);
   return false;
 });
 
@@ -92,35 +88,37 @@ export const authSlice = createSlice({
         console.log("🚀 ~ file: checkSignIn.pending ~ action");
       })
       .addCase(checkSignIn.fulfilled, (state, action) => {
-        let { token, userInfo } = action.payload;
+        let { token, userInfo, tokenExpiredMsg } = action.payload;
 
         if (userInfo && token) {
           state.userToken = token;
           state.userInfo = userInfo;
           state.isLogin = true;
         } else {
-          state.userToken = null;
-          state.userInfo = null;
+          if (tokenExpiredMsg) alert(tokenExpiredMsg);
+          state.userToken = token;
+          state.userInfo = userInfo;
           state.isLogin = false;
         }
         state.isLoading = false;
         console.log("🚀 ~ file: checkSignIn.fulfilled ~ action");
       })
-      .addCase(checkSignIn.rejected, (state, action) => {
-        // action.payload = "Fail to fetch user token and info"
-        console.log(`${JSON.stringify(action.error.message)}`);
-        alert(`${JSON.stringify(action.error.message)}`);
-        console.log("🚀 ~ file: checkSignIn.rejected ~ action");
-      })
+      // .addCase(checkSignIn.rejected, (state, action) => {
+      //   // action.payload = "Fail to fetch user token and info"
+      //   console.log(`${JSON.stringify(action.error.message)}`);
+      //   alert(`${JSON.stringify(action.error.message)}`);
+      //   console.log("🚀 ~ file: checkSignIn.rejected ~ action");
+      // })
       .addCase(appLogin.pending, (state, action) => {
         state.loginIsLoading = true;
         state.loginError = null;
         console.log("🚀 ~ file: appLogin.pending ~ action");
       })
       .addCase(appLogin.fulfilled, (state, action) => {
-        let { user_token, user_info } = action.payload;
+        // let { user_token, user_info } = action.payload;
+        let { user_token } = action.payload;
         state.userToken = user_token;
-        state.userInfo = user_info;
+        // state.userInfo = user_info;
         state.isLogin = true;
         state.loginError = null;
         state.loginIsLoading = false;

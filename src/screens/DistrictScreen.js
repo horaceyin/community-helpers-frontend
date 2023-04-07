@@ -6,7 +6,7 @@ import { RectButton } from "../components";
 import { ActivityIndicator, MD2Colors } from "react-native-paper";
 import { useMutation } from "@apollo/client";
 import { UPDATE_USER } from "../gql/Mutation";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { selectUserInfo } from "../features/AuthSlice";
 
 const districtScreenConfig = {
@@ -18,15 +18,12 @@ const districtScreenConfig = {
 
 const DistrictScreen = ({ route, navigation }) => {
   const [selectedDistrict, setSelectedDistrict] = useState(null);
-  // const myData = route.params.selectedInterests;
-  // console.log(myData);
   const userInfo = useSelector(selectUserInfo);
-  const [updateUserMutation, updateUserResult] = useMutation(UPDATE_USER, {
-    errorPolicy: "all",
-  });
+  const [errorLoading, setErrorLoading] = useState(false);
+  const [updateUserMutation, updateUserResult] = useMutation(UPDATE_USER);
 
   const handleDoneButtonPress = async () => {
-    let result = await updateUserMutation({
+    await updateUserMutation({
       variables: {
         updateUserInput: {
           district: { set: selectedDistrict },
@@ -34,14 +31,14 @@ const DistrictScreen = ({ route, navigation }) => {
         userId: userInfo.id,
       },
       onCompleted: (result) => {
-        console.log("first");
+        setErrorLoading(false);
         navigation.reset({ index: 0, routes: [{ name: "Interests" }] });
       },
       onError: (error) => {
-        console.log(error);
+        setErrorLoading(true);
+        console.log(`Apollo error: ${error.message}`);
       },
     });
-    // navigation.replace("Interests");
   };
 
   const renderDistrictItem = ({ item }) => {
@@ -76,7 +73,7 @@ const DistrictScreen = ({ route, navigation }) => {
       />
       <View style={styles.buttonContainer}>
         <ActivityIndicator
-          animating={updateUserResult.loading}
+          animating={updateUserResult.loading || errorLoading}
           color={MD2Colors.deepOrangeA400}
           size={districtScreenConfig.activityIndicatorSize}
         />
@@ -110,11 +107,9 @@ const styles = StyleSheet.create({
   },
   pageTitle: {
     fontFamily: FONTS.bold,
-    // fontWeight: "bold",
     fontSize: SIZES.xxLarge,
     color: COLORS.body,
     marginVertical: SPACING * 2,
-    // alignSelf: 'center',
   },
   flatListStyle: {
     // backgroundColor: COLORS.error,
@@ -125,7 +120,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   doneButtonExtraStyle: {
-    // alignSelf: "flex-end",
     minWidth: districtScreenConfig.doneButtonWidth,
     backgroundColor: COLORS.primary,
     borderRadius: SPACING,
