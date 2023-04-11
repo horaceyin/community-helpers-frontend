@@ -7,6 +7,7 @@ import {
   ApolloProvider,
   createHttpLink,
 } from "@apollo/client";
+import {createUploadLink} from "apollo-upload-client"
 import { setContext } from "@apollo/client/link/context";
 import MainNavigator from "./src/navigations/MainNavigator";
 import * as SecureStore from "expo-secure-store";
@@ -47,7 +48,8 @@ const authLink = setContext(async (_, { headers }) => {
 const client = new ApolloClient({
   // uri: 'https://communityhelper.azurewebsites.net/graphql',
   // uri: 'http://192.168.0.169:3000/graphql',
-  link: authLink.concat(httpLink),
+  //link: authLink.concat(httpLink),
+  link: createUploadLink({uri: BASE_URL}), 
   cache: new InMemoryCache(),
 });
 
