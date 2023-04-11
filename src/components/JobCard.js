@@ -15,7 +15,6 @@ function areEqual(prevProps, nextProps) {
 }
 
 const JobCard = ({ helpRequest }) => {
-  console.log("55555555555555555");
   var [isLikePress, setIsLikePress] = React.useState(false);
   var [isDislikePress, setIsDislikePress] = React.useState(false);
   const navigation = useNavigation();
