@@ -1,128 +1,158 @@
-import { View, Text, StyleSheet, Image } from 'react-native'
-import React from 'react'
-import { SIZES, COLORS, SHADOWS, assets, FONTS} from '../../constants'
+import { View, Text, StyleSheet, Image } from "react-native";
+import React from "react";
+import { SIZES, COLORS, SHADOWS, assets, FONTS } from "../../constants";
 
-const JobsPrice = ({price}) => {
+const JobsPrice = ({ price }) => {
   return (
     <View style={styles.jobsPrice}>
-      <Image 
+      <Image
         source={assets.dollar}
-        resizeMode='contain'
-        style={{width: 20, height: 20, marginRight: 2}}
+        resizeMode="contain"
+        style={{ width: 20, height: 20, marginRight: 2 }}
       />
-      <Text style={{fontFamily: FONTS.medium, fontSize: SIZES.medium, color: COLORS.primary}}>{price}</Text>
+      <Text
+        style={{
+          fontFamily: FONTS.medium,
+          fontSize: SIZES.medium,
+          color: COLORS.primary,
+        }}
+      >
+        {price}
+      </Text>
     </View>
-  )
-}
+  );
+};
 
-const JobsTitle = ({title, subTitle, titleSize, subTitleSize, location, locationSize}) => {
+const JobsTitle = ({
+  title,
+  subTitle,
+  titleSize,
+  subTitleSize,
+  location,
+  locationSize,
+}) => {
   return (
     <View>
-      <Text style={{
-        fontFamily: FONTS.semiBold, 
-        fontSize: titleSize, 
-        color: COLORS.primary
-      }}>{title}</Text>
+      <Text
+        style={{
+          fontFamily: FONTS.semiBold,
+          fontSize: titleSize,
+          color: COLORS.primary,
+        }}
+      >
+        {title}
+      </Text>
 
-      <Text style={{
-        fontFamily: FONTS.medium,
-        fontSize: locationSize,
-        color: COLORS.primary,
-        marginVertical: SIZES.base,
-        maxWidth: '70%'
-      }}>
+      <Text
+        style={{
+          fontFamily: FONTS.medium,
+          fontSize: locationSize,
+          color: COLORS.primary,
+          marginVertical: SIZES.base,
+          maxWidth: "70%",
+        }}
+      >
         {location}
       </Text>
 
-      <Text style={{
-        fontFamily: FONTS.regular, 
-        fontSize: subTitleSize, 
-        color: COLORS.primary
-      }}>{subTitle}</Text>
+      <Text
+        style={{
+          fontFamily: FONTS.regular,
+          fontSize: subTitleSize,
+          color: COLORS.primary,
+        }}
+      >
+        {subTitle}
+      </Text>
     </View>
-  )
-}
+  );
+};
 
-const Img = ({imgUrl, index}) => {
+const Img = ({ imgUrl, index }) => {
   return (
     <View>
-      <Image 
+      <Image
         source={imgUrl}
-        resizeMode='contain'
-        style={[styles.img, {marginLeft: index === 0 ? 0 : -SIZES.font}]}
+        resizeMode="contain"
+        style={[styles.img, { marginLeft: index === 0 ? 0 : -SIZES.font }]}
       />
     </View>
-  )
-}
+  );
+};
 
 const CircleImgContainer = () => {
   return (
     <View style={styles.circleImgContainer}>
-      {[assets.person01, assets.person02, assets.person03].map((img ,index) => (
+      {[assets.person01, assets.person02, assets.person03].map((img, index) => (
         <Img imgUrl={img} index={index} key={`img-${index}`} />
       ))}
     </View>
-  )
-}
+  );
+};
 
-const JobsDate = ({ jobsDate, jobsTime }) => {
+const JobsDate = ({ helpRequestDate, helpRequestTime }) => {
   return (
     <View style={styles.jobsDate}>
-      <Text style={{
-        fontFamily: FONTS.regular,
-        fontSize: SIZES.small,
-        color: COLORS.primary
-      }}>
+      <Text
+        style={{
+          fontFamily: FONTS.regular,
+          fontSize: SIZES.small,
+          color: COLORS.primary,
+        }}
+      >
         Jobs Date:
       </Text>
 
-      <Text style={{
-        fontFamily: FONTS.semiBold,
-        fontSize: SIZES.medium,
-        color: COLORS.primary
-      }}>
+      <Text
+        style={{
+          fontFamily: FONTS.semiBold,
+          fontSize: SIZES.medium,
+          color: COLORS.primary,
+        }}
+      >
         {/* dd/mm/yyyy */}
-        {jobsDate}
+        {helpRequestDate}
       </Text>
 
-      <Text style={{
-        fontFamily: FONTS.semiBold,
-        fontSize: SIZES.medium,
-        color: COLORS.primary
-      }}>
+      <Text
+        style={{
+          fontFamily: FONTS.semiBold,
+          fontSize: SIZES.medium,
+          color: COLORS.primary,
+        }}
+      >
         {/* dd/mm/yyyy */}
-        {jobsTime}
+        {helpRequestTime}
       </Text>
     </View>
-  )
-}
+  );
+};
 
-const SubInfo = ({ jobsDate, jobsTime }) => {
+const SubInfo = ({ helpRequestDate, helpRequestTime }) => {
   return (
     <View style={styles.subInfo}>
       {/* <CircleImgContainer/> */}
-      <JobsDate jobsDate={jobsDate} jobsTime={jobsTime} />
+      <JobsDate
+        helpRequestDate={helpRequestDate}
+        helpRequestTime={helpRequestTime}
+      />
     </View>
-  )
-}
+  );
+};
 
-export {
-  SubInfo,
-  JobsTitle,
-  JobsPrice,
-}
+export { SubInfo, JobsTitle, JobsPrice };
 
 const styles = StyleSheet.create({
   subInfo: {
-    width: '100%',
+    width: "100%",
     paddingHorizontal: SIZES.font,
     marginTop: -SIZES.extraLarge,
-    flexDirection: 'row',
+    flexDirection: "row",
     //justifyContent: 'space-between'
-    justifyContent: 'flex-end'
+    justifyContent: "flex-end",
   },
   circleImgContainer: {
-    flexDirection: 'row'
+    flexDirection: "row",
   },
   img: {
     width: 48,
@@ -132,14 +162,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: SIZES.font,
     paddingVertical: SIZES.base,
     backgroundColor: COLORS.white,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     ...SHADOWS.light,
-    maxWidth: '50%',
-    elevation: 1
+    maxWidth: "50%",
+    elevation: 1,
   },
   jobsPrice: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  }
-})
+    flexDirection: "row",
+    alignItems: "center",
+  },
+});

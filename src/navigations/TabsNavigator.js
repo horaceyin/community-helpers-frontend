@@ -1,5 +1,5 @@
 // import React, {useContext} from "react";
-import {StyleSheet, View, Image, TouchableOpacity} from 'react-native';
+import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { COLORS } from "../../constants";
 import { HomeScreen, HelpersListScreen, NewJobScreen } from "../screens";
@@ -8,19 +8,14 @@ import { selectIsLogin } from "../features/AuthSlice";
 
 const Tab = createBottomTabNavigator();
 
-const MyTabBarButton = ({children, onPress}) => (
-  <TouchableOpacity
-    style={styles.tabBarButtonContainer}
-    onPress={onPress}>
-
-    <View style={styles.tabBarButton}>
-      {children}
-    </View>
+const MyTabBarButton = ({ children, onPress }) => (
+  <TouchableOpacity style={styles.tabBarButtonContainer} onPress={onPress}>
+    <View style={styles.tabBarButton}>{children}</View>
   </TouchableOpacity>
 );
 
-const getIconColor = focused => ({
-  tintColor: focused ? COLORS.tabSelected : COLORS.tabNotSelected
+const getIconColor = (focused) => ({
+  tintColor: focused ? COLORS.tabSelected : COLORS.tabNotSelected,
 });
 
 const TabsNavigator = () => {
@@ -31,66 +26,78 @@ const TabsNavigator = () => {
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
-        tabBarStyle: styles.tabBar
-      }}>
-
-      <Tab.Screen name="Home" 
+        // tabBarStyle: styles.tabBar
+        tabBarStyle: { display: "none" }, // <<<<<<<
+      }}
+    >
+      <Tab.Screen
+        name="Home"
         component={HomeScreen}
         options={{
-          tabBarIcon: ({focused}) => (
+          tabBarIcon: ({ focused }) => (
             <View style={styles.tabIconContainer}>
-              <Image 
+              <Image
                 source={require("../../assets/tab-icons/home.png")}
                 resizeMode="contain"
-                style={[styles.tabIcon, getIconColor(focused)]}/>
+                style={[styles.tabIcon, getIconColor(focused)]}
+              />
             </View>
           ),
           tabBarItemStyle: {
-            height: 0
-          }
+            height: 0,
+          },
         }}
-        />
+      />
 
-      {isLogin &&
-      <Tab.Screen name="NewJobs" 
-        component={NewJobScreen}
-        options={{
-          tabBarIcon: ({focused}) => (
-            <Image
-              source={require("../../assets/tab-icons/plus.png")}
-              resizeMode="contain"
-              style={[styles.plus, {tintColor: focused ? COLORS.plusSelected : COLORS.plusNotSelected}]}
-            />
-          ),
-          tabBarButton: (props) => (
-            <MyTabBarButton {...props}/>
-          ),
-          tabBarItemStyle: {
-            height: 0
-          }
-        }}
-      />}
-
-      {isLogin &&
-      <Tab.Screen name="HelpersList" 
-        component={HelpersListScreen}
-        options={{
-          tabBarIcon: ({focused}) => (
-            <View style={styles.tabIconContainer}>
-              <Image 
-                source={require("../../assets/tab-icons/help.png")}
+      {isLogin && (
+        <Tab.Screen
+          name="NewJobs"
+          component={NewJobScreen}
+          options={{
+            tabBarIcon: ({ focused }) => (
+              <Image
+                source={require("../../assets/tab-icons/plus.png")}
                 resizeMode="contain"
-                style={[styles.tabIcon, getIconColor(focused)]}/>
-            </View>
-          ),
-          tabBarItemStyle: {
-            height: 0
-          }
-        }}
-        />}
+                style={[
+                  styles.plus,
+                  {
+                    tintColor: focused
+                      ? COLORS.plusSelected
+                      : COLORS.plusNotSelected,
+                  },
+                ]}
+              />
+            ),
+            tabBarButton: (props) => <MyTabBarButton {...props} />,
+            tabBarItemStyle: {
+              height: 0,
+            },
+          }}
+        />
+      )}
 
+      {isLogin && (
+        <Tab.Screen
+          name="HelpersList"
+          component={HelpersListScreen}
+          options={{
+            tabBarIcon: ({ focused }) => (
+              <View style={styles.tabIconContainer}>
+                <Image
+                  source={require("../../assets/tab-icons/help.png")}
+                  resizeMode="contain"
+                  style={[styles.tabIcon, getIconColor(focused)]}
+                />
+              </View>
+            ),
+            tabBarItemStyle: {
+              height: 0,
+            },
+          }}
+        />
+      )}
     </Tab.Navigator>
-  )
+  );
 };
 
 const styles = StyleSheet.create({
@@ -108,7 +115,7 @@ const styles = StyleSheet.create({
     shadowColor: COLORS.dark,
     shadowOffset: {
       height: 6,
-      width: 0
+      width: 0,
     },
     shadowOpacity: 0.1,
     shadowRadius: 3,
@@ -118,20 +125,20 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
   },
-  tabIconContainer:{
+  tabIconContainer: {
     position: "absolute",
     alignItems: "center",
     justifyContent: "center",
-    top: 12
+    top: 12,
   },
   tabBarButtonContainer: {
     // top: -20,
     alignItems: "center",
-    justifyContent: "center",//
+    justifyContent: "center", //
     shadowColor: COLORS.dark,
     shadowOffset: {
       height: 6,
-      width: 0
+      width: 0,
     },
     shadowOpacity: 0.1,
     shadowRadius: 3,
@@ -141,12 +148,12 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: COLORS.tabButton
+    backgroundColor: COLORS.tabButton,
   },
   plus: {
     width: 32,
-    height: 32
-  }
+    height: 32,
+  },
 });
 
 export default TabsNavigator;

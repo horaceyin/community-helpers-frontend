@@ -1,134 +1,160 @@
-
 import * as SecureStore from "expo-secure-store";
-import { tokenName, userInfoName } from '../../config';
+import { tokenName, userInfoName } from "../../config";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    isLogin: false,
-    userToken: null,
-    userInfo: null,
-    loginIsLoading: false,
-    isLoading: true,
-    loginError: null
+  isLogin: false,
+  userToken: null,
+  userInfo: null,
+  loginIsLoading: false,
+  isLoading: true,
+  loginError: null,
 };
 
 export const checkSignIn = createAsyncThunk(
-    'auth/checkSignIn',
-    async (_, {thunkAPI}) => {
-        try{
-            let token = await SecureStore.getItemAsync(tokenName);
-            let userInfo = await SecureStore.getItemAsync(userInfoName);
-            userInfo = JSON.parse(userInfo);
-            return {token, userInfo};
+  "auth/checkSignIn",
+  async ({ navigation, getMyInfo }, { thunkAPI }) => {
+    let token = await SecureStore.getItemAsync(tokenName);
+    let userInfo = null;
+    let tokenExpiredMsg = "Token expired. Please login again";
+
+    if (token === null) return { token, userInfo };
+
+    await getMyInfo({
+      onError: (error) => {
+        token = null;
+      },
+      onCompleted: (result) => {
+        userInfo = result.me;
+        if (!userInfo.district) {
+          navigation.reset({ index: 0, routes: [{ name: "District" }] });
         }
-        catch(error){
-            let fetchTokenErrorMsg = 'Fail to fetch user token and info';
-            return thunkAPI.rejectWithValue(fetchTokenErrorMsg);
-        }
-    }
+        // else if (userInfo.interests.length === 0) {
+        //   navigation.reset({ index: 0, routes: [{ name: "Interests" }] });
+        // }
+      },
+    });
+
+    if (!token) await SecureStore.deleteItemAsync(tokenName);
+
+    return { token, userInfo, tokenExpiredMsg };
+  }
 );
 
 export const appLogin = createAsyncThunk(
-    'auth/appLogin',
-    async ({ loginMutation, navigation, username, password }, thunkAPI) => {
-        try{
-            let result = await loginMutation({
-                variables: {username: username, password: password}
-            });
-            
-            let user_token = result.data.login.access_token;
-            let user_info = result.data.login.user;
+  "auth/appLogin",
+  async ({ loginMutation, navigation, username, password }, thunkAPI) => {
+    let user_token = null;
+    let loginErrorMsg = "Wrong user name or password, try again.";
 
-            await SecureStore.setItemAsync(tokenName, user_token);
-            await SecureStore.setItemAsync(userInfoName, JSON.stringify(user_info));
+    await loginMutation({
+      variables: { username: username, password: password },
+      onError: (error) => {
+        console.log(`Apollo error: ${error.message}`);
+      },
+      onCompleted: async (result) => {
+        user_token = result.login.access_token;
+        await SecureStore.setItemAsync(tokenName, user_token);
+      },
+    });
 
-            navigation.replace('Root');
-
-            return {user_token, user_info};
-
-        }
-        catch(error){
-            let loginErrorMsg = 'Wrong user name or password, try again.';
-            return thunkAPI.rejectWithValue(loginErrorMsg);
-        }
+    if (user_token) {
+      navigation.reset({ index: 0, routes: [{ name: "Root" }] });
+      return { user_token };
     }
+    return thunkAPI.rejectWithValue(loginErrorMsg);
+  }
 );
 
 export const appLogout = createAsyncThunk(
-    'auth/appLogout',
-    async () => {
-        await SecureStore.deleteItemAsync(tokenName);
-        await SecureStore.deleteItemAsync(userInfoName);
-        return false;
-    }
+  "auth/appLogout",
+  async ({ navigation }) => {
+    await SecureStore.deleteItemAsync(tokenName);
+    console.log("logout");
+    navigation.reset({ index: 0, routes: [{ name: "Root" }] });
+    return false;
+  }
 );
 
 export const authSlice = createSlice({
-    name: 'auth',
-    initialState,
-    reducers: {
-        resetLoginState: (state) => {
-            state.loginError = null;
-        }
+  name: "auth",
+  initialState,
+  reducers: {
+    resetLoginState: (state) => {
+      state.loginError = null;
     },
-    extraReducers(builder) {
-        builder
-            .addCase(checkSignIn.pending, (state, action) => {
-                state.isLoading = true;
-            })
-            .addCase(checkSignIn.fulfilled, (state, action) => {
-                let {token, userInfo} = action.payload;
-                
-                if(userInfo && token){
-                    state.userToken = token;
-                    state.userInfo = userInfo;
-                    state.isLogin = true;
-                }
-                else{
-                    state.userToken = null;
-                    state.userInfo = null;
-                    state.isLogin = false;
-                }
-                state.isLoading = false;
-            })
-            .addCase(checkSignIn.rejected, (state, action) => {
-                console.log(`${JSON.stringify(action.payload)}`);
-                alert(`${JSON.stringify(action.payload)}`);
-            })
-            .addCase(appLogin.pending, (state, action) => {
-                state.loginIsLoading = true;
-                state.loginError = null;
-            })
-            .addCase(appLogin.fulfilled, (state, action) => {
-                let {user_token, user_info} = action.payload;
-                state.userToken = user_token;
-                state.userInfo = user_info;
-                state.isLogin = true;
-                state.loginError = null;
-                state.loginIsLoading = false;
-            })
-            .addCase(appLogin.rejected, (state, action) => {
-                state.loginError = action.payload;
-                state.loginIsLoading = false;
-            })
-            .addCase(appLogout.fulfilled, (state, action) => {
-                state.userInfo = null;
-                state.userToken = null;
-                state.isLogin = action.payload;
-            });
-    }
+  },
+  extraReducers(builder) {
+    builder
+      .addCase(checkSignIn.pending, (state, action) => {
+        state.isLoading = true;
+        console.log("🚀 ~ file: checkSignIn.pending ~ action");
+      })
+      .addCase(checkSignIn.fulfilled, (state, action) => {
+        let { token, userInfo, tokenExpiredMsg } = action.payload;
+
+        if (userInfo && token) {
+          state.userToken = token;
+          state.userInfo = userInfo;
+          state.isLogin = true;
+        } else {
+          if (tokenExpiredMsg) alert(tokenExpiredMsg);
+          state.userToken = token;
+          state.userInfo = userInfo;
+          state.isLogin = false;
+        }
+        state.isLoading = false;
+        console.log("🚀 ~ file: checkSignIn.fulfilled ~ action");
+      })
+      // .addCase(checkSignIn.rejected, (state, action) => {
+      //   // action.payload = "Fail to fetch user token and info"
+      //   console.log(`${JSON.stringify(action.error.message)}`);
+      //   alert(`${JSON.stringify(action.error.message)}`);
+      //   console.log("🚀 ~ file: checkSignIn.rejected ~ action");
+      // })
+      .addCase(appLogin.pending, (state, action) => {
+        state.loginIsLoading = true;
+        state.loginError = null;
+        console.log("🚀 ~ file: appLogin.pending ~ action");
+      })
+      .addCase(appLogin.fulfilled, (state, action) => {
+        // let { user_token, user_info } = action.payload;
+        let { user_token } = action.payload;
+        state.userToken = user_token;
+        state.loginError = null;
+        state.loginIsLoading = false;
+        console.log("🚀 ~ file: appLogin.fulfilled ~ action");
+      })
+      .addCase(appLogin.rejected, (state, action) => {
+        state.loginError = action.payload;
+        state.loginIsLoading = false;
+        console.log("🚀 ~ file: appLogin.rejected ~ action");
+      })
+      .addCase(appLogout.pending, (state, action) => {
+        console.log("🚀 ~ file: appLogout.pending ~ action");
+      })
+      .addCase(appLogout.rejected, (state, action) => {
+        console.log("🚀 ~ file: appLogout.rejected ~ action");
+      })
+      .addCase(appLogout.fulfilled, (state, action) => {
+        state.userInfo = null;
+        state.userToken = null;
+        state.isLogin = action.payload;
+        console.log("🚀 ~ file: appLogout.fulfilled ~ action");
+      });
+  },
 });
 
-export const { resetLoginState } = authSlice.actions; 
+export const { resetLoginState } = authSlice.actions;
 
-export const selectIsLoading = state => state.auth.isLoading;
+export const selectIsLoading = (state) => state.auth.isLoading;
 
-export const selectIsLogin = state => state.auth.isLogin;
+export const selectIsLogin = (state) => state.auth.isLogin;
 
-export const selectLoginIsLoading = state => state.auth.loginIsLoading;
+export const selectLoginIsLoading = (state) => state.auth.loginIsLoading;
 
-export const selectUserToken = state => state.auth.userToken;
+export const selectUserToken = (state) => state.auth.userToken;
 
-export const selectUserInfo = state => state.auth.userInfo;
+export const selectUserInfo = (state) => state.auth.userInfo;
 
 export default authSlice.reducer;

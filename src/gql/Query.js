@@ -3,7 +3,16 @@ import { gql } from "@apollo/client";
 export const ME = gql`
   query Me {
     me {
+      id
       username
+      displayName
+      avatar
+      email
+      address
+      phone
+      district
+      city
+      country
     }
   }
 `;
@@ -18,7 +27,7 @@ export const FIND_MATCH_BY_STATE = gql`
         title
         description
         helpRequestDatetime
-        helpSeeker{
+        helpSeeker {
           username
         }
       }
@@ -38,7 +47,7 @@ export const FIND_MATCH_BY_STATE_IN_HOME = gql`
         location
         category
         helpRequestDatetime
-        helpSeeker{
+        helpSeeker {
           displayName
         }
       }
@@ -46,23 +55,57 @@ export const FIND_MATCH_BY_STATE_IN_HOME = gql`
   }
 `;
 
-export const FIND_ALL_JOBS_IN_HOME = gql`
-  query HelpRequests {
-    helpRequests {
-      category
+export const GET_RECOMMENDED_JOBS = gql`
+  query GetRecommendedHelpRequests(
+    $userId: Float!
+    $start: Float!
+    $end: Float!
+  ) {
+    getRecommendedHelpRequests(userId: $userId, start: $start, end: $end) {
+      id
       title
       price
+      images
+      category
       location
-      id
-      helpSeeker {
-        displayName
-      }
       description
+      creationDatetime
       helpRequestDatetime
-      helpRequestMatchings {
+      helpSeeker {
         id
-        state
+        displayName
+        district
+        avatar
+        phone
       }
+      helperRating
+      isDislike
+      isLike
+      recommendationOrder
+    }
+  }
+`;
+
+export const FIND_ALL_JOBS_IN_HOME = gql`
+  query HelpRequests($take: Int, $skip: Int) {
+    helpRequests(take: $take, skip: $skip) {
+      id
+      title
+      price
+      images
+      category
+      location
+      description
+      creationDatetime
+      helpRequestDatetime
+      helpSeeker {
+        id
+        displayName
+        district
+        avatar
+        phone
+      }
+      helperRating
     }
   }
 `;

@@ -6,6 +6,8 @@ import HomeHeader from "./HomeHeader";
 import JobCard from "./JobCard";
 import { SubInfo } from "./SubInfo";
 import MyJobCard from "./MyJobCard";
+import { RoundTextInput } from "./TextInput";
+
 export {
   FocusedStatusBar,
   HomeHeader,
@@ -15,5 +17,6 @@ export {
   RectButton,
   DetailsCategories,
   DetailsDesc,
-  MyJobCard
-}
+  MyJobCard,
+  RoundTextInput,
+};

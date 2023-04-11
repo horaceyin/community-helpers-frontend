@@ -1,31 +1,46 @@
-import { useFonts } from 'expo-font';
-import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
-import { COLORS } from './constants';
-import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink } from '@apollo/client';
-import { setContext } from '@apollo/client/link/context';
-import MainNavigator from './src/navigations/MainNavigator';
+import { useFonts } from "expo-font";
+import { StyleSheet, Text, View, SafeAreaView } from "react-native";
+import { COLORS } from "./constants";
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  createHttpLink,
+} from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
+import MainNavigator from "./src/navigations/MainNavigator";
 import * as SecureStore from "expo-secure-store";
-import { AppProvider } from './AppContext';
-import { BASE_URL, tokenName } from './config';
-
-import { store } from './src/store';
-import { Provider } from 'react-redux';
-import { AppGuard } from './src/features/AppGuard';
+import { AppProvider } from "./AppContext";
+import { BASE_URL, tokenName } from "./config";
+import { store } from "./src/store";
+import { Provider } from "react-redux";
+import { AppGuard } from "./src/features/AppGuard";
+import { useEffect, useState, useRef } from "react";
+import { Provider as PaperProvider, DefaultTheme } from "react-native-paper";
+import { isDevice } from "expo-device";
+import * as Notifications from "expo-notifications";
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 const httpLink = createHttpLink({
   uri: BASE_URL,
   // uri: 'http://192.168.0.169:3000/graphql',
 });
 
-const authLink =  setContext( async (_, { headers }) => {
+const authLink = setContext(async (_, { headers }) => {
   const token = await SecureStore.getItemAsync(tokenName);
-  //console.log(`authLink: ${token}`);
+  // console.log(`authLink: ${token}`);
   return {
-      headers: {
-          ...headers,
-          authorization: token ? `Bearer ${token}` : "",
-      }
-  }
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : "",
+    },
+  };
 });
 
 // Initialize Apollo Client
@@ -36,9 +51,94 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
+async function registerForPushNotificationsAsync() {
+  let token;
+  if (isDevice) {
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== "granted") {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== "granted") {
+      alert("Failed to get push token for push notification!");
+      return;
+    }
+    token = (await Notifications.getExpoPushTokenAsync()).data;
+    console.log("This is the token: " + token);
+  } else {
+    // alert("Must use physical device for Push Notifications");
+  }
+
+  if (Platform.OS === "android") {
+    Notifications.setNotificationChannelAsync("default", {
+      name: "default",
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: "#FF231F7C",
+    });
+  }
+
+  return token;
+}
+
 // entry point
 export default function App() {
-  
+  const theme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      primary: "#1999",
+      accent: "#f1c40f",
+      background: "#f2eded",
+    },
+    roundness: 10,
+    fonts: {
+      ...DefaultTheme.fonts,
+      regular: {
+        fontFamily: "Roboto-Regular",
+        fontWeight: "normal",
+      },
+      medium: {
+        fontFamily: "Roboto-Medium",
+        fontWeight: "normal",
+      },
+    },
+    animation: {
+      scale: 1.0,
+    },
+    dark: true,
+  };
+
+  const [expoPushToken, setExpoPushToken] = useState("");
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
+
+  useEffect(() => {
+    registerForPushNotificationsAsync().then((token) =>
+      setExpoPushToken(token)
+    );
+
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        setNotification(notification);
+      });
+
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        console.log(response);
+      });
+
+    return () => {
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
+      Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
+
   const [appLoaded] = useFonts({
     InterBold: require("./assets/fonts/Inter-Bold.ttf"),
     InterSemiBold: require("./assets/fonts/Inter-SemiBold.ttf"),
@@ -47,18 +147,18 @@ export default function App() {
     InterLight: require("./assets/fonts/Inter-Light.ttf"),
   });
 
-  if (!appLoaded) return null
+  if (!appLoaded) return null;
 
   return (
-    <ApolloProvider client={client}> 
-      <Provider store={store}>
-        <AppGuard>
+    <ApolloProvider client={client}>
+      <PaperProvider theme={theme}>
+        <Provider store={store}>
           <View style={styles.container}>
             {/* <StatusBar style="auto" /> */}
-            <MainNavigator/>
+            <MainNavigator />
           </View>
-        </AppGuard>
-      </Provider>
+        </Provider>
+      </PaperProvider>
     </ApolloProvider>
   );
 }
@@ -72,6 +172,6 @@ const styles = StyleSheet.create({
   },
   my: {
     flex: 1,
-    backgroundColor: '#000',
-  }
+    backgroundColor: "#000",
+  },
 });
