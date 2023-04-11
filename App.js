@@ -17,7 +17,7 @@ import { Provider } from "react-redux";
 import { AppGuard } from "./src/features/AppGuard";
 import { useEffect, useState, useRef } from "react";
 import { Provider as PaperProvider, DefaultTheme } from "react-native-paper";
-import * as Device from "expo-device";
+import { isDevice } from "expo-device";
 import * as Notifications from "expo-notifications";
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -34,7 +34,7 @@ const httpLink = createHttpLink({
 
 const authLink = setContext(async (_, { headers }) => {
   const token = await SecureStore.getItemAsync(tokenName);
-  //console.log(`authLink: ${token}`);
+  // console.log(`authLink: ${token}`);
   return {
     headers: {
       ...headers,
@@ -53,7 +53,7 @@ const client = new ApolloClient({
 
 async function registerForPushNotificationsAsync() {
   let token;
-  if (Device.isDevice) {
+  if (isDevice) {
     const { status: existingStatus } =
       await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
@@ -68,7 +68,7 @@ async function registerForPushNotificationsAsync() {
     token = (await Notifications.getExpoPushTokenAsync()).data;
     console.log("This is the token: " + token);
   } else {
-    alert("Must use physical device for Push Notifications");
+    // alert("Must use physical device for Push Notifications");
   }
 
   if (Platform.OS === "android") {

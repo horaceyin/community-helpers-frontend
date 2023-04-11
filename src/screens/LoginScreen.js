@@ -26,6 +26,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 const loginScreenConfig = {
   loginButtonText: "Login",
+  logoutButtonText: "Logout",
   registerButtonText: "Register",
   buttonWidth: "48%",
   usernamePlaceholder: "Username",
@@ -71,15 +72,13 @@ const LoginScreen = ({ navigation, route }) => {
           />
           Hi, {userInfo && userInfo.displayName}
         </Text>
-        <Pressable
-          style={styles.logoutButton}
-          onPress={() => {
-            dispatch(appLogout());
-            navigation.replace("Root");
-          }}
-        >
-          <Text style={styles.logoutButtonText}>Logout</Text>
-        </Pressable>
+
+        <RectButton
+          buttonText={loginScreenConfig.logoutButtonText}
+          handlePress={() => dispatch(appLogout({ navigation }))}
+          extraContainerStyle={styles.logoutButton}
+          extraTextStyle={styles.logoutButtonText}
+        />
       </View>
     );
   }

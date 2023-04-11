@@ -13,7 +13,6 @@ export const LOGIN = gql`
         phone
         address
         district
-        interests
       }
     }
   }

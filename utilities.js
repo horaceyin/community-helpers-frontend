@@ -1,62 +1,64 @@
 // for HomeScreen.js
 
+const dataTimeSeparator = "$";
+
 const padTo2Digits = (num) => {
-  return num.toString().padStart(2, '0');
+  return num.toString().padStart(2, "0");
 };
 
 const formatDate = (date) => {
-  return (
+  const dateTime =
     [
       padTo2Digits(date.getDate()),
       padTo2Digits(date.getMonth() + 1),
-      date.getFullYear()
-    ].join('-') +
-    '$' +
+      date.getFullYear(),
+    ].join("-") +
+    dataTimeSeparator +
     [
       padTo2Digits(date.getHours()),
       padTo2Digits(date.getMinutes()),
       padTo2Digits(date.getSeconds()),
-    ].join(':')
-  );
+    ].join(":");
+
+  return dateTime.split(dataTimeSeparator);
 };
 
-const formatJobs = (jobs, fetchRecommended, jobsPics) => {
-  return (
-    jobs.map(data => {
-      var job = null;
-      const retJob = {};
+const formatJobs = (jobs, isLogin, jobsPics) => {
+  return jobs.map((job) => {
+    // **********************************************
+    // id, title, price, images(handle later), location, description, helpSeeker, helperRating, (isLike, isDislike for isLogin is true) can remain the same
+    // category, creationDatetime, helpRequestDatetime, images need to be converted
+    // handle the case if type of category changes
+    let retJob = JSON.stringify(job);
+    retJob = JSON.parse(retJob);
 
-      retJob.id = data.id;
+    retJob.image = jobsPics[Math.floor(Math.random() * jobsPics.length)];
+    // helperSeeker display name
+    console.log("creating a job");
 
-      if (fetchRecommended) job = data.helpRequest;
-      else {
-        for (var i=0; i < data.helpRequestMatchings.length; i++){
-          if (data.helpRequestMatchings[i].state == "ongoing") return null;
-        }
-        job = data;
-      }
+    const [helpRequestDate, helpRequestTime] = formatDate(
+      new Date(job.helpRequestDatetime)
+    );
+    const [creationDate, creationTime] = formatDate(
+      new Date(job.creationDatetime)
+    );
 
-      retJob.image = jobsPics[Math.floor(Math.random() * jobsPics.length)];
-      retJob.description = job.description;
-      retJob.helpSeeker = job.helpSeeker.displayName;
-      retJob.location = job.location;
-      retJob.price = job.price;
-      retJob.title = job.title;
-      retJob.categories = job.category.split(",");
-
-      const jobDateAndTime = formatDate(new Date(job.helpRequestDatetime)).split("$");
-      retJob.jobsDate = jobDateAndTime[0];
-      retJob.jobsTime = jobDateAndTime[1];
-
-      return retJob;
-    })
-  );
+    retJob.helpRequestDate = helpRequestDate;
+    retJob.helpRequestTime = helpRequestTime;
+    retJob.creationDate = creationDate;
+    retJob.creationTime = creationTime;
+    retJob.categories = job.category.split(",");
+    return retJob;
+  });
 };
 
-export const createDataArray = (backendData, state, jobsPics) => {
-    //console.log(backendData[0].helpRequestMatchings)
-    var result = formatJobs(backendData, state, jobsPics);
-    result = result.filter(job => job != null)
-    console.log(result, "555")
-    return result
+export const createRenderDataArray = (backendData, loginState, jobsPics) => {
+  return new Promise((resolve, reject) => {
+    try {
+      let result = formatJobs(backendData, loginState, jobsPics);
+      resolve(result);
+    } catch (error) {
+      reject(error);
+    }
+  });
 };

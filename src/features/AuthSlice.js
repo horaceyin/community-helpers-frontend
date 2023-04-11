@@ -26,14 +26,12 @@ export const checkSignIn = createAsyncThunk(
       },
       onCompleted: (result) => {
         userInfo = result.me;
-        if (userInfo.interests) {
-          console.log(userInfo, "!!");
-        }
         if (!userInfo.district) {
           navigation.reset({ index: 0, routes: [{ name: "District" }] });
-        } else if (userInfo.interests.length === 0) {
-          navigation.reset({ index: 0, routes: [{ name: "Interests" }] });
         }
+        // else if (userInfo.interests.length === 0) {
+        //   navigation.reset({ index: 0, routes: [{ name: "Interests" }] });
+        // }
       },
     });
 
@@ -61,17 +59,22 @@ export const appLogin = createAsyncThunk(
     });
 
     if (user_token) {
-      navigation.replace("Root");
+      navigation.reset({ index: 0, routes: [{ name: "Root" }] });
       return { user_token };
     }
     return thunkAPI.rejectWithValue(loginErrorMsg);
   }
 );
 
-export const appLogout = createAsyncThunk("auth/appLogout", async () => {
-  await SecureStore.deleteItemAsync(tokenName);
-  return false;
-});
+export const appLogout = createAsyncThunk(
+  "auth/appLogout",
+  async ({ navigation }) => {
+    await SecureStore.deleteItemAsync(tokenName);
+    console.log("logout");
+    navigation.reset({ index: 0, routes: [{ name: "Root" }] });
+    return false;
+  }
+);
 
 export const authSlice = createSlice({
   name: "auth",
@@ -118,8 +121,6 @@ export const authSlice = createSlice({
         // let { user_token, user_info } = action.payload;
         let { user_token } = action.payload;
         state.userToken = user_token;
-        // state.userInfo = user_info;
-        state.isLogin = true;
         state.loginError = null;
         state.loginIsLoading = false;
         console.log("🚀 ~ file: appLogin.fulfilled ~ action");
@@ -129,10 +130,17 @@ export const authSlice = createSlice({
         state.loginIsLoading = false;
         console.log("🚀 ~ file: appLogin.rejected ~ action");
       })
+      .addCase(appLogout.pending, (state, action) => {
+        console.log("🚀 ~ file: appLogout.pending ~ action");
+      })
+      .addCase(appLogout.rejected, (state, action) => {
+        console.log("🚀 ~ file: appLogout.rejected ~ action");
+      })
       .addCase(appLogout.fulfilled, (state, action) => {
         state.userInfo = null;
         state.userToken = null;
         state.isLogin = action.payload;
+        console.log("🚀 ~ file: appLogout.fulfilled ~ action");
       });
   },
 });

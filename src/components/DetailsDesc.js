@@ -3,9 +3,9 @@ import { React, useState } from "react";
 import { JobsPrice, JobsTitle } from "./SubInfo";
 import { COLORS, FONTS, SIZES } from "../../constants";
 
-const DetailsDesc = ({ data }) => {
+const DetailsDesc = ({ helpRequest }) => {
   const sliceSize = 50;
-  const [text, setText] = useState(data.description.slice(0, sliceSize));
+  const [text, setText] = useState(helpRequest.description.slice(0, sliceSize));
   const [readMore, setReadMore] = useState(false);
   return (
     <>
@@ -18,14 +18,14 @@ const DetailsDesc = ({ data }) => {
         }}
       >
         <JobsTitle
-          title={data.title}
-          subTitle={data.helpSeeker}
-          location={data.location}
+          title={helpRequest.title}
+          subTitle={helpRequest.helpSeeker.displayName}
+          location={helpRequest.location}
           titleSize={SIZES.extraLarge}
           subTitleSize={SIZES.medium}
           locationSize={SIZES.small}
         />
-        <JobsPrice price={data.price} />
+        <JobsPrice price={helpRequest.price} />
       </View>
 
       <View style={{ marginVertical: SIZES.extraLarge * 1.5 }}>
@@ -58,10 +58,10 @@ const DetailsDesc = ({ data }) => {
               }}
               onPress={() => {
                 if (!readMore) {
-                  setText(data.description);
+                  setText(helpRequest.description);
                   setReadMore(true);
                 } else {
-                  setText(data.description.slice(0, 50));
+                  setText(helpRequest.description.slice(0, 50));
                   setReadMore(false);
                 }
               }}

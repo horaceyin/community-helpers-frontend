@@ -46,7 +46,7 @@ const MainNavigator = () => {
           <Stack.Screen name="Registration" component={RegistrationScreen} />
           <Stack.Screen name="Interests" component={InterestsScreen} />
           <Stack.Screen name="District" component={DistrictScreen} />
-          <Stack.Screen name="Address" component={AddressDropDown} />
+          {/* <Stack.Screen name="Address" component={AddressDropDown} /> */}
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaView>

@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, SectionList, FlatList } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   SIZES,
   SPACING,
@@ -29,9 +29,9 @@ const InterestsScreen = ({ navigation }) => {
 
   const userInfo = useSelector(selectUserInfo);
   const [errorLoading, setErrorLoading] = useState(false);
-  const [updateUserMutation, updateUserResult] = useMutation(UPDATE_USER, {
-    errorPolicy: "all",
-  });
+  const [updateUserMutation, updateUserResult] = useMutation(UPDATE_USER);
+
+  useEffect(() => {}, []);
 
   const handleNextButtonPress = async () => {
     await updateUserMutation({
@@ -62,7 +62,7 @@ const InterestsScreen = ({ navigation }) => {
     );
   };
 
-  const handleInterestPress = (interest) => {
+  const handleInterestPress = (interest, index) => {
     if (selectedInterests.includes(interest)) {
       //remove interest
       setSelectedInterests(
@@ -81,7 +81,7 @@ const InterestsScreen = ({ navigation }) => {
     return (
       <RectButton
         buttonText={item}
-        handlePress={() => handleInterestPress(item)}
+        handlePress={() => handleInterestPress(item, index)}
         extraContainerStyle={{
           backgroundColor: backgroundColor,
           ...styles.bubbleButton,
