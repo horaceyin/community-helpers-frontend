@@ -19,6 +19,8 @@ import { useEffect, useState, useRef } from "react";
 import { Provider as PaperProvider, DefaultTheme } from "react-native-paper";
 import { isDevice } from "expo-device";
 import * as Notifications from "expo-notifications";
+import { createUploadLink } from 'apollo-upload-client';
+
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -27,7 +29,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
-const httpLink = createHttpLink({
+const httpLink = createUploadLink({
   uri: BASE_URL,
   // uri: 'http://192.168.0.169:3000/graphql',
 });

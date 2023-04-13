@@ -5,7 +5,11 @@ import {
   Keyboard,
   ScrollView,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import ActionSheet from 'react-native-actionsheet';
+import * as ImagePicker from 'expo-image-picker';
+import { ReactNativeFile } from "apollo-upload-client";
+import * as mime from 'react-native-mime-types';
+import React, { useState, useEffect, useRef } from "react";
 import { COLORS, FONTS, SHADOWS, SIZES, SPACING } from "../../constants";
 import { RoundTextInput } from "../components";
 import { RectButton } from "../components/Button";
@@ -18,6 +22,8 @@ import {
   Text,
   ActivityIndicator,
   MD2Colors,
+  Button,
+  Avatar
 } from "react-native-paper";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useMutation } from "@apollo/client";
@@ -34,7 +40,50 @@ const registrationScreenConfig = {
   buttonWidth: "50%",
   activityIndicatorSize: 36,
 };
+
+const ActionSheetConfig = {
+  BUTTONS: ['Take Photo', 'Choose From Library', 'Cancel'],
+  TITLE: "Select a Photo",
+  CANCELBUTTONINDEX: 2,
+}
+
+function generateRNFile(uri){
+  return uri ? new ReactNativeFile({
+   uri,
+   type: mime.lookup(uri) || 'image',
+   name: uri,
+  }): null;
+}
+
+function ProfileIcon(props) {
+ if(props.image){
+   if(props.image.assets[0].uri){
+     return <Avatar.Image size={64} source={{uri: props.image.assets[0].uri}}/>
+   }
+ }
+
+ return <Avatar.Icon size={64} icon="account" />
+}
+
+function EditPhotoButton(props){
+ if(props.image){
+   return (
+     <Button icon="pen" mode="outlined" onPress={props.onClickAddImage} style={{width: '70%'}}>
+     Edit Your Image
+     </Button>
+     )
+ }
+
+ return (
+   <Button icon="pen" mode="outlined" onPress={props.onClickAddImage} style={{width: '70%'}}>
+   Add your avatar
+   </Button>
+ )
+}
+
 const RegistrationScreen = ({ navigation }) => {
+
+  let actionSheet = useRef()
   const [signUpMutation, signUpResult] = useMutation(SIGN_UP);
   const [loginMutation, loginResult] = useMutation(LOGIN);
   const dispatch = useDispatch();
@@ -75,6 +124,8 @@ const RegistrationScreen = ({ navigation }) => {
 
   const [nextButtonDisabled, setNextButtonDisabled] = useState(true);
 
+  const [image, setImage] = useState(null);
+
   useEffect(() => {
     if (
       username &&
@@ -110,6 +161,54 @@ const RegistrationScreen = ({ navigation }) => {
     birthdayUTC,
     displayName,
   ]);
+
+  const ActionSheetCallback = async (selectedIndex) => {
+    let permission;
+    let result;
+
+    switch(selectedIndex){
+      case 0:
+        permission = await ImagePicker.requestCameraPermissionsAsync();
+        if (permission.status !== 'granted') {
+          alert('Sorry, we need camera permissions to make this work!');
+          return
+        }
+
+        result = await ImagePicker.launchCameraAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: false,
+          aspect: [4, 3], 
+          quality: 1,
+        });
+
+        break;
+      case 1:
+
+        permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (permission.status !== 'granted') {
+          alert('Sorry, we need media library permissions to make this work!');
+          return
+        }
+
+        result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: false,
+          aspect: [4, 3], 
+        });
+
+        break;
+    }
+
+    
+    if (!result.canceled) {
+      console.log(result)
+      setImage(result);
+    }
+  }
+
+  const onClickAddImage = async () => {
+    actionSheet.current.show();
+  }
 
   const handleUsernameInput = (text) => {
     setUsername(text);
@@ -223,6 +322,8 @@ const RegistrationScreen = ({ navigation }) => {
       isEmailFormatValid
     );
 
+    const file = generateRNFile(image.assets[0].uri)
+
     await signUpMutation({
       variables: {
         newUserInput: {
@@ -235,8 +336,8 @@ const RegistrationScreen = ({ navigation }) => {
           gender: gender,
           displayName: displayName,
           district: null,
-          interests: [],
         },
+        file: file
       },
       onError: (error) => {
         setIsUsernameValid(false);
@@ -260,6 +361,17 @@ const RegistrationScreen = ({ navigation }) => {
             </Text>
           </View>
           <ScrollView style={styles.scrollView}>
+            <View style={
+                {
+                flexDirection: 'row', 
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                borderBottomWidth: 10, 
+                borderBottomColor: 'white'
+                }}>
+              <ProfileIcon image={image}/>
+              <EditPhotoButton onClickAddImage={onClickAddImage} image={image}/>
+            </View>
             <TextInput
               mode="outlined"
               label={"Username"}
@@ -461,6 +573,15 @@ const RegistrationScreen = ({ navigation }) => {
             RectButtonTextDisabled={styles.nextButtonTextDisabled}
           />
         </View>
+        <ActionSheet
+          ref={actionSheet}
+          title={ActionSheetConfig.TITLE}
+          options={ActionSheetConfig.BUTTONS}
+          cancelButtonIndex={2}
+          onPress={(index) => {
+            ActionSheetCallback(index)
+          }}
+        />
       </View>
     </TouchableWithoutFeedback>
   );

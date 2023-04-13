@@ -69,8 +69,8 @@ export const UPDATE_HELP_REQUEST = gql`
 `;
 
 export const SIGN_UP = gql`
-  mutation CreateNewUser($newUserInput: LoginUserInput!) {
-    signup(loginUserInput: $newUserInput) {
+  mutation CreateNewUser($newUserInput: LoginUserInput!, $file: Upload!) {
+    signup(loginUserInput: $newUserInput, file: $file) {
       id
       username
       displayName
@@ -84,7 +84,7 @@ export const SIGN_UP = gql`
 `;
 
 export const UPDATE_USER = gql`
-  mutation UpdateUser($updateUserInput: UserUpdateInput!, $userId: Float!) {
+  mutation UpdateUser($updateUserInput: UpdateUserInput!, $userId: Float!) {
     updateUser(updateUserInput: $updateUserInput, userId: $userId) {
       id
       username
@@ -94,7 +94,6 @@ export const UPDATE_USER = gql`
       phone
       address
       district
-      interests
     }
   }
 `;
