@@ -78,8 +78,30 @@ export const appLogin = createAsyncThunk(
 
 export const appLogout = createAsyncThunk(
   "auth/appLogout",
-  async ({ navigation }) => {
-    await SecureStore.deleteItemAsync(tokenName);
+  async ({ signoutMutation, signOutRefetch, signOutCalled, navigation }) => {
+    let expoToken = await SecureStore.getItemAsync("expoToken")
+    
+    if(expoToken){
+      if(signOutCalled){
+        signOutRefetch()
+      }else{
+        await signoutMutation({
+          variables: {
+            expoPushToken: expoToken
+          },
+          onError: (error) => {
+            console.log("bye")
+            console.log(`Apollo error: ${error.message}`);
+          },
+          onCompleted: async (result) => {
+            console.log("hello")
+            await SecureStore.deleteItemAsync(tokenName);
+            await SecureStore.deleteItemAsync("expoToken");
+          },
+        },)
+      }
+    }
+
     console.log("logout");
     navigation.reset({ index: 0, routes: [{ name: "Root" }] });
     return false;

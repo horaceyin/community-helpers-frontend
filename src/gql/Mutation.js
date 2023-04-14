@@ -18,6 +18,12 @@ export const LOGIN = gql`
   }
 `;
 
+export const SIGNOUT = gql`
+  mutation Signout($expoPushToken: String) {
+    signout(expoPushToken: $expoPushToken)
+  }
+`
+
 // export const CREATE_HELP_REQUEST = gql`
 //   mutation CreateHelpRequest(
 //     $title: String!

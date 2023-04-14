@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { COLORS, FONTS, SHADOWS, SIZES, SPACING } from "../../constants";
 import { useMutation, useLazyQuery } from "@apollo/client";
-import { LOGIN } from "../gql/Mutation";
+import { LOGIN, SIGNOUT } from "../gql/Mutation";
 import { FocusedStatusBar, RectButton, RoundTextInput } from "../components";
 import {
   appLogout,
@@ -42,7 +42,7 @@ const LoginScreen = ({ navigation, route }) => {
   const loginError = useSelector((state) => state.auth.loginError);
 
   const [loginMutation, loginResult] = useMutation(LOGIN);
-
+  const [signoutMutation, { loading: signOutLoading, error: signOutError, data: jobData, signOutRefetch, signOutCalled}] = useMutation(SIGNOUT)
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -75,7 +75,7 @@ const LoginScreen = ({ navigation, route }) => {
 
         <RectButton
           buttonText={loginScreenConfig.logoutButtonText}
-          handlePress={() => dispatch(appLogout({ navigation }))}
+          handlePress={() => dispatch(appLogout({ signoutMutation, signOutRefetch, signOutCalled ,navigation }))}
           extraContainerStyle={styles.logoutButton}
           extraTextStyle={styles.logoutButtonText}
         />
