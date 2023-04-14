@@ -47,8 +47,18 @@ export const appLogin = createAsyncThunk(
     let user_token = null;
     let loginErrorMsg = "Wrong user name or password, try again.";
 
+    let expoToken = await SecureStore.getItemAsync("expoToken")
+
+    if(!expoToken){
+      expoToken = null
+    }
+
     await loginMutation({
-      variables: { username: username, password: password },
+      variables: { 
+        username: username, 
+        password: password,
+        expoPushToken: expoToken
+      },
       onError: (error) => {
         console.log(`Apollo error: ${error.message}`);
       },

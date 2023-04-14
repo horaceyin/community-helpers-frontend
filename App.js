@@ -69,6 +69,7 @@ async function registerForPushNotificationsAsync() {
     }
     token = (await Notifications.getExpoPushTokenAsync()).data;
     console.log("This is the token: " + token);
+    await SecureStore.setItemAsync("expoToken", token);
   } else {
     // alert("Must use physical device for Push Notifications");
   }
