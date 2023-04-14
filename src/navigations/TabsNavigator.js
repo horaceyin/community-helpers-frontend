@@ -26,8 +26,8 @@ const TabsNavigator = () => {
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
-        // tabBarStyle: styles.tabBar
-        tabBarStyle: { display: "none" }, // <<<<<<<
+        tabBarStyle: styles.tabBar
+        //tabBarStyle: { display: "none" }, // <<<<<<<
       }}
     >
       <Tab.Screen

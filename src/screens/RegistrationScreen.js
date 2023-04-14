@@ -84,6 +84,7 @@ function EditPhotoButton(props){
 const RegistrationScreen = ({ navigation }) => {
 
   let actionSheet = useRef()
+  
   const [signUpMutation, signUpResult] = useMutation(SIGN_UP);
   const [loginMutation, loginResult] = useMutation(LOGIN);
   const dispatch = useDispatch();

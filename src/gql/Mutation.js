@@ -18,34 +18,50 @@ export const LOGIN = gql`
   }
 `;
 
+// export const CREATE_HELP_REQUEST = gql`
+//   mutation CreateHelpRequest(
+//     $title: String!
+//     $category: String!
+//     $description: String!
+//     $helpRequestDatetime: DateTime!
+//     $price: Float!
+//   ) {
+//     createHelpRequest(
+//       createHelpRequestInput: {
+//         title: $title
+//         category: $category
+//         description: $description
+//         helpRequestDatetime: $helpRequestDatetime
+//         price: $price
+//         # helpRequestDatetime: "2016-07-20T12:00:15.000Z"
+//       }
+//     ) {
+//       category
+//       creationDatetime
+//       description
+//       helpRequestDatetime
+//       helpSeekerId
+//       helperRating
+//       id
+//       location
+//       title
+//     }
+//   }
+// `;
+
 export const CREATE_HELP_REQUEST = gql`
-  mutation CreateHelpRequest(
-    $title: String!
-    $category: String!
-    $description: String!
-    $helpRequestDatetime: DateTime!
-    $price: Float!
+  mutation Mutation(
+    $createHelpRequestInput: CreateHelpRequestInput!
+    $files: [Upload!]!
   ) {
     createHelpRequest(
-      createHelpRequestInput: {
-        title: $title
-        category: $category
-        description: $description
-        helpRequestDatetime: $helpRequestDatetime
-        price: $price
-        # helpRequestDatetime: "2016-07-20T12:00:15.000Z"
-      }
+      createHelpRequestInput: $createHelpRequestInput
+      files: $files
     ) {
       category
       creationDatetime
       description
       helpRequestDatetime
-      # helpRequestMatchings{
-      #   id
-      # }
-      # helpSeeker{
-      #   id
-      # }
       helpSeekerId
       helperRating
       id
@@ -84,7 +100,7 @@ export const SIGN_UP = gql`
 `;
 
 export const UPDATE_USER = gql`
-  mutation UpdateUser($updateUserInput: UpdateUserInput!, $userId: Float!) {
+  mutation UpdateUser($updateUserInput: UpdateUserInput!, $userId: Int!) {
     updateUser(updateUserInput: $updateUserInput, userId: $userId) {
       id
       username

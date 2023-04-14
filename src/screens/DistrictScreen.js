@@ -23,10 +23,11 @@ const DistrictScreen = ({ route, navigation }) => {
   const [updateUserMutation, updateUserResult] = useMutation(UPDATE_USER);
 
   const handleDoneButtonPress = async () => {
+    console.log(typeof(selectedDistrict))
     await updateUserMutation({
       variables: {
         updateUserInput: {
-          district: { set: selectedDistrict },
+          district: selectedDistrict ,
         },
         userId: userInfo.id,
       },
@@ -36,6 +37,7 @@ const DistrictScreen = ({ route, navigation }) => {
       },
       onError: (error) => {
         setErrorLoading(true);
+        console.log(JSON.stringify(error, null, 2));
         console.log(`Apollo error: ${error.message}`);
       },
     });
