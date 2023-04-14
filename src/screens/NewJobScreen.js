@@ -182,7 +182,6 @@ const NewJobScreen = () => {
         break;
     }
 
-    console.log(result)
     if (!result.canceled) {
       for(let i = 0; i < result.assets.length; i++){
         setImages(images => [...images, result.assets[i].uri]);
