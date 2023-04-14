@@ -159,8 +159,6 @@ const NewJobScreen = () => {
 
         result = await ImagePicker.launchCameraAsync({
           mediaTypes: ImagePicker.MediaTypeOptions.Images,
-          allowsMultipleSelection: true,
-          selectionLimit: 4,
           aspect: [9, 16], 
         });
 
@@ -177,7 +175,7 @@ const NewJobScreen = () => {
           mediaTypes: ImagePicker.MediaTypeOptions.Images,
           allowsEditing: false,
           allowsMultipleSelection: true,
-          selectionLimit: 4,
+          selectionLimit: ActionSheetConfig.MAX_IMAGES - images.length,
           aspect: [9, 16], 
         });
 
@@ -254,7 +252,7 @@ const NewJobScreen = () => {
     <View style={styles.container}>
       <Text style={styles.pageTitle}>Create Help Request</Text>
       <ScrollView>
-        <Text style={styles.textInputTitle}>Descriptive images</Text>
+        <Text style={styles.textInputTitle}>Descriptive images (4 Images Max)</Text>
         <ImagesSection images={images} setCarouselIndex={setCarouselIndex}/>
         <ImageControls 
           onClickAddImage={onClickAddImage} 
