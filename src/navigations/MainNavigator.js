@@ -17,6 +17,7 @@ import {
   RegistrationScreen,
   InterestsScreen,
   DistrictScreen,
+  ActivityScreen,
 } from "../screens/";
 import AddressDropDown from "../components/AddressDropDown";
 
@@ -36,7 +37,8 @@ const MainNavigator = () => {
       <NavigationContainer>
         {/* <FocusedStatusBar style='auto' /> */}
         <Stack.Navigator
-          initialRouteName="Splash"
+          initialRouteName="Activity"
+          // initialRouteName="Splash"
           screenOptions={{ headerShown: false }}
         >
           <Stack.Screen name="Splash" component={SplashScreen} />
@@ -47,6 +49,7 @@ const MainNavigator = () => {
           <Stack.Screen name="Interests" component={InterestsScreen} />
           <Stack.Screen name="District" component={DistrictScreen} />
           {/* <Stack.Screen name="Address" component={AddressDropDown} /> */}
+          <Stack.Screen name="Activity" component={ActivityScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaView>
