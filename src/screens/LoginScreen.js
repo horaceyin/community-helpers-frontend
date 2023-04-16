@@ -8,6 +8,10 @@ import {
   ActivityIndicator,
   TouchableWithoutFeedback,
   Keyboard,
+  Touchable,
+  Image,
+  Switch,
+  TouchableOpacity
 } from "react-native";
 import { COLORS, FONTS, SHADOWS, SIZES, SPACING } from "../../constants";
 import { useMutation, useLazyQuery } from "@apollo/client";
@@ -23,6 +27,102 @@ import {
   resetLoginState,
 } from "../features/AuthSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { ScrollView } from "react-native-gesture-handler";
+import { 
+  AntDesign,
+  Entypo,
+  Feather,
+  MaterialIcons,
+} from '@expo/vector-icons'
+
+const SECTIONS = [
+  {
+    header: 'Preferences',
+    icon: 'settings',
+    items: [
+      { icon: 'globe', color: "#fe9400", label: 'Language', type: 'link'},
+      {
+        id: 'darkMode',
+        icon: 'moon',
+        color: '#007afe',
+        label: 'Dark Mode',
+        type: 'toggle',
+      },
+      {
+        id: 'wifi',
+        icon: 'wifi',
+        color: '#007afe',
+        label: 'Use Wi-FI',
+        type: 'toggle',
+      },
+      { icon: 'navigation', color: "#32c759", label: 'Location', type: 'link'},
+      {
+        id: 'showCollaborators',
+        icon: 'users',
+        color: '#32c759',
+        label: 'Show Collaborators',
+        type: 'toggle',
+      },
+      {
+        id: 'accessibilityMode',
+        icon: 'airplay',
+        color: '#fd2d54',
+        label: 'Accessibility Mode',
+        type: 'toggle',
+      }
+    ]
+  },
+  {
+    header: 'Help',
+    icon: 'help-circle',
+    items: [
+      { icon: 'flag', color: "#8e8d91", label: 'Report Bug', type: 'link'},
+      { icon: 'mail', color: "#007afe", label: 'Contact Us', type: 'link'},
+    ]
+  },
+  {
+    header: 'Content',
+    icon: 'align-center',
+    items: [
+      { icon: 'save', color: "#32c759", label: 'Saved', type: 'link'},
+      { icon: 'download', color: "#fd2d54", label: 'Downloads', type: 'link'},
+    ]
+  },
+  {
+    header: 'Account',
+    icon: 'account',
+    items: [
+      { icon: 'logout', color: "#fd2d54", label: 'Logout', type: 'link'},
+    ]
+  }
+]
+
+//For your reference https://icons.expo.fyi/ can find more Icon
+const IconSelection = (props) => {
+  if(props.icon == ('wifi') || 
+  props.icon == ('mail') ||
+  props.icon == ('logout')
+  ){
+    return (
+      <AntDesign name={props.icon} size={18} color="#fff" />
+    )
+  }else if((props.icon == 'globe') || (props.icon == 'moon') || (props.icon == 'users')){
+    return(
+      <Entypo name={props.icon} size={18} color="#fff" />
+    )
+  }else if((props.icon == "navigation") || 
+          (props.icon == "airplay") || 
+          (props.icon == "help-circle") || 
+          (props.icon == "flag") || 
+          (props.icon == "align-center") || 
+          (props.icon == "save") ||
+          (props.icon == "download")
+  ){
+    return (
+      <Feather name={props.icon} size={18} color="#fff" />
+    )
+  }
+}
 
 const loginScreenConfig = {
   loginButtonText: "Login",
@@ -46,6 +146,13 @@ const LoginScreen = ({ navigation, route }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+
+  const [form, setForm] = useState({
+    darkMode: true,
+    wifi: false,
+    showCollaborators: true,
+    accessibilityMode: false,
+  })
   useEffect(() => {
     setUsername("");
     setPassword("");
@@ -62,24 +169,80 @@ const LoginScreen = ({ navigation, route }) => {
   }
 
   if (isLogin) {
+    let PROFILE_PIC = 'https://engineering.fb.com/wp-content/uploads/2016/04/yearinreview.jpg'
+
+    if(userInfo){
+      PROFILE_PIC = userInfo.avatar
+    }
     console.log("enter is login");
     return (
-      <View style={styles.container}>
-        <Text style={styles.pageTitle}>
-          <FocusedStatusBar
-            barStyle="dark-content"
-            backgroundColor="transparent"
-          />
-          Hi, {userInfo && userInfo.displayName}
-        </Text>
+      <View style={{flex: 1}}>
+        <ScrollView contentContainerStyle={loggedInStyles.container}>
+          <View style={loggedInStyles.profile}>
+            <TouchableOpacity onPress={() => {
 
-        <RectButton
-          buttonText={loginScreenConfig.logoutButtonText}
-          handlePress={() => dispatch(appLogout({ signoutMutation, signOutRefetch, signOutCalled ,navigation }))}
-          extraContainerStyle={styles.logoutButton}
-          extraTextStyle={styles.logoutButtonText}
-        />
+            }}>
+              <View styles={loggedInStyles.profileAvatarWrapper}>
+                <Image 
+                  alt="Profile picture"
+                  source={{uri: PROFILE_PIC}} 
+                  style={loggedInStyles.profileAvatar}/>
+              </View>
+
+              <View style={loggedInStyles.profileAction}>
+                <AntDesign name="edit" size={15} color="#fff" />
+              </View>
+            </TouchableOpacity>
+            <Text style={loggedInStyles.profileName}>{userInfo && userInfo.displayName}</Text>
+            {/** Street Name */}
+            <Text style={loggedInStyles.profileAddress}>123 Maple Street, Anytown, 17010</Text>
+          </View>
+
+          {SECTIONS.map(({header, items}) => (
+            <View style={loggedInStyles.section} key={header}>
+                <Text style={loggedInStyles.sectionHeader}>{header}</Text>
+                {items.map(({id, label, type, icon, color}, index) => (
+                  <TouchableOpacity 
+                  key={icon}
+                  onPress={event=>{
+                    if(label == "Logout"){
+                      dispatch(appLogout({ signoutMutation, signOutRefetch, signOutCalled ,navigation }))
+                    }
+                  }}>
+                    <View style={loggedInStyles.row}>
+                      <View style={[loggedInStyles.rowIcon, {backgroundColor: color}]}>
+                        <IconSelection icon={icon}/>
+                      </View>
+                      <Text style={loggedInStyles.rowLabel}>{label}</Text>
+                      <View style={{flex: 1}} />
+                      {type === 'toggle' && <Switch value={form[id]} onValueChange={value => setForm({...form, [id]: value})}/>}
+
+                      {type === 'link' && (<Feather name="chevron-right" color="#0c0c0c" size={22}/>)}
+                      </View>
+                  </TouchableOpacity>
+             ))}
+            </View>
+          ))}
+
+
+        </ScrollView>
       </View>
+      // <View style={styles.container}>
+      //   <Text style={styles.pageTitle}>
+      //     <FocusedStatusBar
+      //       barStyle="dark-content"
+      //       backgroundColor="transparent"
+      //     />
+      //     Hi, {userInfo && userInfo.displayName}
+      //   </Text>
+
+      //   <RectButton
+      //     buttonText={loginScreenConfig.logoutButtonText}
+      //     handlePress={() => dispatch(appLogout({ signoutMutation, signOutRefetch, signOutCalled ,navigation }))}
+      //     extraContainerStyle={styles.logoutButton}
+      //     extraTextStyle={styles.logoutButtonText}
+      //   />
+      // </View>
     );
   }
 
@@ -271,5 +434,82 @@ const styles = StyleSheet.create({
     color: "white",
   },
 });
+
+const loggedInStyles = StyleSheet.create({
+  container: {
+    paddingVertical: 24,
+    backgroundColor: COLORS.white,
+  },
+  profile: {
+    padding: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  profileName:{
+    marginTop: 20,
+    fontSize: 19,
+    fontWeight: '600',
+    color: '#414d63',
+    textAlign: 'center',
+  },
+  profileAddress:{
+    marginTop: 5,
+    fontSize: 16,
+    color: '#989898',
+    textAlign: 'center'
+  },
+  profileAvatar:{
+    width: 72,
+    height: 72,
+    borderRadius: 9999,
+  },
+  profileAvatarWrapper: {
+    position: "relative"
+  },
+  profileAction: {
+    width: 28,
+    height: 28,
+    borderRadius: 9999,
+    backgroundColor: "#007bff",
+    position: 'absolute',
+    right: -4,
+    bottom: -10,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  section: {
+    paddingHorizontal: 24,
+  },
+  sectionHeader: {
+    paddingVertical: 12,
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#9e9e9e',
+    textTransform: 'uppercase',
+    letterSpacing: 1.1,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 50,
+    justifyContent: 'flex-start',
+    backgroundColor: '#f2f2f2',
+    marginBottom: 12,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+  },
+  rowLabel:{
+    fontSize: 17,
+    color: "#8c8c8c"
+  },
+  rowIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 999,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12
+  }
+})
 
 export default LoginScreen;
