@@ -5,9 +5,6 @@ import { SHADOWS, COLORS, SIZES, assets, FONTS } from "../../constants";
 import { CircleButton, RectButton, LikeDislikeButton } from "./Button";
 import { SubInfo, JobsTitle, JobsPrice } from "./SubInfo";
 import { useState } from "react";
-import {
-  DetailsDesc,
-} from "../components/";
 
 function areEqual(prevProps, nextProps) {
   /*
