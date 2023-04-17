@@ -71,7 +71,7 @@ export const CREATE_HELP_REQUEST = gql`
       helpSeekerId
       helperRating
       id
-      location
+      address
       title
     }
   }
