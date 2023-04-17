@@ -6,6 +6,7 @@ import NewJobScreen from "./NewJobScreen";
 import RegistrationScreen from "./RegistrationScreen";
 import InterestsScreen from "./InterestsScreen";
 import DistrictScreen from "./DistrictScreen";
+import ActivityScreen from "./ActivityScreen";
 
 export {
   HelpersListScreen,
@@ -16,4 +17,5 @@ export {
   RegistrationScreen,
   InterestsScreen,
   DistrictScreen,
+  ActivityScreen,
 };
