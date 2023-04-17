@@ -4,6 +4,8 @@ import { useNavigation } from "@react-navigation/native";
 import { SHADOWS, COLORS, SIZES, assets } from "../../constants";
 import { CircleButton, RectButton, LikeDislikeButton } from "./Button";
 import { SubInfo, JobsTitle, JobsPrice } from "./SubInfo";
+import { selectIsLogin } from "../features/AuthSlice";
+import { useSelector } from "react-redux";
 
 function areEqual(prevProps, nextProps) {
   /*
@@ -18,6 +20,7 @@ const JobCard = ({ helpRequest }) => {
   var [isLikePress, setIsLikePress] = React.useState(false);
   var [isDislikePress, setIsDislikePress] = React.useState(false);
   const navigation = useNavigation();
+  const isLogin = useSelector(selectIsLogin);
 
   return (
     <View style={styles.cardContainer}>
@@ -71,17 +74,19 @@ const JobCard = ({ helpRequest }) => {
             justifyContent: "flex-start",
           }}
         >
-          <LikeDislikeButton
-            minWidth={"30%"}
-            isLikePress={isLikePress}
-            isDislikePress={isDislikePress}
-            handleLikePress={() => {
-              if (!isLikePress && !isDislikePress) setIsLikePress(true); // Handle like here
-            }}
-            handleDislikePress={() => {
-              if (!isLikePress && !isDislikePress) setIsDislikePress(true); // Handle dislike here
-            }}
-          />
+          {isLogin && (
+            <LikeDislikeButton
+              minWidth={"30%"}
+              isLikePress={isLikePress}
+              isDislikePress={isDislikePress}
+              handleLikePress={() => {
+                if (!isLikePress && !isDislikePress) setIsLikePress(true); // Handle like here
+              }}
+              handleDislikePress={() => {
+                if (!isLikePress && !isDislikePress) setIsDislikePress(true); // Handle dislike here
+              }}
+            />
+          )}
         </View>
       </View>
     </View>
