@@ -14,19 +14,56 @@ const helpRequest = {
   "location": "Help Request Location",
   "price": 20,
   "description": description,
+  "state": "pending",
   "takenHelpRequest": [
     {"userId": "4", "user": {"displayName": "displayName 4"}},
     {"userId": "3", "user": {"displayName": "displayName 3"}}
   ]
 }
 
-const ActivityScreen = () => {
+
+
+const MyJobDetailScreen = () => {
   const [checked, setChecked] = React.useState(helpRequest.takenHelpRequest[0].userId);
   console.log(checked);
 
+  var state = null;
+  var stateStyles = null;
+  if (helpRequest.state == "pending") {
+      state = "Pending"
+      stateStyles = styles.jobStatusPending;
+  }
+  else if (helpRequest.state == "ongoing") {
+      state = "Ongoing"
+      stateStyles = styles.jobStatusPending;
+  }
+  else {
+      state = "Completed"
+      stateStyles = styles.jobStatusDone;
+  }
+
   return (
     <View style={styles.container}>
-      <FlatList
+      <JobCardDetail helpRequest={helpRequest} />
+      <View style={{ padding: SIZES.font }}>
+        <Text
+          style={{
+            fontFamily: FONTS.bold,
+            fontSize: SIZES.large,
+            color: COLORS.primary,
+            marginBottom: SIZES.large,
+          }}
+        >
+          State
+        </Text>
+        <View style={[styles.jobStatus, stateStyles]}>
+          <Text style={{color: COLORS.white, fontSize: SIZES.large, fontFamily: FONTS.bold,}}>
+            {state}
+          </Text>
+        </View>
+      </View>
+      
+      {/* <FlatList
         data={helpRequest.takenHelpRequest}
         renderItem={({ item }) => <CandidateHelper helper={item} checked={checked} setChecked={setChecked}/>}
         keyExtractor={(item) => item.userId}
@@ -35,17 +72,6 @@ const ActivityScreen = () => {
         ListHeaderComponent={() => (
           <>
             <JobCardDetail helpRequest={helpRequest} />
-            <View style={{ padding: SIZES.font }}>
-              <Text
-                style={{
-                  fontFamily: FONTS.bold,
-                  fontSize: SIZES.large,
-                  color: COLORS.primary,
-                }}
-              >
-                Matched Candidate Helper 
-              </Text>
-            </View>
           </>
         )}
         ListFooterComponent={()=> (
@@ -71,12 +97,12 @@ const ActivityScreen = () => {
 
           </>
         )}
-      />
+      /> */}
     </View>
   );
 };
 
-export default ActivityScreen;
+export default MyJobDetailScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -84,4 +110,18 @@ const styles = StyleSheet.create({
     // justifyContent: "center",
     // alignItems: "center",
   },
+  jobStatus: {
+    borderRadius: SIZES.base,
+    padding: SIZES.small,
+    alignItems: 'center',
+  },
+  jobStatusPending: {
+      backgroundColor: COLORS.pending
+  },
+  jobStatusOngoing: {
+      backgroundColor: COLORS.ongoing
+  },
+  jobStatusDone: {
+      backgroundColor: COLORS.done
+  }
 });

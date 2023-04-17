@@ -17,7 +17,9 @@ import {
   RegistrationScreen,
   InterestsScreen,
   DistrictScreen,
-  ActivityScreen,
+  MyRequestDetailScreen,
+  MyJobDetailScreen,
+  MyActivityScreen,
 } from "../screens/";
 import AddressDropDown from "../components/AddressDropDown";
 
@@ -48,7 +50,9 @@ const MainNavigator = () => {
           <Stack.Screen name="Interests" component={InterestsScreen} />
           <Stack.Screen name="District" component={DistrictScreen} />
           {/* <Stack.Screen name="Address" component={AddressDropDown} /> */}
-          <Stack.Screen name="Activity" component={ActivityScreen} />
+          <Stack.Screen name="MyRequestDetail" component={MyRequestDetailScreen} />
+          <Stack.Screen name="MyJobDetail" component={MyJobDetailScreen} />
+          <Stack.Screen name="MyActivity" component={MyActivityScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaView>

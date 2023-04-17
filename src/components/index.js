@@ -7,6 +7,7 @@ import JobCard from "./JobCard";
 import JobCardDetail from "./JobCardDetail";
 import { SubInfo } from "./SubInfo";
 import MyJobCard from "./MyJobCard";
+import MyRequestCard from "./MyRequestCard";
 import CandidateHelper from "./CandidateHelper";
 import CandidateHelperCard from "./CandidateHelperCard";
 import { RoundTextInput } from "./TextInput";
@@ -25,4 +26,5 @@ export {
   JobCardDetail,
   CandidateHelper,
   CandidateHelperCard,
+  MyRequestCard,
 };

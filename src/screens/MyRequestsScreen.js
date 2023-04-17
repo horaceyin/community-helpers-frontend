@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import {StyleSheet, View, Text, FlatList} from 'react-native';
+import {StyleSheet, View, Text, FlatList, RefreshControl, ScrollView } from 'react-native';
 import { COLORS, FONTS } from '../../constants';
 import { useLazyQuery} from "@apollo/client";
-import { FIND_MATCH_BY_STATE} from '../gql/Query';
+import { FIND_MATCH_BY_STATE, FIND_HELP_REQUESTS_CREATED_BY_ME } from '../gql/Query';
 import { useIsFocused } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
-import { MyJobCard } from '../components';
+import { MyJobCard, MyRequestCard } from '../components';
+import {
+  selectIsLogin,
+  selectUserToken,
+  setIsFetching,
+} from "../features/AuthSlice";
+import { useDispatch, useSelector } from "react-redux";
+
 
 async function getValueFor(key) {
   return await SecureStore.getItemAsync(key);
@@ -15,20 +22,28 @@ async function deleteValueFor(key) {
   return await SecureStore.deleteItemAsync(key);
 }
 
-const HelpersListScreen = () => {
-
+const MyRequestsScreen = () => {
+  const isLogin = useSelector(selectIsLogin);
+  console.log("isLogin: "+isLogin);
+  
   const isFocused = useIsFocused();
-  const [getMyJob, { loading: jobLoading, error: jobError, data: jobData, refetch, called}] = useLazyQuery(FIND_MATCH_BY_STATE);
-  const [isLogin, setIsLogin] = useState(false);
+
+  const [
+    getMyRequest, 
+    { loading: myRequestLoading, error: myRequestError, data: myRequestData, refetch: refetchMyRequest, calledMyRequest}
+  ] = useLazyQuery(FIND_HELP_REQUESTS_CREATED_BY_ME);
+
+  // const [isLogin, setIsLogin] = useState(false);
   const [loadingToken, setLoadingToken] = useState(true);
   const [refresh, setRefresh] = useState(false)
   
   const pull = async () =>{
     setRefresh(true)
 
-    console.log("called")    
+    console.log("calledMyRequest");
 
-    refetch()
+
+    refetchMyRequest();
     setTimeout(()=>{
       setRefresh(false)
     }, 1000)
@@ -38,13 +53,13 @@ const HelpersListScreen = () => {
     const getToken = async () => {
       const token = await getValueFor("token");
       if (token !== null) {
-        console.log("called")
-        if(called){
+        console.log("calledMyRequest")
+        if(calledMyRequest){
           refetch()
         }else{
-          getMyJob({variables: {state: ["ongoing", "done"]}});
+          getMyRequest();
         }
-        setIsLogin(true);
+        // setIsLogin(true);
       }
       setLoadingToken(false);
     };
@@ -52,25 +67,39 @@ const HelpersListScreen = () => {
     if(isFocused){ 
       getToken()
     }
-  }, [isFocused, called]);
+  }, [isFocused, calledMyRequest]);
 
   if (loadingToken) {
-    return <Text>loading token</Text>;
+    return (
+      <ScrollView
+      style={{backgroundColor: COLORS.white,}}
+      contentContainerStyle={styles.scrollView}
+      refreshControl={
+        <RefreshControl refreshing={true} />
+      }></ScrollView>
+    )
   }
 
   if(isLogin){
-    if(jobLoading){
-      return <Text>loading job</Text>;
+    if(myRequestLoading){
+      return (
+        <ScrollView
+        style={{backgroundColor: COLORS.white,}}
+        contentContainerStyle={styles.scrollView}
+        refreshControl={
+          <RefreshControl refreshing={true} />
+        }></ScrollView>
+      )
     }
 
-    if(jobError) {
+    if(myRequestError) {
       return (
         <View style={styles.viewContainer}>
           <Text style={styles.pageTitle}>
-            My Jobs
+            My Activity
           </Text>
           <Text style={styles.pageContent}>
-            Login in to see your job
+            Login in to see your Activity
           </Text>
         </View>
       );
@@ -78,12 +107,9 @@ const HelpersListScreen = () => {
 
     return (
       <View style={styles.viewContainer}>
-        <Text style={styles.pageTitle}>
-          My Jobs
-        </Text>
         <FlatList
-          data={jobData["findByUserAndState"]}
-          renderItem={({item}) => <MyJobCard data={item}/>}
+          data={myRequestData["me"]["userCreatedHelpRequests"]}
+          renderItem={({item}) => <MyRequestCard data={item}/>}
           keyExtractor={item => item.id}
           onRefresh={() => pull()}
           refreshing={refresh}/>
@@ -114,4 +140,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HelpersListScreen
+export default MyRequestsScreen

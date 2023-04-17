@@ -1,4 +1,4 @@
-import HelpersListScreen from "./HelpersListScreen";
+import MyJobScreen from "./MyJobScreen";
 import HomeScreen from "./HomeScreen";
 import JobsDetails from "./JobsDetails";
 import LoginScreen from "./LoginScreen";
@@ -6,10 +6,13 @@ import NewJobScreen from "./NewJobScreen";
 import RegistrationScreen from "./RegistrationScreen";
 import InterestsScreen from "./InterestsScreen";
 import DistrictScreen from "./DistrictScreen";
-import ActivityScreen from "./ActivityScreen";
+import MyRequestDetailScreen from "./MyRequestDetailScreen";
+import MyJobDetailScreen from "./MyJobDetailScreen";
+import MyActivityScreen from "./MyActivityScreen";
+import MyRequestsScreen from "./MyRequestsScreen";
 
 export {
-  HelpersListScreen,
+  MyJobScreen,
   HomeScreen,
   LoginScreen,
   NewJobScreen,
@@ -17,5 +20,8 @@ export {
   RegistrationScreen,
   InterestsScreen,
   DistrictScreen,
-  ActivityScreen,
+  MyRequestDetailScreen,
+  MyActivityScreen,
+  MyRequestsScreen,
+  MyJobDetailScreen,
 };

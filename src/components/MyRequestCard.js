@@ -1,34 +1,37 @@
 import {React, useState}from 'react';
 import { View, Text, StyleSheet} from 'react-native';
 import { SHADOWS, COLORS, SIZES, FONTS } from '../../constants';
-const MyJobCard = ({data}) => {
-    const [text, setText] = useState(data.helpRequest.description.slice(0, 100))
+const MyRequestCard = ({data}) => {
+    const [text, setText] = useState(data.description.slice(0, 50))
 
-    let d = new Date(data.helpRequest.helpRequestDatetime).toDateString()
+    let d = new Date(data.helpRequestDatetime).toDateString()
     const date = d.split(" ")
-    var title = data.helpRequest.title;
+    var title = data.title;
     if (title.length > 25) {
         title = title.slice(0, 24);
         title += " ...";
     }
     var state = null;
     var stateStyles = null;
-    if (data.state == "pending") {
+    if (data.takenHelpRequst == null) {
         state = "Pending"
         stateStyles = styles.jobStatusPending;
     }
-    else if (data.state == "ongoing") {
-        state = "Ongoing"
-        stateStyles = styles.jobStatusOngoing;
-    }
     else {
-        state = "Completed"
-        stateStyles = styles.jobStatusDone;
+        isTakenHelpRequst = data.takenHelpRequst.filter(thr => thr.is_taken === true)
+        if (isTakenHelpRequst.length <= 0) {
+            state = "Pending"
+            stateStyles = styles.jobStatusPending;
+        }
+        else {
+            state = isTakenHelpRequst[0].state === "ongoing" ? "Ongoing" : "Completed";
+            stateStyles = isTakenHelpRequst[0].state === "ongoing" ? styles.jobStatusOngoing : state = styles.jobStatusDone;
+        }
     }
     return (
         <View style={styles.cardContainer}>
             <View style={styles.card}>
-                <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+                <View style={{flexDirection: 'row'}}>
                     
                     <Text style={{
                         fontFamily: FONTS.semiBold, 
@@ -38,20 +41,13 @@ const MyJobCard = ({data}) => {
                     }}>
                     {title}
                     </Text>
+ 
                     <View style={[styles.jobStatus, stateStyles]}>
                         <Text style={{color: COLORS.white}}>
                             {state}
                         </Text>
                     </View>
                 </View>
-                
-
-                <Text style={{
-                    fontFamily: FONTS.regular, 
-                    fontSize: SIZES.medium, 
-                    color: COLORS.primary,
-                    marginBottom: SIZES.base
-                }}>{`${data.helpRequest.helpSeeker.displayName}`}</Text>
 
                 <Text style={{
                     fontFamily: FONTS.regular, 
@@ -83,15 +79,14 @@ const styles = StyleSheet.create({
       },
     card: {
         width: '100%',
-        height: 170,
+        height: 130,
         padding: SIZES.font
       },
     jobStatus: {
         borderRadius: SIZES.extraLarge,
         padding: SIZES.small,
         alignItems: 'center',
-        alignSelf: 'flex-end',
-        width: "25%",
+        width: "25%"
     },
     jobStatusPending: {
         backgroundColor: COLORS.pending
@@ -104,4 +99,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default MyJobCard;
+export default MyRequestCard;

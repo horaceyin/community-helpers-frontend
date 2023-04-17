@@ -20,16 +20,34 @@ export const ME = gql`
 export const FIND_MATCH_BY_STATE = gql`
   query FindByUserAndState($state: [String!]!) {
     findByUserAndState(state: $state) {
-      id
-      userId
-      state
+      helpRequestId
       helpRequest {
+        id
+        title
+        description
+        price
+        address
+        helpRequestDatetime
+        helpSeeker {
+          displayName
+        }
+      }
+      is_taken
+      state
+    }
+  }
+`;
+
+export const FIND_HELP_REQUESTS_CREATED_BY_ME = gql`
+  query Me {
+    me {
+      userCreatedHelpRequests {
         title
         description
         helpRequestDatetime
-        helpSeeker {
-          username
-        }
+        address
+        price
+        id
       }
     }
   }
@@ -44,7 +62,7 @@ export const FIND_MATCH_BY_STATE_IN_HOME = gql`
         title
         price
         description
-        location
+        address
         category
         helpRequestDatetime
         helpSeeker {
@@ -67,7 +85,7 @@ export const GET_RECOMMENDED_JOBS = gql`
       price
       images
       category
-      location
+      address
       description
       creationDatetime
       helpRequestDatetime
@@ -94,7 +112,7 @@ export const FIND_ALL_JOBS_IN_HOME = gql`
       price
       images
       category
-      location
+      address
       description
       creationDatetime
       helpRequestDatetime

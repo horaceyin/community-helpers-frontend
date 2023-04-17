@@ -2,7 +2,7 @@
 import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { COLORS } from "../../constants";
-import { HomeScreen, HelpersListScreen, NewJobScreen } from "../screens";
+import { HomeScreen, MyJobScreen, NewJobScreen, MyActivityScreen } from "../screens";
 import { useSelector } from "react-redux";
 import { selectIsLogin } from "../features/AuthSlice";
 
@@ -79,7 +79,7 @@ const TabsNavigator = () => {
       {isLogin && (
         <Tab.Screen
           name="HelpersList"
-          component={HelpersListScreen}
+          component={MyActivityScreen}
           options={{
             tabBarIcon: ({ focused }) => (
               <View style={styles.tabIconContainer}>
