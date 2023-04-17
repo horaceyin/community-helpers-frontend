@@ -3,6 +3,8 @@ import { React, useState } from "react";
 import { JobsPrice, JobsTitle } from "./SubInfo";
 import { COLORS, FONTS, SIZES } from "../../constants";
 import { LikeDislikeButton } from "./Button";
+import { useSelector } from "react-redux";
+import { selectIsLogin } from "../features/AuthSlice";
 
 const DetailsDesc = ({ helpRequest }) => {
   const sliceSize = 50;
@@ -10,6 +12,7 @@ const DetailsDesc = ({ helpRequest }) => {
   const [readMore, setReadMore] = useState(false);
   var [isLikePress, setIsLikePress] = useState(false);
   var [isDislikePress, setIsDislikePress] = useState(false);
+  const isLogin = useSelector(selectIsLogin);
 
   return (
     <>
@@ -40,17 +43,19 @@ const DetailsDesc = ({ helpRequest }) => {
           justifyContent: "flex-start",
         }}
       >
-        <LikeDislikeButton
-          minWidth={"30%"}
-          isLikePress={isLikePress}
-          isDislikePress={isDislikePress}
-          handleLikePress={() => {
-            if (!isLikePress && !isDislikePress) setIsLikePress(true); // Handle like here
-          }}
-          handleDislikePress={() => {
-            if (!isLikePress && !isDislikePress) setIsDislikePress(true); // Handle dislike here
-          }}
-        />
+        {isLogin && (
+          <LikeDislikeButton
+            minWidth={"30%"}
+            isLikePress={isLikePress}
+            isDislikePress={isDislikePress}
+            handleLikePress={() => {
+              if (!isLikePress && !isDislikePress) setIsLikePress(true); // Handle like here
+            }}
+            handleDislikePress={() => {
+              if (!isLikePress && !isDislikePress) setIsDislikePress(true); // Handle dislike here
+            }}
+          />
+        )}
       </View>
 
       <View style={{ marginVertical: SIZES.extraLarge * 1.5 }}>

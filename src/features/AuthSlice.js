@@ -47,17 +47,17 @@ export const appLogin = createAsyncThunk(
     let user_token = null;
     let loginErrorMsg = "Wrong user name or password, try again.";
 
-    let expoToken = await SecureStore.getItemAsync("expoToken")
+    let expoToken = await SecureStore.getItemAsync("expoToken");
 
-    if(!expoToken){
-      expoToken = null
+    if (!expoToken) {
+      expoToken = null;
     }
 
     await loginMutation({
-      variables: { 
-        username: username, 
+      variables: {
+        username: username,
         password: password,
-        expoPushToken: expoToken
+        expoPushToken: expoToken,
       },
       onError: (error) => {
         console.log(`Apollo error: ${error.message}`);
@@ -79,27 +79,30 @@ export const appLogin = createAsyncThunk(
 export const appLogout = createAsyncThunk(
   "auth/appLogout",
   async ({ signoutMutation, signOutRefetch, signOutCalled, navigation }) => {
-    let expoToken = await SecureStore.getItemAsync("expoToken")
-    
-    if(expoToken){
-      if(signOutCalled){
-        signOutRefetch()
-      }else{
+    let expoToken = await SecureStore.getItemAsync("expoToken");
+
+    if (expoToken) {
+      if (signOutCalled) {
+        signOutRefetch();
+      } else {
         await signoutMutation({
           variables: {
-            expoPushToken: expoToken
+            expoPushToken: expoToken,
           },
           onError: (error) => {
-            console.log("bye")
+            console.log("bye");
             console.log(`Apollo error: ${error.message}`);
           },
           onCompleted: async (result) => {
-            console.log("hello")
+            console.log("hello");
             await SecureStore.deleteItemAsync(tokenName);
             await SecureStore.deleteItemAsync("expoToken");
           },
-        },)
+        });
       }
+    } else {
+      // for not a real device
+      await SecureStore.deleteItemAsync(tokenName);
     }
 
     console.log("logout");

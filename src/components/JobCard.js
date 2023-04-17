@@ -1,11 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { SHADOWS, COLORS, SIZES, assets } from "../../constants";
 import { CircleButton, RectButton, LikeDislikeButton } from "./Button";
 import { SubInfo, JobsTitle, JobsPrice } from "./SubInfo";
-import { selectIsLogin } from "../features/AuthSlice";
-import { useSelector } from "react-redux";
+import { selectIsLogin, selectUserInfo } from "../features/AuthSlice";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  collectUserAction,
+  selectHelpRequestsAction,
+} from "../features/UserActionSlice";
 
 function areEqual(prevProps, nextProps) {
   /*
@@ -17,10 +21,37 @@ function areEqual(prevProps, nextProps) {
 }
 
 const JobCard = ({ helpRequest }) => {
-  var [isLikePress, setIsLikePress] = React.useState(false);
-  var [isDislikePress, setIsDislikePress] = React.useState(false);
+  let [isLikePress, setIsLikePress] = useState(helpRequest.isLike);
+  let [isDislikePress, setIsDislikePress] = useState(helpRequest.isDislike);
+  const helpRequestId = helpRequest.id;
   const navigation = useNavigation();
   const isLogin = useSelector(selectIsLogin);
+  const dispatch = useDispatch();
+  let userId = isLogin ? useSelector(selectUserInfo).id : null;
+
+  console.log(helpRequest);
+
+  const handleLikeButtonPress = () => {
+    if (!isLikePress && !isDislikePress) {
+      setIsLikePress(true);
+      dispatch(
+        collectUserAction({ userId, helpRequestId, actionType: "liked" })
+      );
+    } else {
+      alert("You have already liked/disliked this request");
+    }
+  };
+
+  const handleDislikeButtonPress = () => {
+    if (!isLikePress && !isDislikePress) {
+      setIsDislikePress(true);
+      dispatch(
+        collectUserAction({ userId, helpRequestId, actionType: "disliked" })
+      );
+    } else {
+      alert("You have already liked/disliked this request");
+    }
+  };
 
   return (
     <View style={styles.cardContainer}>
@@ -79,12 +110,14 @@ const JobCard = ({ helpRequest }) => {
               minWidth={"30%"}
               isLikePress={isLikePress}
               isDislikePress={isDislikePress}
-              handleLikePress={() => {
-                if (!isLikePress && !isDislikePress) setIsLikePress(true); // Handle like here
-              }}
-              handleDislikePress={() => {
-                if (!isLikePress && !isDislikePress) setIsDislikePress(true); // Handle dislike here
-              }}
+              handleLikePress={handleLikeButtonPress}
+              handleDislikePress={handleDislikeButtonPress}
+              // handleLikePress={() => {
+              //   if (!isLikePress && !isDislikePress) setIsLikePress(true); // Handle like here
+              // }}
+              // handleDislikePress={() => {
+              //   if (!isLikePress && !isDislikePress) setIsDislikePress(true); // Handle dislike here
+              // }}
             />
           )}
         </View>
