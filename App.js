@@ -6,6 +6,7 @@ import {
   InMemoryCache,
   ApolloProvider,
   createHttpLink,
+  ApolloLink,
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import MainNavigator from "./src/navigations/MainNavigator";
@@ -13,13 +14,15 @@ import * as SecureStore from "expo-secure-store";
 import { AppProvider } from "./AppContext";
 import { BASE_URL, tokenName } from "./config";
 import { store } from "./src/store";
-import { Provider } from "react-redux";
+import { Provider, useSelector, useDispatch } from "react-redux";
+import { clearUserAction } from "./src/features/UserActionSlice";
 import { AppGuard } from "./src/features/AppGuard";
 import { useEffect, useState, useRef } from "react";
 import { Provider as PaperProvider, DefaultTheme } from "react-native-paper";
 import { isDevice } from "expo-device";
 import * as Notifications from "expo-notifications";
-import { createUploadLink } from 'apollo-upload-client';
+import { createUploadLink } from "apollo-upload-client";
+import { selectHelpRequestsAction } from "./src/features/UserActionSlice";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -36,10 +39,13 @@ const httpLink = createUploadLink({
 
 const authLink = setContext(async (_, { headers }) => {
   const token = await SecureStore.getItemAsync(tokenName);
-  // console.log(`authLink: ${token}`);
+  // const userAction = await SecureStore.getItemAsync("user_action");
+  // console.log(`authLink: ${token}`, userAction);
   return {
     headers: {
       ...headers,
+      // cookie: `user_action=12345678`,
+      // cookie: userAction ? `user_action=${userAction}` : "",
       authorization: token ? `Bearer ${token}` : "",
     },
   };
@@ -151,7 +157,7 @@ export default function App() {
   });
 
   if (!appLoaded) return null;
-
+  console.log("App loaded");
   return (
     <ApolloProvider client={client}>
       <PaperProvider theme={theme}>

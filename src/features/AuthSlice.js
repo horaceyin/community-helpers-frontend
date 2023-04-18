@@ -1,7 +1,6 @@
 import * as SecureStore from "expo-secure-store";
 import { tokenName, userInfoName } from "../../config";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-
 const initialState = {
   isLogin: false,
   userToken: null,
@@ -15,6 +14,7 @@ export const checkSignIn = createAsyncThunk(
   "auth/checkSignIn",
   async ({ navigation, getMyInfo }, { thunkAPI }) => {
     let token = await SecureStore.getItemAsync(tokenName);
+    console.log("🚀 ~ file: AuthSlice.js:17 ~ token:", token);
     let userInfo = null;
     let tokenExpiredMsg = "Token expired. Please login again";
 
@@ -65,6 +65,7 @@ export const appLogin = createAsyncThunk(
       onCompleted: async (result) => {
         user_token = result.login.access_token;
         await SecureStore.setItemAsync(tokenName, user_token);
+        await SecureStore.setItemAsync("user_action", "[]");
       },
     });
 
@@ -105,6 +106,7 @@ export const appLogout = createAsyncThunk(
       await SecureStore.deleteItemAsync(tokenName);
     }
 
+    await SecureStore.deleteItemAsync("user_action");
     console.log("logout");
     navigation.reset({ index: 0, routes: [{ name: "Root" }] });
     return false;
@@ -193,3 +195,4 @@ export const selectUserToken = (state) => state.auth.userToken;
 export const selectUserInfo = (state) => state.auth.userInfo;
 
 export default authSlice.reducer;
+console.log("authSlice.reducer");

@@ -1,6 +1,6 @@
 import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { COLORS } from "../../constants";
+import { COLORS, FONTS } from "../../constants";
 import { MyJobScreen, MyRequestsScreen } from "../screens";
 
 const Tab = createBottomTabNavigator();
@@ -8,6 +8,7 @@ const Tab = createBottomTabNavigator();
 const ActivityNavigator = () => {
   return (
     <Tab.Navigator
+      initialRouteName="My Jobs"
       screenOptions={{
         tabBarPosition: "top",
         tabBarIndicatorStyle: {

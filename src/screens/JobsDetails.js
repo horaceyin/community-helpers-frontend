@@ -19,12 +19,13 @@ import {
 import { useMutation } from "@apollo/client";
 import { AppContext } from "../../AppContext";
 import { UPDATE_HELP_REQUEST } from "../gql/Mutation";
-import {
-  selectIsLogin,
-  selectUserToken,
-  setIsFetching,
-} from "../features/AuthSlice";
+import { selectIsLogin, selectUserInfo } from "../features/AuthSlice";
 import { useDispatch, useSelector } from "react-redux";
+import {
+  collectUserAction,
+  addUserAction,
+  saveUserAction,
+} from "../features/UserActionSlice";
 
 const DetailsHeader = ({ helpRequest, navigation }) => (
   <View style={{ width: "100%", height: 250 }}>
@@ -51,10 +52,27 @@ const DetailsHeader = ({ helpRequest, navigation }) => (
 
 const JobsDetails = ({ route, navigation }) => {
   const isLogin = useSelector(selectIsLogin);
+  const userId = isLogin ? useSelector(selectUserInfo).id : null;
+  const dispatch = useDispatch();
+  const helpRequest = route.params.helpRequest;
+
+  // const isLikePress = route.params.isLikePress;
+  // const isDislikePress = route.params.isDislikePress;
+  // const handleLikeButtonPress = route.params.handleLikeButtonPress;
+  // const handleDislikeButtonPress = route.params.handleDislikeButtonPress;
 
   const [updateRequest, { data: updatedRequest, loading, error }] =
     useMutation(UPDATE_HELP_REQUEST);
-  const helpRequest = route.params.helpRequest;
+
+  if (isLogin) {
+    // dispatch(
+    //   saveUserAction({
+    //     userId,
+    //     helpRequestId: helpRequest.id,
+    //     actionType: "viewed",
+    //   })
+    // );
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: COLORS.white }}>
@@ -107,7 +125,7 @@ const JobsDetails = ({ route, navigation }) => {
               helpRequestTime={helpRequest.helpRequestTime}
             />
             <View style={{ padding: SIZES.font }}>
-              <DetailsDesc helpRequest={helpRequest} />
+              <DetailsDesc helpRequest={helpRequest} {...route.params} />
               <Text
                 style={{
                   fontFamily: FONTS.semiBold,

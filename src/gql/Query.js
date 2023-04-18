@@ -105,8 +105,8 @@ export const GET_RECOMMENDED_JOBS = gql`
 `;
 
 export const FIND_ALL_JOBS_IN_HOME = gql`
-  query HelpRequests($take: Int, $skip: Int) {
-    helpRequests(take: $take, skip: $skip) {
+  query HelpRequests($is_taken: Boolean, $take: Int, $skip: Int) {
+    helpRequests(is_taken: $is_taken, take: $take, skip: $skip) {
       id
       title
       price

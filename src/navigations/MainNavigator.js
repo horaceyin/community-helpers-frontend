@@ -34,6 +34,7 @@ const theme = {
 };
 
 const MainNavigator = () => {
+  console.log("======================================");
   return (
     <SafeAreaView style={styles.root}>
       <NavigationContainer>

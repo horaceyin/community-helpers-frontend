@@ -147,6 +147,7 @@ const HomeScreen = () => {
       });
 
       if (result) {
+        // console.log(JSON.stringify(result.error, null, 2));
         alert(
           `Something went wrong, please try again later.\n Error message: ${result.error.message}`
         );

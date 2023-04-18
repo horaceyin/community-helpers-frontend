@@ -3,16 +3,71 @@ import { React, useState } from "react";
 import { JobsPrice, JobsTitle } from "./SubInfo";
 import { COLORS, FONTS, SIZES } from "../../constants";
 import { LikeDislikeButton } from "./Button";
-import { useSelector } from "react-redux";
-import { selectIsLogin } from "../features/AuthSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { selectIsLogin, selectUserInfo } from "../features/AuthSlice";
+import {
+  saveUserAction,
+  selectHelpRequestsAction,
+} from "../features/UserActionSlice";
+import { useLazyQuery } from "@apollo/client";
+import { ME } from "../gql/Query";
 
-const DetailsDesc = ({ helpRequest }) => {
+const DetailsDesc = ({ helpRequest, ...prop }) => {
   const sliceSize = 50;
   const [text, setText] = useState(helpRequest.description.slice(0, sliceSize));
   const [readMore, setReadMore] = useState(false);
+
   var [isLikePress, setIsLikePress] = useState(false);
   var [isDislikePress, setIsDislikePress] = useState(false);
+
+  if (prop.isLikePress) setIsLikePress(true);
+  if (prop.isDislikePress) setIsDislikePress(true);
+
+  const helpRequestId = helpRequest.id;
   const isLogin = useSelector(selectIsLogin);
+  const userId = isLogin ? useSelector(selectUserInfo).id : null;
+  const helpRequestsAction = useSelector(selectHelpRequestsAction);
+
+  // const globalSetLike = useSelector(selectSetLike);
+  // const globalSetDislike = useSelector(selectSetDislike);
+
+  // const dispatch = useDispatch();
+
+  // //for send user action cookie to server
+  // const [getMyInfo, getMyInfoResult] = useLazyQuery(ME);
+
+  // const handleLikeButtonPress = async () => {
+  //   console.log("press");
+  //   if (!isLikePress && !isDislikePress) {
+  //     dispatch(
+  //       saveUserAction({
+  //         getMyInfo,
+  //         userId,
+  //         helpRequestId,
+  //         actionType: "liked",
+  //       })
+  //     );
+  //     //query me to send cookie
+  //   } else {
+  //     alert("You have already liked/disliked this request");
+  //   }
+  // };
+
+  // const handleDislikeButtonPress = () => {
+  //   if (!isLikePress && !isDislikePress) {
+  //     dispatch(
+  //       saveUserAction({
+  //         userId,
+  //         helpRequestId,
+  //         actionType: "disliked",
+  //       })
+  //     );
+  //     // globalSetDislike(true);
+  //     setIsDislikePress(true);
+  //   } else {
+  //     alert("You have already liked/disliked this request");
+  //   }
+  // };
 
   return (
     <>
@@ -48,6 +103,8 @@ const DetailsDesc = ({ helpRequest }) => {
             minWidth={"30%"}
             isLikePress={isLikePress}
             isDislikePress={isDislikePress}
+            // handleLikePress={handleLikeButtonPress}
+            // handleDislikePress={handleDislikeButtonPress}
             handleLikePress={() => {
               if (!isLikePress && !isDislikePress) setIsLikePress(true); // Handle like here
             }}

@@ -8,7 +8,8 @@ import { selectIsLogin, selectUserInfo } from "../features/AuthSlice";
 import { useSelector, useDispatch } from "react-redux";
 import {
   collectUserAction,
-  selectHelpRequestsAction,
+  addUserAction,
+  saveUserAction,
 } from "../features/UserActionSlice";
 
 function areEqual(prevProps, nextProps) {
@@ -31,26 +32,37 @@ const JobCard = ({ helpRequest }) => {
 
   console.log(helpRequest);
 
-  const handleLikeButtonPress = () => {
-    if (!isLikePress && !isDislikePress) {
-      setIsLikePress(true);
-      dispatch(
-        collectUserAction({ userId, helpRequestId, actionType: "liked" })
-      );
-    } else {
-      alert("You have already liked/disliked this request");
-    }
-  };
+  // const handleLikeButtonPress = () => {
+  //   if (!isLikePress && !isDislikePress) {
+  //     setIsLikePress(true);
+  //     dispatch(
+  //       saveUserAction({ userId, helpRequestId, actionType: "liked" })
+  //       // collectUserAction({ userId, helpRequestId, actionType: "liked" })
+  //     );
+  //   } else {
+  //     alert("You have already liked/disliked this request");
+  //   }
+  // };
 
-  const handleDislikeButtonPress = () => {
-    if (!isLikePress && !isDislikePress) {
-      setIsDislikePress(true);
-      dispatch(
-        collectUserAction({ userId, helpRequestId, actionType: "disliked" })
-      );
-    } else {
-      alert("You have already liked/disliked this request");
-    }
+  // const handleDislikeButtonPress = () => {
+  //   if (!isLikePress && !isDislikePress) {
+  //     setIsDislikePress(true);
+  //     dispatch(
+  //       saveUserAction({ userId, helpRequestId, actionType: "liked" })
+  //       // collectUserAction({ userId, helpRequestId, actionType: "disliked" })
+  //     );
+  //   } else {
+  //     alert("You have already liked/disliked this request");
+  //   }
+  // };
+
+  handleNavigation = () => {
+    // dispatch(setLikeDislikeFunc({ setIsLikePress, setIsDislikePress }));
+    navigation.navigate("JobsDetails", {
+      helpRequest,
+      isLikePress,
+      isDislikePress,
+    });
   };
 
   return (
@@ -92,9 +104,7 @@ const JobCard = ({ helpRequest }) => {
             buttonText={"Details"}
             minWidth={"15%"}
             fontSize={SIZES.font}
-            handlePress={() =>
-              navigation.navigate("JobsDetails", { helpRequest })
-            }
+            handlePress={handleNavigation}
           />
         </View>
         <View
@@ -110,14 +120,14 @@ const JobCard = ({ helpRequest }) => {
               minWidth={"30%"}
               isLikePress={isLikePress}
               isDislikePress={isDislikePress}
-              handleLikePress={handleLikeButtonPress}
-              handleDislikePress={handleDislikeButtonPress}
-              // handleLikePress={() => {
-              //   if (!isLikePress && !isDislikePress) setIsLikePress(true); // Handle like here
-              // }}
-              // handleDislikePress={() => {
-              //   if (!isLikePress && !isDislikePress) setIsDislikePress(true); // Handle dislike here
-              // }}
+              // handleLikePress={handleLikeButtonPress}
+              // handleDislikePress={handleDislikeButtonPress}
+              handleLikePress={() => {
+                if (!isLikePress && !isDislikePress) setIsLikePress(true); // Handle like here
+              }}
+              handleDislikePress={() => {
+                if (!isLikePress && !isDislikePress) setIsDislikePress(true); // Handle dislike here
+              }}
             />
           )}
         </View>
