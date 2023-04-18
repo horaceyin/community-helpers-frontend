@@ -31,58 +31,58 @@ import { ScrollView } from "react-native-gesture-handler";
 import { AntDesign, Entypo, Feather, MaterialIcons } from "@expo/vector-icons";
 
 const SECTIONS = [
-  {
-    header: "Preferences",
-    icon: "settings",
-    items: [
-      { icon: "globe", color: "#fe9400", label: "Language", type: "link" },
-      {
-        id: "darkMode",
-        icon: "moon",
-        color: "#007afe",
-        label: "Dark Mode",
-        type: "toggle",
-      },
-      {
-        id: "wifi",
-        icon: "wifi",
-        color: "#007afe",
-        label: "Use Wi-FI",
-        type: "toggle",
-      },
-      { icon: "navigation", color: "#32c759", label: "Location", type: "link" },
-      {
-        id: "showCollaborators",
-        icon: "users",
-        color: "#32c759",
-        label: "Show Collaborators",
-        type: "toggle",
-      },
-      {
-        id: "accessibilityMode",
-        icon: "airplay",
-        color: "#fd2d54",
-        label: "Accessibility Mode",
-        type: "toggle",
-      },
-    ],
-  },
-  {
-    header: "Help",
-    icon: "help-circle",
-    items: [
-      { icon: "flag", color: "#8e8d91", label: "Report Bug", type: "link" },
-      { icon: "mail", color: "#007afe", label: "Contact Us", type: "link" },
-    ],
-  },
-  {
-    header: "Content",
-    icon: "align-center",
-    items: [
-      { icon: "save", color: "#32c759", label: "Saved", type: "link" },
-      { icon: "download", color: "#fd2d54", label: "Downloads", type: "link" },
-    ],
-  },
+  // {
+  //   header: "Preferences",
+  //   icon: "settings",
+  //   items: [
+  //     { icon: "globe", color: "#fe9400", label: "Language", type: "link" },
+  //     {
+  //       id: "darkMode",
+  //       icon: "moon",
+  //       color: "#007afe",
+  //       label: "Dark Mode",
+  //       type: "toggle",
+  //     },
+  //     {
+  //       id: "wifi",
+  //       icon: "wifi",
+  //       color: "#007afe",
+  //       label: "Use Wi-FI",
+  //       type: "toggle",
+  //     },
+  //     { icon: "navigation", color: "#32c759", label: "Location", type: "link" },
+  //     {
+  //       id: "showCollaborators",
+  //       icon: "users",
+  //       color: "#32c759",
+  //       label: "Show Collaborators",
+  //       type: "toggle",
+  //     },
+  //     {
+  //       id: "accessibilityMode",
+  //       icon: "airplay",
+  //       color: "#fd2d54",
+  //       label: "Accessibility Mode",
+  //       type: "toggle",
+  //     },
+  //   ],
+  // },
+  // {
+  //   header: "Help",
+  //   icon: "help-circle",
+  //   items: [
+  //     { icon: "flag", color: "#8e8d91", label: "Report Bug", type: "link" },
+  //     { icon: "mail", color: "#007afe", label: "Contact Us", type: "link" },
+  //   ],
+  // },
+  // {
+  //   header: "Content",
+  //   icon: "align-center",
+  //   items: [
+  //     { icon: "save", color: "#32c759", label: "Saved", type: "link" },
+  //     { icon: "download", color: "#fd2d54", label: "Downloads", type: "link" },
+  //   ],
+  // },
   {
     header: "Account",
     icon: "account",
