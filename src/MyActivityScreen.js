@@ -1,22 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import {StyleSheet, View, Text, FlatList} from 'react-native';
-import { COLORS, FONTS } from '../../constants';
-import { useLazyQuery} from "@apollo/client";
-import { FIND_MATCH_BY_STATE, FIND_HELP_REQUESTS_CREATED_BY_ME } from '../gql/Query';
+import React, { useEffect, useState } from "react";
+import { StyleSheet, View, Text, FlatList } from "react-native";
+import { COLORS, FONTS } from "../constants";
+import { useLazyQuery } from "@apollo/client";
+import {
+  FIND_MATCH_BY_STATE,
+  FIND_HELP_REQUESTS_CREATED_BY_ME,
+} from "./gql/Query";
 import { useIsFocused } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
-import { MyJobCard } from '../components';
-import { NavigationContainer } from '@react-navigation/native';
-import { MyJobScreen, MyRequestsScreen } from "./";
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { MyJobCard } from "./components";
+import { NavigationContainer } from "@react-navigation/native";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import ActivityNavigator from "./navigations/ActivityNavigator";
 
 import {
   selectIsLogin,
   selectUserToken,
   setIsFetching,
-} from "../features/AuthSlice";
+} from "./features/AuthSlice";
 import { useDispatch, useSelector } from "react-redux";
-
 
 // async function getValueFor(key) {
 //   return await SecureStore.getItemAsync(key);
@@ -30,27 +32,27 @@ const Tab = createMaterialTopTabNavigator();
 
 const MyActivityScreen = () => {
   const isLogin = useSelector(selectIsLogin);
-  console.log("isLogin: "+isLogin);
-  
+  console.log("isLogin: " + isLogin);
+
   // const isFocused = useIsFocused();
   // const [
-  //   getMyJob, 
+  //   getMyJob,
   //   { loading: jobLoading, error: jobError, data: jobData, refetch, called}
   // ] = useLazyQuery(FIND_MATCH_BY_STATE);
 
   // const [
-  //   getMyRequest, 
+  //   getMyRequest,
   //   { loading: myRequestLoading, error: myRequestError, data: myRequestData, refetchMyRequest, calledMyRequest}
   // ] = useLazyQuery(FIND_HELP_REQUESTS_CREATED_BY_ME);
 
   // // const [isLogin, setIsLogin] = useState(false);
   // const [loadingToken, setLoadingToken] = useState(true);
   // const [refresh, setRefresh] = useState(false)
-  
+
   // const pull = async () =>{
   //   setRefresh(true)
 
-  //   console.log("called")    
+  //   console.log("called")
 
   //   refetch()
   //   setTimeout(()=>{
@@ -74,7 +76,7 @@ const MyActivityScreen = () => {
   //     setLoadingToken(false);
   //   };
 
-  //   if(isFocused){ 
+  //   if(isFocused){
   //     getToken()
   //   }
   // }, [isFocused, called]);
@@ -83,7 +85,7 @@ const MyActivityScreen = () => {
   //   return <Text>loading token</Text>;
   // }
 
-  if(isLogin){
+  if (isLogin) {
     // if(jobLoading || myRequestLoading){
     //   return <Text>loading Activity</Text>;
     // }
@@ -106,25 +108,24 @@ const MyActivityScreen = () => {
 
     return (
       <View style={{ height: "100%" }}>
-        <Text style={styles.pageTitle}>
-          My Activity
-        </Text>
-        <Tab.Navigator 
+        <Text style={styles.pageTitle}>My Activity</Text>
+        <ActivityNavigator />
+        {/* <Tab.Navigator
           screenOptions={{
-            tabBarPosition: 'top',
+            tabBarPosition: "top",
             tabBarIndicatorStyle: {
               backgroundColor: COLORS.body,
-              height : 3  
+              height: 3,
             },
             tabBarLabelStyle: {
-              fontWeight: '200',
+              fontWeight: "200",
               fontFamily: FONTS.bold,
             },
           }}
         >
           <Tab.Screen name="My Jobs" component={MyJobScreen} />
           <Tab.Screen name="My Requests" component={MyRequestsScreen} />
-        </Tab.Navigator>
+        </Tab.Navigator> */}
       </View>
 
       // <View style={styles.viewContainer}>
@@ -138,26 +139,20 @@ const MyActivityScreen = () => {
       //     onRefresh={() => pull()}
       //     refreshing={refresh}/>
       // </View>
-      ) 
-      
-  }
-  else {
+    );
+  } else {
     return (
       <View style={styles.viewContainer}>
-        <Text style={styles.pageTitle}>
-          My Activity
-        </Text>
-        <Text style={styles.pageContent}>
-          Login in to see your Activity
-        </Text>
+        <Text style={styles.pageTitle}>My Activity</Text>
+        <Text style={styles.pageContent}>Login in to see your Activity</Text>
       </View>
     );
   }
-}
+};
 
 function HomeScreen() {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Text>Home!</Text>
     </View>
   );
@@ -165,7 +160,7 @@ function HomeScreen() {
 
 function SettingsScreen() {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Text>Settings!</Text>
     </View>
   );
@@ -175,7 +170,7 @@ const styles = StyleSheet.create({
   viewContainer: {
     flex: 1,
     backgroundColor: COLORS.white,
-    padding: 10
+    padding: 10,
   },
   pageTitle: {
     fontFamily: FONTS.bold,
@@ -189,8 +184,8 @@ const styles = StyleSheet.create({
     fontSize: 25,
     color: COLORS.gray,
     marginTop: 50,
-    alignSelf: "center"
+    alignSelf: "center",
   },
 });
 
-export default MyActivityScreen
+export default MyActivityScreen;

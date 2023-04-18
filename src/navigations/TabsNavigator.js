@@ -2,7 +2,8 @@
 import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { COLORS } from "../../constants";
-import { HomeScreen, MyJobScreen, NewJobScreen, MyActivityScreen } from "../screens";
+import { HomeScreen, MyJobScreen, NewJobScreen } from "../screens";
+import MyActivityScreen from "../MyActivityScreen";
 import { useSelector } from "react-redux";
 import { selectIsLogin } from "../features/AuthSlice";
 
@@ -26,7 +27,7 @@ const TabsNavigator = () => {
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
-        tabBarStyle: styles.tabBar
+        tabBarStyle: styles.tabBar,
         //tabBarStyle: { display: "none" }, // <<<<<<<
       }}
     >

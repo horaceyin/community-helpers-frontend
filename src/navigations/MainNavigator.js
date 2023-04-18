@@ -19,8 +19,8 @@ import {
   DistrictScreen,
   MyRequestDetailScreen,
   MyJobDetailScreen,
-  MyActivityScreen,
 } from "../screens/";
+import MyActivityScreen from "../MyActivityScreen";
 import AddressDropDown from "../components/AddressDropDown";
 
 const Stack = createNativeStackNavigator();
@@ -50,7 +50,10 @@ const MainNavigator = () => {
           <Stack.Screen name="Interests" component={InterestsScreen} />
           <Stack.Screen name="District" component={DistrictScreen} />
           {/* <Stack.Screen name="Address" component={AddressDropDown} /> */}
-          <Stack.Screen name="MyRequestDetail" component={MyRequestDetailScreen} />
+          <Stack.Screen
+            name="MyRequestDetail"
+            component={MyRequestDetailScreen}
+          />
           <Stack.Screen name="MyJobDetail" component={MyJobDetailScreen} />
           <Stack.Screen name="MyActivity" component={MyActivityScreen} />
         </Stack.Navigator>

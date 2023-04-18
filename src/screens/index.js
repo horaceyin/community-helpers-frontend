@@ -8,7 +8,6 @@ import InterestsScreen from "./InterestsScreen";
 import DistrictScreen from "./DistrictScreen";
 import MyRequestDetailScreen from "./MyRequestDetailScreen";
 import MyJobDetailScreen from "./MyJobDetailScreen";
-import MyActivityScreen from "./MyActivityScreen";
 import MyRequestsScreen from "./MyRequestsScreen";
 
 export {
@@ -21,7 +20,6 @@ export {
   InterestsScreen,
   DistrictScreen,
   MyRequestDetailScreen,
-  MyActivityScreen,
   MyRequestsScreen,
   MyJobDetailScreen,
 };
