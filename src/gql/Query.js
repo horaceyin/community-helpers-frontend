@@ -33,8 +33,18 @@ export const FIND_MATCH_BY_STATE = gql`
         address
         helpRequestDatetime
         helpSeeker {
+          id
           displayName
+          district
+          avatar
+          phone
         }
+
+        creationDatetime
+        creationDatetime
+        helperRating
+        images
+        category
       }
       is_taken
       state

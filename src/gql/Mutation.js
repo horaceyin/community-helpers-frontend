@@ -97,6 +97,21 @@ export const UPDATE_HELP_REQUEST = gql`
   }
 `;
 
+export const COMMIT_HELP_REQUEST = gql`
+  mutation HelperAcceptHelpRequst(
+    $takenHelpRequestUncheckedCreateInput: TakenHelpRequestUncheckedCreateInput!
+  ) {
+    HelperAcceptHelpRequst(
+      createTakenHelpRequestInput: $takenHelpRequestUncheckedCreateInput
+    ) {
+      userId
+      helpRequestId
+      is_taken
+      state
+    }
+  }
+`;
+
 export const SIGN_UP = gql`
   mutation CreateNewUser($newUserInput: LoginUserInput!, $file: Upload!) {
     signup(loginUserInput: $newUserInput, file: $file) {

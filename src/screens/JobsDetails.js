@@ -16,9 +16,13 @@ import {
   DetailsCategories,
   DetailsDesc,
 } from "../components/";
-import { useMutation } from "@apollo/client";
+import { useMutation, useLazyQuery } from "@apollo/client";
 import { AppContext } from "../../AppContext";
-import { UPDATE_HELP_REQUEST, SEND_USER_ACTION } from "../gql/Mutation";
+import {
+  UPDATE_HELP_REQUEST,
+  SEND_USER_ACTION,
+  COMMIT_HELP_REQUEST,
+} from "../gql/Mutation";
 import { selectIsLogin, selectUserInfo } from "../features/AuthSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -26,6 +30,7 @@ import {
   addUserAction,
   saveUserAction,
 } from "../features/UserActionSlice";
+import { FIND_MATCH_BY_STATE } from "../gql/Query";
 
 const DetailsHeader = ({ helpRequest, navigation }) => (
   <View style={{ width: "100%", height: 250 }}>
@@ -56,20 +61,30 @@ const JobsDetails = ({ route, navigation }) => {
   const isLogin = useSelector(selectIsLogin);
   const userId = isLogin ? useSelector(selectUserInfo).id : null;
   const dispatch = useDispatch();
+  const [isDisplayAccept, setIsDisplayAccept] = useState(true);
 
   const helpRequest = route.params.helpRequest;
-  console.log(helpRequest.categories, "^^^^^^^^");
   // const isLikePress = route.params.isLikePress;
   // const isDislikePress = route.params.isDislikePress;
 
   // const handleLikeButtonPress = route.params.handleLikeButtonPress;
   // const handleDislikeButtonPress = route.params.handleDislikeButtonPress;
 
-  const [updateRequest, { data: updatedRequest, loading, error }] =
-    useMutation(UPDATE_HELP_REQUEST);
+  const [commitRequest, commitRequestResult] = useMutation(COMMIT_HELP_REQUEST);
 
   const [sendUserActionMutation, sendUserActionResult] =
     useMutation(SEND_USER_ACTION);
+
+  const [
+    getCommitJob,
+    {
+      loading: getCommitLoading,
+      error: getCommitError,
+      data: getCommitData,
+      refetch: getCommitRefetch,
+      called: getCommitCalled,
+    },
+  ] = useLazyQuery(FIND_MATCH_BY_STATE);
 
   const handleSendUserAction = async (actionType) => {
     await sendUserActionMutation({
@@ -79,7 +94,7 @@ const JobsDetails = ({ route, navigation }) => {
         actionType: actionType,
       },
       onCompleted: (result) => {
-        console.log("sendUserActionMutation completed");
+        console.log("sendUserActionMutation completed", actionType);
       },
       onError: (error) => {
         console.log(`Apollo error: ${error.message}`);
@@ -87,11 +102,63 @@ const JobsDetails = ({ route, navigation }) => {
     });
   };
 
-  useEffect(() => {
+  useEffect(async () => {
     if (isLogin) {
       handleSendUserAction("view");
     }
+
+    // if (getCommitCalled) {
+    //   await getCommitRefetch();
+    // } else {
+    //   await getCommitJob({
+    //     variables: {
+    //       state: ["pending"],
+    //     },
+    //     onCompleted: (result) => {
+    //       let match = result.findMatchByState.find(
+    //         (job) => job.helpRequestId === helpRequest.id
+    //       );
+    //       console.log("find");
+    //       if (match.length > 0) {
+    //         setIsDisplayAccept(false);
+    //       }
+    //     },
+    //   });
+    // }
   }, []);
+
+  const handleCommitRequest = async () => {
+    console.log(helpRequest.id, userId);
+    // commitRequest({
+    //   variables: {
+    //     createTakenHelpRequestInput: {
+    //       helpRequestId: helpRequest.id,
+    //       // state: "ongoing",
+    //       userId: userId,
+    //     },
+    //   },
+    // }).then((data) => {
+    //   navigation.replace("Root");
+    // });
+
+    await commitRequest({
+      variables: {
+        takenHelpRequestUncheckedCreateInput: {
+          helpRequestId: helpRequest.id,
+          userId: userId,
+        },
+      },
+      onCompleted: async (result) => {
+        handleSendUserAction("commit");
+        console.log("commitRequest completed");
+        navigation.replace("Root");
+      },
+      onError: (error) => {
+        console.log(JSON.stringify(error, null, 2));
+        console.log(`Apollo error: ${error.message}`);
+      },
+    });
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: COLORS.white }}>
@@ -108,24 +175,13 @@ const JobsDetails = ({ route, navigation }) => {
           zIndex: 1,
         }}
       >
-        {isLogin && (
+        {isLogin && isDisplayAccept && (
           <RectButton
             buttonText={"Accept"}
             minWidth={170}
             fontSize={SIZES.large}
             {...SHADOWS.dark}
-            handlePress={() =>
-              updateRequest({
-                variables: {
-                  updateHelpRequestMatchingInput: {
-                    id: helpRequest.id,
-                    state: "ongoing",
-                  },
-                },
-              }).then((data) => {
-                navigation.replace("Root");
-              })
-            }
+            handlePress={handleCommitRequest}
           />
         )}
       </View>

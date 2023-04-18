@@ -23,13 +23,16 @@ const JobCardDetail = ({ helpRequest }) => {
   const [text, setText] = useState(helpRequest.description.slice(0, sliceSize));
   const [readMore, setReadMore] = useState(false);
 
-
   return (
     <View style={styles.cardContainer}>
       <View style={styles.card}>
         <Image
           // may need to change this to multiple images
-          source={helpRequest.image}
+          source={
+            helpRequest.images
+              ? { uri: helpRequest.images[0] }
+              : helpRequest.fakeImage
+          }
           resizeMode="cover"
           style={styles.cardImage}
         />
@@ -105,7 +108,6 @@ const JobCardDetail = ({ helpRequest }) => {
           </View>
         </View>
       </View>
-      
     </View>
   );
 };

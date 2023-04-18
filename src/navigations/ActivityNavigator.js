@@ -1,16 +1,17 @@
 import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { COLORS, FONTS } from "../../constants";
 import { MyJobScreen, MyRequestsScreen } from "../screens";
 
-const Tab = createBottomTabNavigator();
+const Tab = createMaterialTopTabNavigator();
 
 const ActivityNavigator = () => {
   return (
     <Tab.Navigator
       initialRouteName="My Jobs"
       screenOptions={{
-        tabBarPosition: "top",
+        // tabBarPosition: "top",
         tabBarIndicatorStyle: {
           backgroundColor: COLORS.body,
           height: 3,
