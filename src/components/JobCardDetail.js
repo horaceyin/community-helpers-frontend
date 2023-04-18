@@ -30,7 +30,7 @@ const JobCardDetail = ({ helpRequest }) => {
           // may need to change this to multiple images
           source={
             helpRequest.images
-              ? { uri: helpRequest.images[0] }
+              ? { uri: helpRequest.images }
               : helpRequest.fakeImage
           }
           resizeMode="cover"

@@ -43,6 +43,7 @@ const InterestsScreen = ({ navigation }) => {
       },
       onCompleted: (result) => {
         setErrorLoading(false);
+        console.log("updateUserInterestsMutation completed");
         navigation.reset({ index: 0, routes: [{ name: "Root" }] });
       },
       onError: (error) => {

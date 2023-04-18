@@ -62,6 +62,28 @@ export const FIND_HELP_REQUESTS_CREATED_BY_ME = gql`
         address
         price
         id
+
+        helpSeeker {
+          id
+          displayName
+          district
+          avatar
+          phone
+        }
+
+        creationDatetime
+        category
+        images
+
+        takenHelpRequests {
+          userId
+          user {
+            displayName
+            avatar
+            userScore
+            helperCount
+          }
+        }
       }
     }
   }

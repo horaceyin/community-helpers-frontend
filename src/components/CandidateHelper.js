@@ -4,10 +4,8 @@ import { SHADOWS, COLORS, FONTS, SIZES, assets } from "../../constants";
 import { IconButton } from "./Button";
 import { RadioButton } from "react-native-paper";
 
-
 const CandidateHelper = ({ helper, checked, setChecked }) => {
   return (
-
     <View style={styles.cardContainer}>
       <View
         style={{
@@ -16,25 +14,27 @@ const CandidateHelper = ({ helper, checked, setChecked }) => {
           justifyContent: "flex-start",
         }}
       >
-        <IconButton
-          iconSource={assets.person04}
-          goToLogin={() => {}}
-        />
-        <Text style={{marginStart: SIZES.font}} minWidth={"70%"}>
-            {helper.user.displayName}
+        <IconButton iconSource={assets.person04} goToLogin={() => {}} />
+        <Text style={{ marginStart: SIZES.font }} minWidth={"70%"}>
+          {helper.user.displayName}
         </Text>
-        <RadioButton 
+        <Text style={{ marginStart: SIZES.base }} minWidth={"70%"}>
+          Rating:{" "}
+          {parseFloat(helper.user.userScore / helper.user.helperCount).toFixed(
+            2
+          )}
+        </Text>
+        <RadioButton
           value={helper.userId}
           innerColor={COLORS.primary}
           outerColor={COLORS.primary}
-          status={ checked === helper.userId ? 'checked' : 'unchecked' }
-          onPress={() => {setChecked(helper.userId)}}
+          status={checked === helper.userId ? "checked" : "unchecked"}
+          onPress={() => {
+            setChecked(helper.userId);
+          }}
         />
       </View>
-
     </View>
-
-
   );
 };
 

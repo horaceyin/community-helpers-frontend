@@ -14,7 +14,7 @@ export const checkSignIn = createAsyncThunk(
   "auth/checkSignIn",
   async ({ navigation, getMyInfo }, { thunkAPI }) => {
     let token = await SecureStore.getItemAsync(tokenName);
-    console.log("🚀 ~ file: AuthSlice.js:17 ~ token:", token);
+    // console.log("🚀 ~ file: AuthSlice.js:17 ~ token:", token);
     let userInfo = null;
     let tokenExpiredMsg = "Token expired. Please login again";
 

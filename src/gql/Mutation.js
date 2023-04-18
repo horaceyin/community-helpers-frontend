@@ -186,3 +186,18 @@ export const CREATE_REQUEST_CATEGORY_WITH_STRING = gql`
     }
   }
 `;
+
+export const HELPER_ACCEPT_HELP_REQUEST = gql`
+  mutation HelperAcceptHelpRequst(
+    $createTakenHelpRequestInput: TakenHelpRequestUncheckedCreateInput!
+  ) {
+    HelperAcceptHelpRequst(
+      createTakenHelpRequestInput: $createTakenHelpRequestInput
+    ) {
+      helpRequestId
+      is_taken
+      state
+      userId
+    }
+  }
+`;

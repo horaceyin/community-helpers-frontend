@@ -1,18 +1,27 @@
-import React, { useEffect, useState } from 'react';
-import {StyleSheet, View, Text, FlatList, RefreshControl, ScrollView } from 'react-native';
-import { COLORS, FONTS } from '../../constants';
-import { useLazyQuery} from "@apollo/client";
-import { FIND_MATCH_BY_STATE, FIND_HELP_REQUESTS_CREATED_BY_ME } from '../gql/Query';
+import React, { useEffect, useState } from "react";
+import {
+  StyleSheet,
+  View,
+  Text,
+  FlatList,
+  RefreshControl,
+  ScrollView,
+} from "react-native";
+import { COLORS, FONTS } from "../../constants";
+import { useLazyQuery } from "@apollo/client";
+import {
+  FIND_MATCH_BY_STATE,
+  FIND_HELP_REQUESTS_CREATED_BY_ME,
+} from "../gql/Query";
 import { useIsFocused } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
-import { MyJobCard, MyRequestCard } from '../components';
+import { MyJobCard, MyRequestCard } from "../components";
 import {
   selectIsLogin,
   selectUserToken,
   setIsFetching,
 } from "../features/AuthSlice";
 import { useDispatch, useSelector } from "react-redux";
-
 
 async function getValueFor(key) {
   return await SecureStore.getItemAsync(key);
@@ -22,41 +31,46 @@ async function deleteValueFor(key) {
   return await SecureStore.deleteItemAsync(key);
 }
 
-const MyRequestsScreen = () => {
+const MyRequestsScreen = ({ navigation }) => {
   const isLogin = useSelector(selectIsLogin);
-  console.log("isLogin: "+isLogin);
-  
+  console.log("isLogin: " + isLogin);
+
   const isFocused = useIsFocused();
 
   const [
-    getMyRequest, 
-    { loading: myRequestLoading, error: myRequestError, data: myRequestData, refetch: refetchMyRequest, calledMyRequest}
+    getMyRequest,
+    {
+      loading: myRequestLoading,
+      error: myRequestError,
+      data: myRequestData,
+      refetch: refetchMyRequest,
+      calledMyRequest,
+    },
   ] = useLazyQuery(FIND_HELP_REQUESTS_CREATED_BY_ME);
 
   // const [isLogin, setIsLogin] = useState(false);
   const [loadingToken, setLoadingToken] = useState(true);
-  const [refresh, setRefresh] = useState(false)
-  
-  const pull = async () =>{
-    setRefresh(true)
+  const [refresh, setRefresh] = useState(false);
+
+  const pull = async () => {
+    setRefresh(true);
 
     console.log("calledMyRequest");
 
-
     refetchMyRequest();
-    setTimeout(()=>{
-      setRefresh(false)
-    }, 1000)
-  }
+    setTimeout(() => {
+      setRefresh(false);
+    }, 1000);
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     const getToken = async () => {
       const token = await getValueFor("token");
       if (token !== null) {
-        console.log("calledMyRequest")
-        if(calledMyRequest){
-          refetch()
-        }else{
+        console.log("calledMyRequest");
+        if (calledMyRequest) {
+          refetch();
+        } else {
           getMyRequest();
         }
         // setIsLogin(true);
@@ -64,43 +78,37 @@ const MyRequestsScreen = () => {
       setLoadingToken(false);
     };
 
-    if(isFocused){ 
-      getToken()
+    if (isFocused) {
+      getToken();
     }
   }, [isFocused, calledMyRequest]);
 
   if (loadingToken) {
     return (
       <ScrollView
-      style={{backgroundColor: COLORS.white,}}
-      contentContainerStyle={styles.scrollView}
-      refreshControl={
-        <RefreshControl refreshing={true} />
-      }></ScrollView>
-    )
+        style={{ backgroundColor: COLORS.white }}
+        contentContainerStyle={styles.scrollView}
+        refreshControl={<RefreshControl refreshing={true} />}
+      ></ScrollView>
+    );
   }
 
-  if(isLogin){
-    if(myRequestLoading){
+  if (isLogin) {
+    if (myRequestLoading) {
       return (
         <ScrollView
-        style={{backgroundColor: COLORS.white,}}
-        contentContainerStyle={styles.scrollView}
-        refreshControl={
-          <RefreshControl refreshing={true} />
-        }></ScrollView>
-      )
+          style={{ backgroundColor: COLORS.white }}
+          contentContainerStyle={styles.scrollView}
+          refreshControl={<RefreshControl refreshing={true} />}
+        ></ScrollView>
+      );
     }
 
-    if(myRequestError) {
+    if (myRequestError) {
       return (
         <View style={styles.viewContainer}>
-          <Text style={styles.pageTitle}>
-            My Activity
-          </Text>
-          <Text style={styles.pageContent}>
-            Login in to see your Activity
-          </Text>
+          <Text style={styles.pageTitle}>My Activity</Text>
+          <Text style={styles.pageContent}>Login in to see your Activity</Text>
         </View>
       );
     }
@@ -109,21 +117,23 @@ const MyRequestsScreen = () => {
       <View style={styles.viewContainer}>
         <FlatList
           data={myRequestData["me"]["userCreatedHelpRequests"]}
-          renderItem={({item}) => <MyRequestCard data={item}/>}
-          keyExtractor={item => item.id}
+          renderItem={({ item }) => (
+            <MyRequestCard data={item} navigation={navigation} />
+          )}
+          keyExtractor={(item) => item.id}
           onRefresh={() => pull()}
-          refreshing={refresh}/>
+          refreshing={refresh}
+        />
       </View>
-      ) 
-      
+    );
   }
-}
+};
 
 const styles = StyleSheet.create({
   viewContainer: {
     flex: 1,
     backgroundColor: COLORS.white,
-    padding: 10
+    padding: 10,
   },
   pageTitle: {
     fontFamily: FONTS.bold,
@@ -136,8 +146,8 @@ const styles = StyleSheet.create({
     fontSize: 25,
     color: COLORS.gray,
     marginTop: 50,
-    alignSelf: "center"
+    alignSelf: "center",
   },
 });
 
-export default MyRequestsScreen
+export default MyRequestsScreen;
