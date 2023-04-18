@@ -126,3 +126,24 @@ export const UPDATE_USER = gql`
     }
   }
 `;
+
+export const SEND_USER_ACTION = gql`
+  mutation createUserHelpRequestActionInput(
+    $userId: Int!
+    $helpRequestId: Int!
+    $actionType: String
+  ) {
+    createUserHelpRequestAction(
+      createUserHelpRequestActionInput: {
+        userId: $userId
+        helpRequestId: $helpRequestId
+        actionType: $actionType
+      }
+    ) {
+      id
+      userId
+      actionType
+      helpRequestId
+    }
+  }
+`;

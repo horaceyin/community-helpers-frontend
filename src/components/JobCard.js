@@ -70,7 +70,11 @@ const JobCard = ({ helpRequest }) => {
       <View style={styles.card}>
         <Image
           // may need to change this to multiple images
-          source={helpRequest.image}
+          source={
+            helpRequest.images
+              ? { uri: helpRequest.images }
+              : helpRequest.fakeImage
+          }
           resizeMode="cover"
           style={styles.cardImage}
         />

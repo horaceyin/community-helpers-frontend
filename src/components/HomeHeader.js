@@ -29,7 +29,7 @@ const HomeHeader = ({ onSearch, ...props }) => {
         />
 
         <IconButton
-          iconSource={isLogin ? assets.person04 : assets.fakeUser}
+          iconSource={isLogin ? { uri: userInfo.avatar } : assets.fakeUser}
           goToLogin={() => navigation.navigate("Login", props)}
         />
       </View>

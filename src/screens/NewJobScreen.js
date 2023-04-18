@@ -15,57 +15,63 @@ import { useMutation } from "@apollo/client";
 import { CREATE_HELP_REQUEST } from "../gql/Mutation";
 import { Avatar, TouchableRipple, Button } from "react-native-paper";
 import Carousel from "../components/Carousel";
-import ActionSheet from 'react-native-actionsheet';
-import * as ImagePicker from 'expo-image-picker';
+import ActionSheet from "react-native-actionsheet";
+import * as ImagePicker from "expo-image-picker";
 import { ReactNativeFile } from "apollo-upload-client";
-import * as mime from 'react-native-mime-types';
+import * as mime from "react-native-mime-types";
 
 async function getValueFor(key) {
   return await SecureStore.getItemAsync(key);
 }
 
 const ActionSheetConfig = {
-  BUTTONS: ['Take Photo', 'Choose From Library', 'Cancel'],
+  BUTTONS: ["Take Photo", "Choose From Library", "Cancel"],
   TITLE: "Select a Photo",
   CANCELBUTTONINDEX: 2,
-  MAX_IMAGES: 4
-}
+  MAX_IMAGES: 4,
+};
 
 const ImageControls = (props) => {
   return (
     <View>
-      <View style={{
-        flexDirection: 'row', 
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        borderTopWidth:10,
-        borderBottomWidth: 10, 
-        borderBottomColor: 'white',
-        borderTopColor: 'white'
-        }}>
-        <Button 
-        icon="plus" 
-        mode="outlined"
-        textColor="green"
+      <View
         style={{
-          width: "45%",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          borderTopWidth: 10,
+          borderBottomWidth: 10,
+          borderBottomColor: "white",
+          borderTopColor: "white",
         }}
-        disabled={!props.enabled}
-        onPress={props.onClickAddImage}>
+      >
+        <Button
+          icon="plus"
+          mode="outlined"
+          textColor="green"
+          style={{
+            width: "45%",
+          }}
+          disabled={!props.enabled}
+          onPress={props.onClickAddImage}
+        >
           Add Image
         </Button>
 
-        <Button 
-        icon="delete" 
-        mode="outlined"
-        textColor="blue"
-        disabled={!props.removable}
-        style={{
-          width: "45%"
-        }} 
-        onPress={()=> {
-          props.setImages(((current) => 
-            current.filter((image, index) => index != props.carouselIndex)))}}>
+        <Button
+          icon="delete"
+          mode="outlined"
+          textColor="blue"
+          disabled={!props.removable}
+          style={{
+            width: "45%",
+          }}
+          onPress={() => {
+            props.setImages((current) =>
+              current.filter((image, index) => index != props.carouselIndex)
+            );
+          }}
+        >
           Remove Selected
         </Button>
       </View>
@@ -74,45 +80,48 @@ const ImageControls = (props) => {
         mode="outlined"
         textColor="red"
         disabled={!props.removable}
-        onPress={()=> props.setImages([])}>
-          Remove all
+        onPress={() => props.setImages([])}
+      >
+        Remove all
       </Button>
     </View>
-  )
-}
+  );
+};
 
 const ImagesSection = (props) => {
-
-  if(props.images){
-    if(props.images.length != 0){
+  if (props.images) {
+    if (props.images.length != 0) {
       return (
         <View>
-          <Carousel images={props.images} setCarouselIndex={props.setCarouselIndex}/>
+          <Carousel
+            images={props.images}
+            setCarouselIndex={props.setCarouselIndex}
+          />
         </View>
-      )
-    }else{
+      );
+    } else {
       return (
-        <TouchableRipple     
-            rippleColor="rgba(0, 0, 0, .32)"
-            style={{borderRadius: 15}}
-          >
-          <Avatar.Icon 
-          size={64} 
-          icon="image-plus"
-          style={{
-            width: Dimensions.get('window').width - 50, 
-            height: 300,
-            borderRadius: 15
-            }}/>
+        <TouchableRipple
+          rippleColor="rgba(0, 0, 0, .32)"
+          style={{ borderRadius: 15 }}
+        >
+          <Avatar.Icon
+            size={64}
+            icon="image-plus"
+            style={{
+              width: Dimensions.get("window").width - 50,
+              height: 300,
+              borderRadius: 15,
+            }}
+          />
         </TouchableRipple>
-      )
+      );
     }
   }
-}
+};
 
 const NewJobScreen = () => {
-
-  let actionSheet = useRef()
+  let actionSheet = useRef();
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
@@ -123,7 +132,7 @@ const NewJobScreen = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
-  const [price, setPrice] = useState(0);
+  const [price, setPrice] = useState("");
   const [scheduledDatetime, setScheduledDatetime] = useState(
     new Date(new Date().toDateString())
   );
@@ -131,42 +140,43 @@ const NewJobScreen = () => {
   const [createHelpRequest, { data, loading, error }] =
     useMutation(CREATE_HELP_REQUEST);
 
-    const onClickAddImage = async () => {
+  const onClickAddImage = async () => {
     actionSheet.current.show();
-  }
+  };
 
-  function generateRNFile(uri){
-    return uri ? new ReactNativeFile({
-     uri,
-     type: mime.lookup(uri) || 'image',
-     name: uri,
-    }): null;
+  function generateRNFile(uri) {
+    return uri
+      ? new ReactNativeFile({
+          uri,
+          type: mime.lookup(uri) || "image",
+          name: uri,
+        })
+      : null;
   }
 
   const ActionSheetCallback = async (selectedIndex) => {
     let permission;
     let result;
 
-    switch(selectedIndex){
+    switch (selectedIndex) {
       case 0:
         permission = await ImagePicker.requestCameraPermissionsAsync();
-        if (permission.status !== 'granted') {
-          alert('Sorry, we need camera permissions to make this work!');
-          return
+        if (permission.status !== "granted") {
+          alert("Sorry, we need camera permissions to make this work!");
+          return;
         }
 
         result = await ImagePicker.launchCameraAsync({
           mediaTypes: ImagePicker.MediaTypeOptions.Images,
-          aspect: [9, 16], 
+          aspect: [9, 16],
         });
 
         break;
       case 1:
-
         permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (permission.status !== 'granted') {
-          alert('Sorry, we need media library permissions to make this work!');
-          return
+        if (permission.status !== "granted") {
+          alert("Sorry, we need media library permissions to make this work!");
+          return;
         }
 
         result = await ImagePicker.launchImageLibraryAsync({
@@ -174,18 +184,18 @@ const NewJobScreen = () => {
           allowsEditing: false,
           allowsMultipleSelection: true,
           selectionLimit: ActionSheetConfig.MAX_IMAGES - images.length,
-          aspect: [9, 16], 
+          aspect: [9, 16],
         });
 
         break;
     }
 
     if (!result.canceled) {
-      for(let i = 0; i < result.assets.length; i++){
-        setImages(images => [...images, result.assets[i].uri]);
+      for (let i = 0; i < result.assets.length; i++) {
+        setImages((images) => [...images, result.assets[i].uri]);
       }
     }
-  }
+  };
 
   // useEffect(() => {
   //   console.log('in');
@@ -249,14 +259,17 @@ const NewJobScreen = () => {
     <View style={styles.container}>
       <Text style={styles.pageTitle}>Create Help Request</Text>
       <ScrollView>
-      <Text style={styles.textInputTitle}>Descriptive images (4 Images Max)</Text>
-        <ImagesSection images={images} setCarouselIndex={setCarouselIndex}/>
-        <ImageControls 
-          onClickAddImage={onClickAddImage} 
-          setImages={setImages} 
+        <Text style={styles.textInputTitle}>
+          Descriptive images (4 Images Max)
+        </Text>
+        <ImagesSection images={images} setCarouselIndex={setCarouselIndex} />
+        <ImageControls
+          onClickAddImage={onClickAddImage}
+          setImages={setImages}
           carouselIndex={carouselIndex}
-          removable={(images.length > 0) && (images.length <= 4)}
-          enabled={images.length < ActionSheetConfig.MAX_IMAGES}/>
+          removable={images.length > 0 && images.length <= 4}
+          enabled={images.length < ActionSheetConfig.MAX_IMAGES}
+        />
         <Text style={styles.textInputTitle}>Help Request Title</Text>
         <TextInput
           style={styles.textInput}
@@ -280,7 +293,7 @@ const NewJobScreen = () => {
           style={styles.textInput}
           value={price}
           keyboardType="decimal-pad"
-          onChangeText={(inputPrice) => setPrice(parseFloat(inputPrice))}
+          onChangeText={(inputPrice) => setPrice(inputPrice)}
         />
         <Text style={styles.textInputTitle}>Scheduled Data & Time</Text>
         {/* <TextInput style={styles.textInput} /> */}
@@ -320,27 +333,24 @@ const NewJobScreen = () => {
         <Pressable
           style={styles.submitButton}
           onPress={() => {
-
             let files = [];
 
-            for(let i = 0; i < images.length; i++){
-              files.push(
-                generateRNFile(images[i])
-              )
+            for (let i = 0; i < images.length; i++) {
+              files.push(generateRNFile(images[i]));
             }
 
-            getValueFor('token').then((token)=>{
+            getValueFor("token").then((token) => {
               if (token) {
                 createHelpRequest({
                   variables: {
-                    createHelpRequestInput:{
+                    createHelpRequestInput: {
                       title: title,
                       description: description,
                       category: category,
                       helpRequestDatetime: scheduledDatetime,
-                      price: price,
+                      price: parseFloat(price),
                     },
-                    files: files
+                    files: files,
                   },
                 })
                   .then(() => {
@@ -350,12 +360,10 @@ const NewJobScreen = () => {
                     console.error(e);
                     alert("Create fail");
                   });
-              }
-              else {
+              } else {
                 alert("Please login first");
               }
             });
-            
 
             // getValueFor("token").then((token) => {
             //   console.log(token ? true : false);
@@ -367,14 +375,14 @@ const NewJobScreen = () => {
         </Pressable>
       </ScrollView>
       <ActionSheet
-          ref={actionSheet}
-          title={ActionSheetConfig.TITLE}
-          options={ActionSheetConfig.BUTTONS}
-          cancelButtonIndex={2}
-          onPress={(index) => {
-            ActionSheetCallback(index)
-          }}
-        />
+        ref={actionSheet}
+        title={ActionSheetConfig.TITLE}
+        options={ActionSheetConfig.BUTTONS}
+        cancelButtonIndex={2}
+        onPress={(index) => {
+          ActionSheetCallback(index);
+        }}
+      />
     </View>
   );
 };
@@ -394,7 +402,7 @@ const styles = StyleSheet.create({
     color: COLORS.body,
   },
   pageTitle: {
-    fontFamily: FONTS.bold, 
+    fontFamily: FONTS.bold,
     fontWeight: "bold",
     fontSize: SIZES.extraLarge,
     color: COLORS.body,

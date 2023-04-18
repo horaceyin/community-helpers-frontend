@@ -6,7 +6,7 @@ import {
   StatusBar,
   FlatList,
 } from "react-native";
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { COLORS, SIZES, SHADOWS, FONTS, assets } from "../../constants";
 import {
   CircleButton,
@@ -18,7 +18,7 @@ import {
 } from "../components/";
 import { useMutation } from "@apollo/client";
 import { AppContext } from "../../AppContext";
-import { UPDATE_HELP_REQUEST } from "../gql/Mutation";
+import { UPDATE_HELP_REQUEST, SEND_USER_ACTION } from "../gql/Mutation";
 import { selectIsLogin, selectUserInfo } from "../features/AuthSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -30,7 +30,9 @@ import {
 const DetailsHeader = ({ helpRequest, navigation }) => (
   <View style={{ width: "100%", height: 250 }}>
     <Image
-      source={helpRequest.image}
+      source={
+        helpRequest.images ? { uri: helpRequest.images } : helpRequest.fakeImage
+      }
       resizeMode="cover"
       style={{ width: "100%", height: "100%" }}
     />
@@ -64,15 +66,41 @@ const JobsDetails = ({ route, navigation }) => {
   const [updateRequest, { data: updatedRequest, loading, error }] =
     useMutation(UPDATE_HELP_REQUEST);
 
-  if (isLogin) {
-    // dispatch(
-    //   saveUserAction({
-    //     userId,
-    //     helpRequestId: helpRequest.id,
-    //     actionType: "viewed",
-    //   })
-    // );
-  }
+  const [sendUserActionMutation, sendUserActionResult] =
+    useMutation(SEND_USER_ACTION);
+
+  const handleSendUserAction = async (actionType) => {
+    await sendUserActionMutation({
+      variables: {
+        userId: userId,
+        helpRequestId: helpRequest.id,
+        actionType: actionType,
+      },
+      onCompleted: (result) => {
+        console.log("sendUserActionMutation completed");
+      },
+      onError: (error) => {
+        console.log(`Apollo error: ${error.message}`);
+      },
+    });
+  };
+
+  // if (isLogin) {
+  //   handleSendUserAction("view");
+  //   // dispatch(
+  //   //   saveUserAction({
+  //   //     userId,
+  //   //     helpRequestId: helpRequest.id,
+  //   //     actionType: "viewed",
+  //   //   })
+  //   // );
+  // }
+
+  useEffect(() => {
+    if (isLogin) {
+      handleSendUserAction("view");
+    }
+  }, []);
 
   return (
     <View style={{ flex: 1, backgroundColor: COLORS.white }}>

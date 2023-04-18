@@ -32,7 +32,8 @@ const formatJobs = (jobs, isLogin, jobsPics) => {
     let retJob = JSON.stringify(job);
     retJob = JSON.parse(retJob);
 
-    retJob.image = jobsPics[Math.floor(Math.random() * jobsPics.length)];
+    retJob.fakeImage = jobsPics[Math.floor(Math.random() * jobsPics.length)];
+    retJob.images = retJob.images ? retJob.images[0] : null;
     // helperSeeker display name
     console.log("creating a job");
 
@@ -53,6 +54,7 @@ const formatJobs = (jobs, isLogin, jobsPics) => {
 };
 
 export const createRenderDataArray = (backendData, loginState, jobsPics) => {
+  console.log(backendData, "/////////////////////");
   return new Promise((resolve, reject) => {
     try {
       let result = formatJobs(backendData, loginState, jobsPics);
