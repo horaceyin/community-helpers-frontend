@@ -26,12 +26,12 @@ export const checkSignIn = createAsyncThunk(
       },
       onCompleted: (result) => {
         userInfo = result.me;
+        console.log("🚀 ~ file: AuthSlice.js:29 ~ userInfo:", userInfo);
         if (!userInfo.district) {
           navigation.reset({ index: 0, routes: [{ name: "District" }] });
+        } else if (userInfo.interests.length === 0) {
+          navigation.reset({ index: 0, routes: [{ name: "Interests" }] });
         }
-        // else if (userInfo.interests.length === 0) {
-        //   navigation.reset({ index: 0, routes: [{ name: "Interests" }] });
-        // }
       },
     });
 
@@ -158,6 +158,7 @@ export const authSlice = createSlice({
         // let { user_token, user_info } = action.payload;
         let { user_token } = action.payload;
         state.userToken = user_token;
+        state.userInfo = null;
         state.loginError = null;
         state.loginIsLoading = false;
         console.log("🚀 ~ file: appLogin.fulfilled ~ action");

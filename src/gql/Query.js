@@ -11,6 +11,10 @@ export const ME = gql`
       address
       phone
       district
+      interests {
+        categoryId
+        userId
+      }
       city
       country
     }

@@ -11,7 +11,7 @@ import {
 import { RectButton } from "../components";
 import { ActivityIndicator, MD2Colors } from "react-native-paper";
 import { useMutation } from "@apollo/client";
-import { UPDATE_USER } from "../gql/Mutation";
+import { UPDATE_USER_INTERESTS } from "../gql/Mutation";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUserInfo } from "../features/AuthSlice";
 
@@ -29,16 +29,16 @@ const InterestsScreen = ({ navigation }) => {
 
   const userInfo = useSelector(selectUserInfo);
   const [errorLoading, setErrorLoading] = useState(false);
-  const [updateUserMutation, updateUserResult] = useMutation(UPDATE_USER);
+  const [updateUserInterestsMutation, updateUserInterestsResult] = useMutation(
+    UPDATE_USER_INTERESTS
+  );
 
   useEffect(() => {}, []);
 
   const handleNextButtonPress = async () => {
-    await updateUserMutation({
+    await updateUserInterestsMutation({
       variables: {
-        updateUserInput: {
-          interests: { set: selectedInterests },
-        },
+        categories: selectedInterests,
         userId: userInfo.id,
       },
       onCompleted: (result) => {
@@ -124,7 +124,7 @@ const InterestsScreen = ({ navigation }) => {
           extraTextStyle={styles.districtButtonTextExtraStyle}
         />
         <ActivityIndicator
-          animating={updateUserResult.loading}
+          animating={updateUserInterestsResult.loading}
           color={MD2Colors.deepOrangeA400}
           size={interestsScreenConfig.activityIndicatorSize}
         />

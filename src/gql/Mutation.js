@@ -147,3 +147,27 @@ export const SEND_USER_ACTION = gql`
     }
   }
 `;
+
+export const UPDATE_USER_INTERESTS = gql`
+  mutation UpdateUserInterests($categories: [String!]!, $userId: Int!) {
+    createInterestWithStringBatch(categories: $categories, userId: $userId) {
+      userId
+      categoryId
+    }
+  }
+`;
+
+export const CREATE_REQUEST_CATEGORY_WITH_STRING = gql`
+  mutation CreateHelpRequestCategoryWithStringBatch(
+    $categories: [String!]!
+    $helpRequestId: Int!
+  ) {
+    createHelpRequestCategoryWithStringBatch(
+      categories: $categories
+      helpRequestId: $helpRequestId
+    ) {
+      categoryId
+      helpRequestId
+    }
+  }
+`;

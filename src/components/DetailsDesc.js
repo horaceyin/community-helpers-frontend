@@ -9,8 +9,8 @@ import {
   saveUserAction,
   selectHelpRequestsAction,
 } from "../features/UserActionSlice";
-import { useLazyQuery } from "@apollo/client";
-import { ME } from "../gql/Query";
+import { useMutation } from "@apollo/client";
+import { SEND_USER_ACTION } from "../gql/Mutation";
 
 const DetailsDesc = ({ helpRequest, ...prop }) => {
   const sliceSize = 50;
@@ -28,6 +28,9 @@ const DetailsDesc = ({ helpRequest, ...prop }) => {
   const userId = isLogin ? useSelector(selectUserInfo).id : null;
   const helpRequestsAction = useSelector(selectHelpRequestsAction);
 
+  const [sendUserActionMutation, sendUserActionResult] =
+    useMutation(SEND_USER_ACTION);
+
   // const globalSetLike = useSelector(selectSetLike);
   // const globalSetDislike = useSelector(selectSetDislike);
 
@@ -36,38 +39,45 @@ const DetailsDesc = ({ helpRequest, ...prop }) => {
   // //for send user action cookie to server
   // const [getMyInfo, getMyInfoResult] = useLazyQuery(ME);
 
-  // const handleLikeButtonPress = async () => {
-  //   console.log("press");
-  //   if (!isLikePress && !isDislikePress) {
-  //     dispatch(
-  //       saveUserAction({
-  //         getMyInfo,
-  //         userId,
-  //         helpRequestId,
-  //         actionType: "liked",
-  //       })
-  //     );
-  //     //query me to send cookie
-  //   } else {
-  //     alert("You have already liked/disliked this request");
-  //   }
-  // };
+  const handleSendUserAction = async (actionType) => {
+    await sendUserActionMutation({
+      variables: {
+        userId: userId,
+        helpRequestId: helpRequestId,
+        actionType: actionType,
+      },
+      onCompleted: (result) => {
+        console.log("sendUserActionMutation completed");
+      },
+      onError: (error) => {
+        console.log(`Apollo error: ${error.message}`);
+      },
+    });
+  };
 
-  // const handleDislikeButtonPress = () => {
-  //   if (!isLikePress && !isDislikePress) {
-  //     dispatch(
-  //       saveUserAction({
-  //         userId,
-  //         helpRequestId,
-  //         actionType: "disliked",
-  //       })
-  //     );
-  //     // globalSetDislike(true);
-  //     setIsDislikePress(true);
-  //   } else {
-  //     alert("You have already liked/disliked this request");
-  //   }
-  // };
+  const handleLikeButtonPress = async () => {
+    if (!isLikePress && !isDislikePress) {
+      setIsLikePress(true);
+      handleSendUserAction("like");
+      // dispatch(
+      //   saveUserAction({ userId, helpRequestId, actionType: "liked" })
+      // );
+    } else {
+      alert("You have already liked/disliked this request");
+    }
+  };
+
+  const handleDislikeButtonPress = async () => {
+    if (!isLikePress && !isDislikePress) {
+      setIsDislikePress(true);
+      handleSendUserAction("dislike");
+      // dispatch(
+      //   saveUserAction({ userId, helpRequestId, actionType: "liked" })
+      // );
+    } else {
+      alert("You have already liked/disliked this request");
+    }
+  };
 
   return (
     <>
@@ -103,14 +113,14 @@ const DetailsDesc = ({ helpRequest, ...prop }) => {
             minWidth={"30%"}
             isLikePress={isLikePress}
             isDislikePress={isDislikePress}
-            // handleLikePress={handleLikeButtonPress}
-            // handleDislikePress={handleDislikeButtonPress}
-            handleLikePress={() => {
-              if (!isLikePress && !isDislikePress) setIsLikePress(true); // Handle like here
-            }}
-            handleDislikePress={() => {
-              if (!isLikePress && !isDislikePress) setIsDislikePress(true); // Handle dislike here
-            }}
+            handleLikePress={handleLikeButtonPress}
+            handleDislikePress={handleDislikeButtonPress}
+            // handleLikePress={() => {
+            //   if (!isLikePress && !isDislikePress) setIsLikePress(true); // Handle like here
+            // }}
+            // handleDislikePress={() => {
+            //   if (!isLikePress && !isDislikePress) setIsDislikePress(true); // Handle dislike here
+            // }}
           />
         )}
       </View>

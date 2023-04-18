@@ -11,6 +11,8 @@ import {
   addUserAction,
   saveUserAction,
 } from "../features/UserActionSlice";
+import { SEND_USER_ACTION } from "../gql/Mutation";
+import { useMutation } from "@apollo/client";
 
 function areEqual(prevProps, nextProps) {
   /*
@@ -30,31 +32,48 @@ const JobCard = ({ helpRequest }) => {
   const dispatch = useDispatch();
   let userId = isLogin ? useSelector(selectUserInfo).id : null;
 
-  console.log(helpRequest);
+  const [sendUserActionMutation, sendUserActionResult] =
+    useMutation(SEND_USER_ACTION);
 
-  // const handleLikeButtonPress = () => {
-  //   if (!isLikePress && !isDislikePress) {
-  //     setIsLikePress(true);
-  //     dispatch(
-  //       saveUserAction({ userId, helpRequestId, actionType: "liked" })
-  //       // collectUserAction({ userId, helpRequestId, actionType: "liked" })
-  //     );
-  //   } else {
-  //     alert("You have already liked/disliked this request");
-  //   }
-  // };
+  const handleSendUserAction = async (actionType) => {
+    await sendUserActionMutation({
+      variables: {
+        userId: userId,
+        helpRequestId: helpRequestId,
+        actionType: actionType,
+      },
+      onCompleted: (result) => {
+        console.log("sendUserActionMutation completed");
+      },
+      onError: (error) => {
+        console.log(`Apollo error: ${error.message}`);
+      },
+    });
+  };
 
-  // const handleDislikeButtonPress = () => {
-  //   if (!isLikePress && !isDislikePress) {
-  //     setIsDislikePress(true);
-  //     dispatch(
-  //       saveUserAction({ userId, helpRequestId, actionType: "liked" })
-  //       // collectUserAction({ userId, helpRequestId, actionType: "disliked" })
-  //     );
-  //   } else {
-  //     alert("You have already liked/disliked this request");
-  //   }
-  // };
+  const handleLikeButtonPress = async () => {
+    if (!isLikePress && !isDislikePress) {
+      setIsLikePress(true);
+      handleSendUserAction("like");
+      // dispatch(
+      //   saveUserAction({ userId, helpRequestId, actionType: "liked" })
+      // );
+    } else {
+      alert("You have already liked/disliked this request");
+    }
+  };
+
+  const handleDislikeButtonPress = async () => {
+    if (!isLikePress && !isDislikePress) {
+      setIsDislikePress(true);
+      handleSendUserAction("dislike");
+      // dispatch(
+      //   saveUserAction({ userId, helpRequestId, actionType: "liked" })
+      // );
+    } else {
+      alert("You have already liked/disliked this request");
+    }
+  };
 
   handleNavigation = () => {
     // dispatch(setLikeDislikeFunc({ setIsLikePress, setIsDislikePress }));
@@ -124,14 +143,14 @@ const JobCard = ({ helpRequest }) => {
               minWidth={"30%"}
               isLikePress={isLikePress}
               isDislikePress={isDislikePress}
-              // handleLikePress={handleLikeButtonPress}
-              // handleDislikePress={handleDislikeButtonPress}
-              handleLikePress={() => {
-                if (!isLikePress && !isDislikePress) setIsLikePress(true); // Handle like here
-              }}
-              handleDislikePress={() => {
-                if (!isLikePress && !isDislikePress) setIsDislikePress(true); // Handle dislike here
-              }}
+              handleLikePress={handleLikeButtonPress}
+              handleDislikePress={handleDislikeButtonPress}
+              // handleLikePress={() => {
+              //   if (!isLikePress && !isDislikePress) setIsLikePress(true); // Handle like here
+              // }}
+              // handleDislikePress={() => {
+              //   if (!isLikePress && !isDislikePress) setIsDislikePress(true); // Handle dislike here
+              // }}
             />
           )}
         </View>

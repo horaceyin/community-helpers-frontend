@@ -54,7 +54,6 @@ const formatJobs = (jobs, isLogin, jobsPics) => {
 };
 
 export const createRenderDataArray = (backendData, loginState, jobsPics) => {
-  console.log(backendData, "/////////////////////");
   return new Promise((resolve, reject) => {
     try {
       let result = formatJobs(backendData, loginState, jobsPics);

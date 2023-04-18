@@ -126,7 +126,6 @@ const HomeScreen = () => {
 
   const getRequests = async () => {
     if (isLogin) {
-      console.log("num: ", renderData.length);
       let result = await requestServer(
         getRecommenedJobsCalled,
         getRecommenedJobs,

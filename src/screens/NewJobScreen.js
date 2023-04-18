@@ -12,7 +12,10 @@ import { COLORS, FONTS, SIZES } from "../../constants";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import * as SecureStore from "expo-secure-store";
 import { useMutation } from "@apollo/client";
-import { CREATE_HELP_REQUEST } from "../gql/Mutation";
+import {
+  CREATE_HELP_REQUEST,
+  CREATE_REQUEST_CATEGORY_WITH_STRING,
+} from "../gql/Mutation";
 import { Avatar, TouchableRipple, Button } from "react-native-paper";
 import Carousel from "../components/Carousel";
 import ActionSheet from "react-native-actionsheet";
@@ -139,6 +142,9 @@ const NewJobScreen = () => {
 
   const [createHelpRequest, { data, loading, error }] =
     useMutation(CREATE_HELP_REQUEST);
+
+  const [createCategoryWithString, createCategoryWithStringResult] =
+    useMutation(CREATE_REQUEST_CATEGORY_WITH_STRING);
 
   const onClickAddImage = async () => {
     actionSheet.current.show();
@@ -282,7 +288,9 @@ const NewJobScreen = () => {
           value={description}
           onChangeText={(inputDescription) => setDescription(inputDescription)}
         />
-        <Text style={styles.textInputTitle}>Category</Text>
+        <Text style={styles.textInputTitle}>
+          Category (separated by commas ",")
+        </Text>
         <TextInput
           style={styles.textInput}
           value={category}
@@ -341,20 +349,40 @@ const NewJobScreen = () => {
 
             getValueFor("token").then((token) => {
               if (token) {
+                let categoryArray = category.split(",");
+                let categoryArrayTrimmed = categoryArray.map((item) =>
+                  item.trim()
+                );
+                let myCategory = categoryArrayTrimmed.join(",");
+
                 createHelpRequest({
                   variables: {
                     createHelpRequestInput: {
                       title: title,
                       description: description,
-                      category: category,
+                      category: myCategory,
                       helpRequestDatetime: scheduledDatetime,
                       price: parseFloat(price),
                     },
                     files: files,
                   },
                 })
-                  .then(() => {
-                    alert("Create success!");
+                  .then((result) => {
+                    let requestId = result.data.createHelpRequest.id;
+                    console.log(categoryArrayTrimmed);
+                    createCategoryWithString({
+                      variables: {
+                        categories: categoryArrayTrimmed,
+                        helpRequestId: requestId,
+                      },
+                    })
+                      .then((result) => {
+                        alert("Create success!");
+                        console.log(result);
+                      })
+                      .catch((e) => {
+                        console.error(e);
+                      });
                   })
                   .catch((e) => {
                     console.error(e);

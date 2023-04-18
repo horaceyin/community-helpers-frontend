@@ -56,10 +56,12 @@ const JobsDetails = ({ route, navigation }) => {
   const isLogin = useSelector(selectIsLogin);
   const userId = isLogin ? useSelector(selectUserInfo).id : null;
   const dispatch = useDispatch();
-  const helpRequest = route.params.helpRequest;
 
+  const helpRequest = route.params.helpRequest;
+  console.log(helpRequest.categories, "^^^^^^^^");
   // const isLikePress = route.params.isLikePress;
   // const isDislikePress = route.params.isDislikePress;
+
   // const handleLikeButtonPress = route.params.handleLikeButtonPress;
   // const handleDislikeButtonPress = route.params.handleDislikeButtonPress;
 
@@ -84,17 +86,6 @@ const JobsDetails = ({ route, navigation }) => {
       },
     });
   };
-
-  // if (isLogin) {
-  //   handleSendUserAction("view");
-  //   // dispatch(
-  //   //   saveUserAction({
-  //   //     userId,
-  //   //     helpRequestId: helpRequest.id,
-  //   //     actionType: "viewed",
-  //   //   })
-  //   // );
-  // }
 
   useEffect(() => {
     if (isLogin) {
