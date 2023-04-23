@@ -303,7 +303,7 @@ const NewJobScreen = () => {
           keyboardType="decimal-pad"
           onChangeText={(inputPrice) => setPrice(inputPrice)}
         />
-        <Text style={styles.textInputTitle}>Scheduled Data & Time</Text>
+        <Text style={styles.textInputTitle}>Scheduled Date & Time</Text>
         {/* <TextInput style={styles.textInput} /> */}
         <View style={{ flexDirection: "row" }}>
           <Pressable style={styles.datePicker} onPress={showDatePicker}>
