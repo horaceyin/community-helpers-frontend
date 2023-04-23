@@ -16,8 +16,8 @@ const MyRequestCard = ({ navigation, reduxIndex }) => {
   let d = new Date(data.helpRequestDatetime).toDateString();
   const date = d.split(" ");
   var title = data.title;
-  if (title.length > 25) {
-    title = title.slice(0, 24);
+  if (title.length > 21) {
+    title = title.slice(0, 20);
     title += " ...";
   }
   var state = null;
@@ -72,7 +72,7 @@ const MyRequestCard = ({ navigation, reduxIndex }) => {
                 fontFamily: FONTS.semiBold,
                 fontSize: SIZES.extraLarge - 3,
                 color: COLORS.primary,
-                width: "75%",
+                width: "70%",
               }}
             >
               {title}
