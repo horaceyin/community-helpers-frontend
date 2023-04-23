@@ -1,5 +1,9 @@
-import React, { useContext } from "react";
-import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
+import React, { useContext, useRef, useState } from "react";
+import {
+  NavigationContainer,
+  createNavigationContainerRef,
+  useNavigationContainerRef,
+} from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SplashScreen from "../SplashScreen";
 import RootScreen from "../RootScreen";
@@ -22,22 +26,42 @@ import {
 } from "../screens/";
 import MyActivityScreen from "../MyActivityScreen";
 import AddressDropDown from "../components/AddressDropDown";
+import { useTheme } from "react-native-paper";
 
 const Stack = createNativeStackNavigator();
 
-const theme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    background: "transparent",
-  },
-};
-
 const MainNavigator = () => {
-  console.log("======================================");
+  const theme = useTheme();
+
+  const navigationRef = useNavigationContainerRef();
+
+  const [currentRoute, setCurrentRoute] = useState("Splash");
+
+  // const navigationOnReady = () => {
+  //   routeNameRef.current = navigationRef.getCurrentRoute().name;
+  // };
+
+  const navigationOnStateChange = async () => {
+    const currentRouteName = navigationRef.getCurrentRoute().name;
+    console.log("in main on change: ", currentRouteName);
+    if (currentRoute === "Splash") setCurrentRoute("Others");
+  };
+
+  const styles = StyleSheet.create({
+    root: {
+      flex: 1,
+      backgroundColor:
+        currentRoute === "Splash" ? COLORS.white : theme.colors.appBar,
+    },
+  });
+
   return (
     <SafeAreaView style={styles.root}>
-      <NavigationContainer>
+      <NavigationContainer
+        ref={navigationRef}
+        // onReady={navigationOnReady}
+        onStateChange={navigationOnStateChange}
+      >
         {/* <FocusedStatusBar style='auto' /> */}
         <Stack.Navigator
           initialRouteName="Splash"
@@ -62,14 +86,5 @@ const MainNavigator = () => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: COLORS.white,
-    // alignItems: 'center',
-    // justifyContent: 'center',
-  },
-});
 
 export default MainNavigator;

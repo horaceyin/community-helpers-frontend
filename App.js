@@ -18,7 +18,11 @@ import { Provider, useSelector, useDispatch } from "react-redux";
 import { clearUserAction } from "./src/features/UserActionSlice";
 import { AppGuard } from "./src/features/AppGuard";
 import { useEffect, useState, useRef } from "react";
-import { Provider as PaperProvider, DefaultTheme } from "react-native-paper";
+import {
+  Provider as PaperProvider,
+  DefaultTheme,
+  MD2Colors,
+} from "react-native-paper";
 import { isDevice } from "expo-device";
 import * as Notifications from "expo-notifications";
 import { createUploadLink } from "apollo-upload-client";
@@ -101,6 +105,14 @@ export default function App() {
       primary: "#1999",
       accent: "#f1c40f",
       background: "#f2eded",
+      // appBar: "#e2e7ee",
+
+      // appBar: "#c7d3db",
+      // appBar: "#c7d5db",
+      // appBar: "#c7d1db",
+
+      appBar: "#d4dee7",
+      appBackground: MD2Colors.lightBlue50,
     },
     roundness: 10,
     fonts: {

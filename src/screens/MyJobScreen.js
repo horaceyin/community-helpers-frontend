@@ -34,7 +34,7 @@ async function deleteValueFor(key) {
 
 const MyJobScreen = ({ navigation }) => {
   const isLogin = useSelector(selectIsLogin);
-  console.log("isLogin: " + isLogin);
+  // console.log("isLogin: " + isLogin);
 
   const isFocused = useIsFocused();
   const [
@@ -42,7 +42,6 @@ const MyJobScreen = ({ navigation }) => {
     { loading: jobLoading, error: jobError, data: jobData, refetch, called },
   ] = useLazyQuery(FIND_MATCH_BY_STATE);
 
-  // const [isLogin, setIsLogin] = useState(false);
   const [loadingToken, setLoadingToken] = useState(true);
   const [refresh, setRefresh] = useState(false);
 

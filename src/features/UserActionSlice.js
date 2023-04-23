@@ -3,8 +3,8 @@ import * as SecureStore from "expo-secure-store";
 
 const initialState = {
   helpRequestsAction: [],
-  // currentSetLike: null,
-  // currentSetDislike: null,
+  requests: [],
+  myRequests: [],
 };
 
 export const sendCookie = createAsyncThunk(
@@ -52,6 +52,26 @@ export const userActionSlice = createSlice({
     addUserAction: (state, action) => {
       state.helpRequestsAction.push(action.payload);
     },
+    addRequest: (state, action) => {
+      let rawRequestArray = action.payload;
+      console.log("push....");
+      state.requests.push(...rawRequestArray);
+    },
+    findAndReplace: (state, action) => {
+      let { index, current } = action.payload;
+      state.requests[index] = current;
+    },
+    addMyRequests: (state, action) => {
+      state.myRequests = [];
+      let rawRequestArray = action.payload;
+      console.log("push to my requests....");
+      state.myRequests.push(...rawRequestArray);
+    },
+    // for the purpose of displaying the one that seeker accepted.
+    findAndReplaceHelperList: (state, action) => {
+      let { oneHelperList, index } = action.payload;
+      state.myRequests[index].takenHelpRequests = oneHelperList;
+    },
   },
   extraReducers(builder) {
     builder
@@ -64,12 +84,22 @@ export const userActionSlice = createSlice({
   },
 });
 
-export const { clearUserAction, addUserAction } = userActionSlice.actions;
+export const {
+  clearUserAction,
+  addUserAction,
+  addRequest,
+  findAndReplace,
+  addMyRequests,
+  findAndReplaceHelperList,
+} = userActionSlice.actions;
 
 export const selectHelpRequestsAction = (state) =>
   state.userAction.helpRequestsAction;
 
-// export const selectSetLike = (state) => state.userAction.currentSetLike;
-// export const selectSetDislike = (state) => state.userAction.currentSetDislike;
+export const selectRequest = (state, reduxIndex) =>
+  state.userAction.requests[reduxIndex];
+
+export const selectMyRequests = (state, reduxIndex) =>
+  state.userAction.myRequests[reduxIndex];
 
 export default userActionSlice.reducer;

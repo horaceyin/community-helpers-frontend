@@ -23,7 +23,7 @@ const formatDate = (date) => {
   return dateTime.split(dataTimeSeparator);
 };
 
-const formatJobs = (jobs, isLogin, jobsPics) => {
+const formatJobs = (jobs, isLogin, jobsPics, requestIndex) => {
   return jobs.map((job) => {
     // **********************************************
     // id, title, price, images(handle later), location, description, helpSeeker, helperRating, (isLike, isDislike for isLogin is true) can remain the same
@@ -49,14 +49,25 @@ const formatJobs = (jobs, isLogin, jobsPics) => {
     retJob.creationDate = creationDate;
     retJob.creationTime = creationTime;
     retJob.categories = job.category.split(",");
+    retJob.requestIndex = requestIndex;
+    requestIndex += 1;
+
+    if (job.takenHelpRequests) {
+      retJob.takenUserId = job.takenHelpRequests.map((user) => user.userId);
+    }
     return retJob;
   });
 };
 
-export const createRenderDataArray = (backendData, loginState, jobsPics) => {
+export const createRenderDataArray = (
+  backendData,
+  loginState,
+  jobsPics,
+  requestIndex
+) => {
   return new Promise((resolve, reject) => {
     try {
-      let result = formatJobs(backendData, loginState, jobsPics);
+      let result = formatJobs(backendData, loginState, jobsPics, requestIndex);
       resolve(result);
     } catch (error) {
       reject(error);
@@ -65,6 +76,6 @@ export const createRenderDataArray = (backendData, loginState, jobsPics) => {
 };
 
 export const createDataArrayOne = (backendData, loginState, jobsPics) => {
-  let pakingData = [backendData];
-  return formatJobs(pakingData, loginState, jobsPics);
+  let parkingData = [backendData];
+  return formatJobs(parkingData, loginState, jobsPics);
 };

@@ -1,29 +1,27 @@
 import { View, Text } from "react-native";
-import { React, useState } from "react";
+import { React, useState, memo } from "react";
 import { JobsPrice, JobsTitle } from "./SubInfo";
 import { COLORS, FONTS, SIZES } from "../../constants";
 import { LikeDislikeButton } from "./Button";
 import { useSelector, useDispatch } from "react-redux";
 import { selectIsLogin, selectUserInfo } from "../features/AuthSlice";
 import {
-  saveUserAction,
   selectHelpRequestsAction,
+  selectRequest,
+  findAndReplace,
 } from "../features/UserActionSlice";
 import { useMutation } from "@apollo/client";
 import { SEND_USER_ACTION } from "../gql/Mutation";
 
-const DetailsDesc = ({ helpRequest, ...prop }) => {
+const DetailsDesc = ({ reduxIndex }) => {
+  const thisRequest = useSelector((state) => selectRequest(state, reduxIndex));
+  const dispatch = useDispatch();
+
   const sliceSize = 50;
-  const [text, setText] = useState(helpRequest.description.slice(0, sliceSize));
+  const [text, setText] = useState(thisRequest.description.slice(0, sliceSize));
   const [readMore, setReadMore] = useState(false);
 
-  var [isLikePress, setIsLikePress] = useState(false);
-  var [isDislikePress, setIsDislikePress] = useState(false);
-
-  if (prop.isLikePress) setIsLikePress(true);
-  if (prop.isDislikePress) setIsDislikePress(true);
-
-  const helpRequestId = helpRequest.id;
+  const helpRequestId = thisRequest.id;
   const isLogin = useSelector(selectIsLogin);
   const userId = isLogin ? useSelector(selectUserInfo).id : null;
   const helpRequestsAction = useSelector(selectHelpRequestsAction);
@@ -43,7 +41,7 @@ const DetailsDesc = ({ helpRequest, ...prop }) => {
     await sendUserActionMutation({
       variables: {
         userId: userId,
-        helpRequestId: helpRequestId,
+        helpRequestId: thisRequest.id,
         actionType: actionType,
       },
       onCompleted: (result) => {
@@ -55,25 +53,18 @@ const DetailsDesc = ({ helpRequest, ...prop }) => {
     });
   };
 
-  const handleLikeButtonPress = async () => {
-    if (!isLikePress && !isDislikePress) {
-      setIsLikePress(true);
-      handleSendUserAction("like");
-      // dispatch(
-      //   saveUserAction({ userId, helpRequestId, actionType: "liked" })
-      // );
-    } else {
-      alert("You have already liked/disliked this request");
-    }
+  const updateRequestInRedux = (preference) => {
+    let newRequestObj = JSON.stringify(thisRequest);
+    newRequestObj = JSON.parse(newRequestObj);
+    newRequestObj.isLike = preference === "like" ? true : false;
+    newRequestObj.isDislike = preference === "dislike" ? true : false;
+    dispatch(findAndReplace({ index: reduxIndex, current: newRequestObj }));
   };
 
-  const handleDislikeButtonPress = async () => {
-    if (!isLikePress && !isDislikePress) {
-      setIsDislikePress(true);
-      handleSendUserAction("dislike");
-      // dispatch(
-      //   saveUserAction({ userId, helpRequestId, actionType: "liked" })
-      // );
+  const handleLikeDisLikeButtonPress = async (preference) => {
+    if (thisRequest && !thisRequest.isLike && !thisRequest.isDislike) {
+      updateRequestInRedux(preference);
+      handleSendUserAction(preference);
     } else {
       alert("You have already liked/disliked this request");
     }
@@ -90,14 +81,14 @@ const DetailsDesc = ({ helpRequest, ...prop }) => {
         }}
       >
         <JobsTitle
-          title={helpRequest.title}
-          subTitle={helpRequest.helpSeeker.displayName}
-          location={helpRequest.location}
+          title={thisRequest.title}
+          subTitle={thisRequest.helpSeeker.displayName}
+          location={thisRequest.location}
           titleSize={SIZES.extraLarge}
           subTitleSize={SIZES.medium}
           locationSize={SIZES.small}
         />
-        <JobsPrice price={helpRequest.price} />
+        <JobsPrice price={thisRequest.price} />
       </View>
 
       <View
@@ -111,10 +102,10 @@ const DetailsDesc = ({ helpRequest, ...prop }) => {
         {isLogin && (
           <LikeDislikeButton
             minWidth={"30%"}
-            isLikePress={isLikePress}
-            isDislikePress={isDislikePress}
-            handleLikePress={handleLikeButtonPress}
-            handleDislikePress={handleDislikeButtonPress}
+            isLikePress={thisRequest ? thisRequest.isLike : false}
+            isDislikePress={thisRequest ? thisRequest.isDislike : false}
+            handleLikePress={() => handleLikeDisLikeButtonPress("like")}
+            handleDislikePress={() => handleLikeDisLikeButtonPress("dislike")}
             // handleLikePress={() => {
             //   if (!isLikePress && !isDislikePress) setIsLikePress(true); // Handle like here
             // }}
@@ -167,10 +158,10 @@ const DetailsDesc = ({ helpRequest, ...prop }) => {
                 }}
                 onPress={() => {
                   if (!readMore) {
-                    setText(helpRequest.description);
+                    setText(thisRequest.description);
                     setReadMore(true);
                   } else {
-                    setText(helpRequest.description.slice(0, 50));
+                    setText(thisRequest.description.slice(0, 50));
                     setReadMore(false);
                   }
                 }}
@@ -185,4 +176,4 @@ const DetailsDesc = ({ helpRequest, ...prop }) => {
   );
 };
 
-export default DetailsDesc;
+export default memo(DetailsDesc);

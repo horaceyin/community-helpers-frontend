@@ -7,7 +7,7 @@ import {
   RefreshControl,
   ScrollView,
 } from "react-native";
-import { COLORS, FONTS } from "../../constants";
+import { COLORS, FONTS, assets } from "../../constants";
 import { useLazyQuery } from "@apollo/client";
 import {
   FIND_MATCH_BY_STATE,
@@ -22,6 +22,16 @@ import {
   setIsFetching,
 } from "../features/AuthSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { createRenderDataArray } from "../../utilities";
+import { addMyRequests, addRequest } from "../features/UserActionSlice";
+
+const randomPics = [
+  assets.english,
+  assets.fixItem,
+  assets.food,
+  assets.myImages,
+  assets.tv,
+];
 
 async function getValueFor(key) {
   return await SecureStore.getItemAsync(key);
@@ -33,9 +43,9 @@ async function deleteValueFor(key) {
 
 const MyRequestsScreen = ({ navigation }) => {
   const isLogin = useSelector(selectIsLogin);
-  console.log("isLogin: " + isLogin);
-
+  const [retData, setRetData] = useState([]);
   const isFocused = useIsFocused();
+  const dispatch = useDispatch();
 
   const [
     getMyRequest,
@@ -49,8 +59,9 @@ const MyRequestsScreen = ({ navigation }) => {
   ] = useLazyQuery(FIND_HELP_REQUESTS_CREATED_BY_ME);
 
   // const [isLogin, setIsLogin] = useState(false);
-  const [loadingToken, setLoadingToken] = useState(true);
-  const [refresh, setRefresh] = useState(false);
+  // const [loadingToken, setLoadingToken] = useState(true);
+
+  const [refresh, setRefresh] = useState(true);
 
   const pull = async () => {
     setRefresh(true);
@@ -63,27 +74,64 @@ const MyRequestsScreen = ({ navigation }) => {
     }, 1000);
   };
 
+  const handleOnComplete = async (myRequestArray) => {
+    if (myRequestArray.length === 0) {
+      setRetData([]);
+      return;
+    } else {
+      let retDataArray = await createRenderDataArray(
+        myRequestArray,
+        true,
+        randomPics,
+        0
+      );
+      dispatch(addMyRequests(retDataArray));
+      setRetData(retDataArray);
+    }
+    setRefresh(false);
+  };
+
   useEffect(() => {
-    const getToken = async () => {
-      const token = await getValueFor("token");
-      if (token !== null) {
-        console.log("calledMyRequest");
-        if (calledMyRequest) {
-          refetch();
+    const fetchMyRequests = async () => {
+      if (calledMyRequest) {
+        let result = await refetchMyRequest();
+        if (!result.error) {
+          handleOnComplete(result.data.me.userCreatedHelpRequests);
         } else {
-          getMyRequest();
+          alert(
+            `Something went wrong, please try again later.\n Error message: ${result.error.message}`
+          );
         }
-        // setIsLogin(true);
+      } else {
+        let result = await getMyRequest();
+        if (!result.error) {
+          handleOnComplete(result.data.me.userCreatedHelpRequests);
+        } else {
+          alert(
+            `Something went wrong, please try again later.\n Error message: ${result.error.message}`
+          );
+        }
       }
-      setLoadingToken(false);
     };
 
     if (isFocused) {
-      getToken();
+      fetchMyRequests();
+      console.log("I am focused");
     }
-  }, [isFocused, calledMyRequest]);
+  }, [isFocused]);
 
-  if (loadingToken) {
+  // if (loadingToken) {
+  //   return (
+  //     <ScrollView
+  //       style={{ backgroundColor: COLORS.white }}
+  //       contentContainerStyle={styles.scrollView}
+  //       refreshControl={<RefreshControl refreshing={true} />}
+  //     ></ScrollView>
+  //   );
+  // }
+
+  // it says that fetching the data
+  if (refresh) {
     return (
       <ScrollView
         style={{ backgroundColor: COLORS.white }}
@@ -93,40 +141,34 @@ const MyRequestsScreen = ({ navigation }) => {
     );
   }
 
-  if (isLogin) {
-    if (myRequestLoading) {
-      return (
-        <ScrollView
-          style={{ backgroundColor: COLORS.white }}
-          contentContainerStyle={styles.scrollView}
-          refreshControl={<RefreshControl refreshing={true} />}
-        ></ScrollView>
-      );
-    }
-
-    if (myRequestError) {
-      return (
-        <View style={styles.viewContainer}>
-          <Text style={styles.pageTitle}>My Activity</Text>
-          <Text style={styles.pageContent}>Login in to see your Activity</Text>
-        </View>
-      );
-    }
-
+  //show error if there is an error
+  if (myRequestError) {
     return (
       <View style={styles.viewContainer}>
-        <FlatList
-          data={myRequestData["me"]["userCreatedHelpRequests"]}
-          renderItem={({ item }) => (
-            <MyRequestCard data={item} navigation={navigation} />
-          )}
-          keyExtractor={(item) => item.id}
-          onRefresh={() => pull()}
-          refreshing={refresh}
-        />
+        <Text style={styles.pageTitle}>My Activity</Text>
+        <Text style={styles.pageContent}>Login in to see your Activity</Text>
       </View>
     );
   }
+
+  return (
+    <View style={styles.viewContainer}>
+      <FlatList
+        // data={myRequestData["me"]["userCreatedHelpRequests"]}
+        data={retData}
+        renderItem={({ item, index }) => (
+          <MyRequestCard
+            // data={item}
+            navigation={navigation}
+            reduxIndex={index}
+          />
+        )}
+        keyExtractor={(item) => item.id}
+        onRefresh={() => pull()}
+        refreshing={refresh}
+      />
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({

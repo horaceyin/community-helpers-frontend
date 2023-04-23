@@ -1,7 +1,11 @@
 import { React, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { SHADOWS, COLORS, SIZES, FONTS } from "../../constants";
-const MyRequestCard = ({ data, navigation }) => {
+import { useSelector, useDispatch } from "react-redux";
+import { findAndReplace, selectMyRequests } from "../features/UserActionSlice";
+const MyRequestCard = ({ navigation, reduxIndex }) => {
+  const data = useSelector((state) => selectMyRequests(state, reduxIndex));
+  const dispatch = useDispatch();
   const [text, setText] = useState(data.description.slice(0, 50));
 
   let d = new Date(data.helpRequestDatetime).toDateString();
@@ -13,29 +17,38 @@ const MyRequestCard = ({ data, navigation }) => {
   }
   var state = null;
   var stateStyles = null;
-  if (data.takenHelpRequst == null) {
+
+  // ***** may need to change to []
+  if (data.takenHelpRequests.length === 0) {
+    // means no one has committed the request
     state = "Pending";
     stateStyles = styles.jobStatusPending;
   } else {
-    isTakenHelpRequst = data.takenHelpRequst.filter(
+    // check if a seeker accepted any helper's commit
+    const isTakenHelpRequst = data.takenHelpRequests.filter(
       (thr) => thr.is_taken === true
     );
+
+    //  means I didn't accept any helper's commit
     if (isTakenHelpRequst.length <= 0) {
       state = "Pending";
       stateStyles = styles.jobStatusPending;
     } else {
-      state =
-        isTakenHelpRequst[0].state === "ongoing" ? "Ongoing" : "Completed";
+      // replace takenHelpRequests array with one helper element
+      dispatch(findAndReplaceHelperList({ isTakenHelpRequst, reduxIndex }));
+      const theMatch = isTakenHelpRequst[0];
+      state = theMatch.state === "ongoing" ? "Ongoing" : "Completed";
+
       stateStyles =
-        isTakenHelpRequst[0].state === "ongoing"
+        theMatch.state === "ongoing"
           ? styles.jobStatusOngoing
-          : (state = styles.jobStatusDone);
+          : styles.jobStatusDone;
     }
   }
 
   const handleRequestPress = () => {
     navigation.navigate("MyRequestDetail", {
-      data,
+      reduxIndex,
     });
   };
 

@@ -59,6 +59,7 @@ export const FIND_HELP_REQUESTS_CREATED_BY_ME = gql`
         title
         description
         helpRequestDatetime
+        creationDatetime
         address
         price
         id
@@ -71,13 +72,17 @@ export const FIND_HELP_REQUESTS_CREATED_BY_ME = gql`
           phone
         }
 
-        creationDatetime
         category
         images
 
         takenHelpRequests {
           userId
+          is_taken
+          state
           user {
+            id
+            avatar
+            phone
             displayName
             avatar
             userScore
@@ -101,8 +106,13 @@ export const FIND_MATCH_BY_STATE_IN_HOME = gql`
         address
         category
         helpRequestDatetime
+        creationDatetime
         helpSeeker {
+          id
           displayName
+          district
+          avatar
+          phone
         }
       }
     }
@@ -132,6 +142,9 @@ export const GET_RECOMMENDED_JOBS = gql`
         avatar
         phone
       }
+      takenHelpRequests {
+        userId
+      }
       helperRating
       isDislike
       isLike
@@ -158,6 +171,9 @@ export const FIND_ALL_JOBS_IN_HOME = gql`
         district
         avatar
         phone
+      }
+      takenHelpRequests {
+        userId
       }
       helperRating
     }

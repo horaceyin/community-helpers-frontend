@@ -42,14 +42,6 @@ const MyJobDetailScreen = ({ route, navigation }) => {
   //   helpRequest.takenHelpRequest[0].userId
   // );
   // console.log(checked);
-
-  // const createArray = async (rawRequest) => {
-  //   console.log(rawRequest, "RRRRRRRRRRRRRRRRRRRRRRRRrr");
-  //   return await createRenderDataArray(rawRequest, true, randomPics);
-  // };
-
-  console.log(helpRequest.helpRequest, "##########################3333");
-
   let helpRequestsArray = createDataArrayOne(
     helpRequest.helpRequest,
     true,

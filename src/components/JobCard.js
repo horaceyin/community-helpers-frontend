@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { SHADOWS, COLORS, SIZES, assets } from "../../constants";
@@ -10,6 +10,10 @@ import {
   collectUserAction,
   addUserAction,
   saveUserAction,
+  addRequest,
+  selectNum,
+  findAndReplace,
+  selectRequest,
 } from "../features/UserActionSlice";
 import { SEND_USER_ACTION } from "../gql/Mutation";
 import { useMutation } from "@apollo/client";
@@ -20,17 +24,19 @@ function areEqual(prevProps, nextProps) {
   the same result as passing prevProps to render,
   otherwise return false
   */
-  return prevProps.helpRequest.id === nextProps.helpRequest.id;
+  return prevProps.helpRequestData.id === nextProps.helpRequestData.id;
 }
 
-const JobCard = ({ helpRequest }) => {
-  let [isLikePress, setIsLikePress] = useState(helpRequest.isLike);
-  let [isDislikePress, setIsDislikePress] = useState(helpRequest.isDislike);
-  const helpRequestId = helpRequest.id;
+const JobCard = ({ helpRequestData, reduxIndex }) => {
+  // const helpRequest = useMemo(() => helpRequestData, [helpRequestData]);
+
   const navigation = useNavigation();
   const isLogin = useSelector(selectIsLogin);
   const dispatch = useDispatch();
   let userId = isLogin ? useSelector(selectUserInfo).id : null;
+
+  const thisRequest = useSelector((state) => selectRequest(state, reduxIndex));
+  // console.log(thisRequest, "$$$$$$$");
 
   const [sendUserActionMutation, sendUserActionResult] =
     useMutation(SEND_USER_ACTION);
@@ -39,7 +45,7 @@ const JobCard = ({ helpRequest }) => {
     await sendUserActionMutation({
       variables: {
         userId: userId,
-        helpRequestId: helpRequestId,
+        helpRequestId: thisRequest.id,
         actionType: actionType,
       },
       onCompleted: (result) => {
@@ -51,36 +57,51 @@ const JobCard = ({ helpRequest }) => {
     });
   };
 
-  const handleLikeButtonPress = async () => {
-    if (!isLikePress && !isDislikePress) {
-      setIsLikePress(true);
-      handleSendUserAction("like");
-      // dispatch(
-      //   saveUserAction({ userId, helpRequestId, actionType: "liked" })
-      // );
+  const updateRequestInRedux = (preference) => {
+    let newRequestObj = JSON.stringify(thisRequest);
+    newRequestObj = JSON.parse(newRequestObj);
+    newRequestObj.isLike = preference === "like" ? true : false;
+    newRequestObj.isDislike = preference === "dislike" ? true : false;
+    dispatch(findAndReplace({ index: reduxIndex, current: newRequestObj }));
+  };
+
+  const handleLikeDisLikeButtonPress = async (preference) => {
+    if (thisRequest && !thisRequest.isLike && !thisRequest.isDislike) {
+      updateRequestInRedux(preference);
+      handleSendUserAction(preference);
     } else {
       alert("You have already liked/disliked this request");
     }
   };
 
-  const handleDislikeButtonPress = async () => {
-    if (!isLikePress && !isDislikePress) {
-      setIsDislikePress(true);
-      handleSendUserAction("dislike");
-      // dispatch(
-      //   saveUserAction({ userId, helpRequestId, actionType: "liked" })
-      // );
-    } else {
-      alert("You have already liked/disliked this request");
-    }
-  };
+  // const handleLikeButtonPress = async () => {
+  //   if (thisRequest && !thisRequest.isLike && !thisRequest.isDislike) {
+  //     updateRequestInRedux("like");
+  //     handleSendUserAction("like");
+  //     // dispatch(
+  //     //   saveUserAction({ userId, helpRequestId, actionType: "liked" })
+  //     // );
+  //   } else {
+  //     alert("You have already liked/disliked this request");
+  //   }
+  // };
+
+  // const handleDislikeButtonPress = async () => {
+  //   if (thisRequest && !thisRequest.isLike && !thisRequest.isDislike) {
+  //     updateRequestInRedux("dislike");
+  //     handleSendUserAction("dislike");
+  //     // dispatch(
+  //     //   saveUserAction({ userId, helpRequestId, actionType: "liked" })
+  //     // );
+  //   } else {
+  //     alert("You have already liked/disliked this request");
+  //   }
+  // };
 
   handleNavigation = () => {
     // dispatch(setLikeDislikeFunc({ setIsLikePress, setIsDislikePress }));
     navigation.navigate("JobsDetails", {
-      helpRequest,
-      isLikePress,
-      isDislikePress,
+      reduxIndex,
     });
   };
 
@@ -90,9 +111,9 @@ const JobCard = ({ helpRequest }) => {
         <Image
           // may need to change this to multiple images
           source={
-            helpRequest.images
-              ? { uri: helpRequest.images }
-              : helpRequest.fakeImage
+            thisRequest.images
+              ? { uri: thisRequest.images }
+              : thisRequest.fakeImage
           }
           resizeMode="cover"
           style={styles.cardImage}
@@ -101,17 +122,17 @@ const JobCard = ({ helpRequest }) => {
       </View>
 
       <SubInfo
-        helpRequestDate={helpRequest.helpRequestDate}
-        helpRequestTime={helpRequest.helpRequestTime}
+        helpRequestDate={thisRequest.helpRequestDate}
+        helpRequestTime={thisRequest.helpRequestTime}
       />
 
       <View style={{ width: "100%", padding: SIZES.font }}>
         <JobsTitle
-          title={helpRequest.title}
-          subTitle={helpRequest.helpSeeker.displayName}
+          title={thisRequest.title}
+          subTitle={thisRequest.helpSeeker.displayName}
           titleSize={SIZES.large}
           subTitleSize={SIZES.medium}
-          location={helpRequest.location}
+          location={thisRequest.location}
           locationSize={SIZES.small}
         />
         <View
@@ -122,7 +143,7 @@ const JobCard = ({ helpRequest }) => {
             justifyContent: "space-between",
           }}
         >
-          <JobsPrice price={helpRequest.price} />
+          <JobsPrice price={thisRequest.price} />
           <RectButton
             buttonText={"Details"}
             minWidth={"15%"}
@@ -141,10 +162,10 @@ const JobCard = ({ helpRequest }) => {
           {isLogin && (
             <LikeDislikeButton
               minWidth={"30%"}
-              isLikePress={isLikePress}
-              isDislikePress={isDislikePress}
-              handleLikePress={handleLikeButtonPress}
-              handleDislikePress={handleDislikeButtonPress}
+              isLikePress={thisRequest ? thisRequest.isLike : false}
+              isDislikePress={thisRequest ? thisRequest.isDislike : false}
+              handleLikePress={() => handleLikeDisLikeButtonPress("like")}
+              handleDislikePress={() => handleLikeDisLikeButtonPress("dislike")}
               // handleLikePress={() => {
               //   if (!isLikePress && !isDislikePress) setIsLikePress(true); // Handle like here
               // }}

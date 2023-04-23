@@ -5,8 +5,10 @@ import { checkSignIn, selectIsLoading } from "./AuthSlice";
 import { useNavigation } from "@react-navigation/native";
 import { useLazyQuery } from "@apollo/client";
 import { ME } from "../gql/Query";
+import { useTheme } from "react-native-paper";
 
 export const AppGuard = ({ children }) => {
+  const theme = useTheme();
   const dispatch = useDispatch();
   const isLoading = useSelector(selectIsLoading);
   const navigation = useNavigation();
@@ -16,9 +18,18 @@ export const AppGuard = ({ children }) => {
     dispatch(checkSignIn({ navigation, getMyInfo }));
   }, []);
 
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: theme.colors.appBar,
+    },
+  });
+
   if (isLoading)
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View style={styles.container}>
         <ActivityIndicator size={"large"} />
       </View>
     );

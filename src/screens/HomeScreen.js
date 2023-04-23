@@ -24,6 +24,7 @@ import { Text } from "react-native-paper";
 import uuid from "react-native-uuid";
 
 import { FlashList } from "@shopify/flash-list";
+import { addRequest } from "../features/UserActionSlice";
 
 //should be fetched the real from backend
 const randomPics = [
@@ -34,7 +35,8 @@ const randomPics = [
   assets.tv,
 ];
 
-const BATCH_NUM = 10;
+const BATCH_NUM = 3;
+var requestIndex = 0;
 
 const HomeScreen = () => {
   const isLogin = useSelector(selectIsLogin);
@@ -51,6 +53,8 @@ const HomeScreen = () => {
   const [isNoMoreRequests, setIsNoMoreRequests] = useState(false);
   const [triggerOnRefresh, setTriggerOnRefresh] = useState(true);
 
+  const dispatch = useDispatch();
+
   const fetchJobOnCompleted = async (
     helpRequestsArray,
     loginState,
@@ -64,8 +68,11 @@ const HomeScreen = () => {
       let retDataArray = await createRenderDataArray(
         helpRequestsArray,
         loginState,
-        jobsPics
+        jobsPics,
+        requestIndex
       );
+      requestIndex += retDataArray.length;
+      dispatch(addRequest(retDataArray));
       console.log("fetchJobOnCompleted");
       setRenderData([...renderData, ...retDataArray]);
     }
@@ -179,11 +186,6 @@ const HomeScreen = () => {
     if (skip !== 0) {
       setGetRequestsLoading(true);
       getRequests();
-      console.log(
-        renderData.length,
-        "+++++++++++++++++++++++++++++++++++++++",
-        skip
-      );
     }
   }, [skip]);
 
@@ -236,7 +238,9 @@ const HomeScreen = () => {
         <FlashList
           estimatedItemSize={100}
           data={renderData}
-          renderItem={({ item }) => <JobCard helpRequest={item} />}
+          renderItem={({ item, index }) => (
+            <JobCard helpRequestData={item} reduxIndex={index} />
+          )}
           keyExtractor={(item, index) => item.id}
           showsVerticalScrollIndicator={false}
           ListHeaderComponent={<HomeHeader />}
