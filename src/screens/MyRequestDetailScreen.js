@@ -62,7 +62,8 @@ const MyRequestDetailScreen = ({ route }) => {
     (thr) => thr.is_taken === true
   );
 
-  helpRequest.takenHelpRequests = isOngoningOrCompleted;
+  if (isOngoningOrCompleted[0])
+    helpRequest.takenHelpRequests = isOngoningOrCompleted;
 
   console.log(helpRequest, "🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀");
 
