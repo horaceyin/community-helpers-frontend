@@ -24,7 +24,7 @@ import { Text } from "react-native-paper";
 import uuid from "react-native-uuid";
 
 import { FlashList } from "@shopify/flash-list";
-import { addRequest } from "../features/UserActionSlice";
+import { addRequest, clearAllRequestsCache } from "../features/UserActionSlice";
 
 //should be fetched the real from backend
 const randomPics = [
@@ -40,7 +40,7 @@ var requestIndex = 0;
 
 const HomeScreen = () => {
   const isLogin = useSelector(selectIsLogin);
-  const userToken = useSelector(selectUserToken);
+  // const userToken = useSelector(selectUserToken);
   const userInfo = useSelector(selectUserInfo);
 
   const [isFetching, setIsFetching] = useState(false);
@@ -165,6 +165,7 @@ const HomeScreen = () => {
     if (getRequestsLoading) {
       if (renderData.length === 0) {
         setIsFetching(true);
+        dispatch(clearAllRequestsCache());
       } else {
         setIsLoadingMore(true);
       }
@@ -235,33 +236,37 @@ const HomeScreen = () => {
       <View style={styles.flatListContainer}>
         {/* <Text style={{backgroundColor: COLORS.gray}}>{called && !jobLoading? JSON.stringify(data) : "no"}</Text> */}
         {/* <Text style={{backgroundColor: COLORS.gray}}>{isLogin} || {userToken}</Text> */}
-        <FlashList
-          estimatedItemSize={100}
-          data={renderData}
-          renderItem={({ item, index }) => (
-            <JobCard helpRequestData={item} reduxIndex={index} />
-          )}
-          keyExtractor={(item, index) => item.id}
-          showsVerticalScrollIndicator={false}
-          ListHeaderComponent={<HomeHeader />}
-          ListFooterComponent={renderFooter}
-          onEndReached={
-            !isLoadingMore && !isNoMoreRequests && renderData.length > 0
-              ? handleLoadMore
-              : null
-          }
-          onEndReachedThreshold={0.8}
-          removeClippedSubviews={true}
-          refreshControl={
-            <RefreshControl
-              refreshing={isFetching}
-              onRefresh={onRefresh}
-              // title="Pull to refresh"
-              tintColor="#fff"
-              titleColor="#fff"
-            />
-          }
-        />
+        {!isFetching ? (
+          <FlashList
+            estimatedItemSize={100}
+            data={renderData}
+            renderItem={({ item, index }) => (
+              <JobCard helpRequestData={item} reduxIndex={index} />
+            )}
+            keyExtractor={(item, index) => item.id}
+            showsVerticalScrollIndicator={false}
+            ListHeaderComponent={<HomeHeader />}
+            ListFooterComponent={renderFooter}
+            onEndReached={
+              !isLoadingMore && !isNoMoreRequests && renderData.length > 0
+                ? handleLoadMore
+                : null
+            }
+            onEndReachedThreshold={0.8}
+            removeClippedSubviews={true}
+            refreshControl={
+              <RefreshControl
+                refreshing={isFetching}
+                onRefresh={onRefresh}
+                // title="Pull to refresh"
+                tintColor="#fff"
+                titleColor="#fff"
+              />
+            }
+          />
+        ) : (
+          <ActivityIndicator size={"large"} />
+        )}
       </View>
       <View
         style={{

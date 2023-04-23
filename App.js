@@ -27,6 +27,8 @@ import { isDevice } from "expo-device";
 import * as Notifications from "expo-notifications";
 import { createUploadLink } from "apollo-upload-client";
 import { selectHelpRequestsAction } from "./src/features/UserActionSlice";
+import { FocusedStatusBar } from "./src/components";
+import { StatusBar } from "expo-status-bar";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -176,6 +178,7 @@ export default function App() {
         <Provider store={store}>
           <View style={styles.container}>
             {/* <StatusBar style="auto" /> */}
+            <StatusBar animated={true} style="auto" />
             <MainNavigator />
           </View>
         </Provider>

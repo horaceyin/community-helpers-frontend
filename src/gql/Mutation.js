@@ -112,6 +112,34 @@ export const COMMIT_HELP_REQUEST = gql`
   }
 `;
 
+export const SEEKER_ACCEPT_HELPER = gql`
+  mutation HelpSeekerCommitJob($helpRequestId: Int!, $userId: Int!) {
+    helpSeekerCommitJob(helpRequestId: $helpRequestId, userId: $userId) {
+      userId
+      state
+      is_taken
+    }
+  }
+`;
+
+export const SEEKER_COMPLETE_REQUEST = gql`
+  mutation UpdateTakenHelpRequest(
+    $helpRequestId: Int!
+    $userId: Int!
+    $state: String!
+  ) {
+    updateTakenHelpRequest(
+      helpRequestId: $helpRequestId
+      userId: $userId
+      updateTakenHelpRequestInput: { state: { set: $state } }
+    ) {
+      is_taken
+      state
+      userId
+    }
+  }
+`;
+
 export const SIGN_UP = gql`
   mutation CreateNewUser($newUserInput: LoginUserInput!, $file: Upload!) {
     signup(loginUserInput: $newUserInput, file: $file) {

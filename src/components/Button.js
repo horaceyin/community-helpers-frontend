@@ -83,9 +83,13 @@ export const LikeDislikeButton = ({
   );
 };
 
-export const IconButton = ({ iconSource, goToLogin }) => {
+export const IconButton = ({ iconSource, goToLogin, isDisable = false }) => {
   return (
-    <TouchableOpacity onPress={goToLogin} style={styles.iconButton}>
+    <TouchableOpacity
+      onPress={goToLogin}
+      style={styles.iconButton}
+      disabled={isDisable}
+    >
       <View>
         <Image
           source={iconSource}

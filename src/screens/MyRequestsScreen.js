@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   StyleSheet,
   View,
@@ -13,7 +13,7 @@ import {
   FIND_MATCH_BY_STATE,
   FIND_HELP_REQUESTS_CREATED_BY_ME,
 } from "../gql/Query";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
 import { MyJobCard, MyRequestCard } from "../components";
 import {
@@ -24,6 +24,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { createRenderDataArray } from "../../utilities";
 import { addMyRequests, addRequest } from "../features/UserActionSlice";
+import { useFocusEffect } from "@react-navigation/native";
 
 const randomPics = [
   assets.english,
@@ -41,7 +42,8 @@ async function deleteValueFor(key) {
   return await SecureStore.deleteItemAsync(key);
 }
 
-const MyRequestsScreen = ({ navigation }) => {
+const MyRequestsScreen = () => {
+  const navigation = useNavigation();
   const isLogin = useSelector(selectIsLogin);
   const [retData, setRetData] = useState([]);
   const isFocused = useIsFocused();
@@ -56,7 +58,9 @@ const MyRequestsScreen = ({ navigation }) => {
       refetch: refetchMyRequest,
       calledMyRequest,
     },
-  ] = useLazyQuery(FIND_HELP_REQUESTS_CREATED_BY_ME);
+  ] = useLazyQuery(FIND_HELP_REQUESTS_CREATED_BY_ME, {
+    fetchPolicy: "cache-and-network",
+  });
 
   // const [isLogin, setIsLogin] = useState(false);
   // const [loadingToken, setLoadingToken] = useState(true);
@@ -77,6 +81,7 @@ const MyRequestsScreen = ({ navigation }) => {
   const handleOnComplete = async (myRequestArray) => {
     if (myRequestArray.length === 0) {
       setRetData([]);
+      setRefresh(false);
       return;
     } else {
       let retDataArray = await createRenderDataArray(
@@ -120,6 +125,17 @@ const MyRequestsScreen = ({ navigation }) => {
     }
   }, [isFocused]);
 
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     console.log("MyScreen focused");
+  //     return () => {
+  //       console.log("MyScreen blurred");
+  //       navigation.pop();
+  //       // Here, you can add code to destroy the screen, such as removing it from the navigation stack
+  //     };
+  //   }, [])
+  // );
+
   // if (loadingToken) {
   //   return (
   //     <ScrollView
@@ -158,7 +174,7 @@ const MyRequestsScreen = ({ navigation }) => {
         data={retData}
         renderItem={({ item, index }) => (
           <MyRequestCard
-            // data={item}
+            // myRequest={item}
             navigation={navigation}
             reduxIndex={index}
           />

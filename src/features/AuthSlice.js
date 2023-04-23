@@ -26,7 +26,7 @@ export const checkSignIn = createAsyncThunk(
       },
       onCompleted: (result) => {
         userInfo = result.me;
-        console.log("🚀 ~ file: AuthSlice.js:29 ~ userInfo:", userInfo);
+        console.log("🚀 ~ file: AuthSlice.js:29 ~ result.me:", result.me);
         if (!userInfo.district) {
           navigation.reset({ index: 0, routes: [{ name: "District" }] });
         } else if (userInfo.interests.length === 0) {
@@ -65,7 +65,6 @@ export const appLogin = createAsyncThunk(
       onCompleted: async (result) => {
         user_token = result.login.access_token;
         await SecureStore.setItemAsync(tokenName, user_token);
-        await SecureStore.setItemAsync("user_action", "[]");
       },
     });
 
@@ -81,6 +80,7 @@ export const appLogout = createAsyncThunk(
   "auth/appLogout",
   async ({ signoutMutation, signOutRefetch, signOutCalled, navigation }) => {
     let expoToken = await SecureStore.getItemAsync("expoToken");
+    await SecureStore.deleteItemAsync(tokenName);
 
     if (expoToken) {
       if (signOutCalled) {
@@ -96,17 +96,15 @@ export const appLogout = createAsyncThunk(
           },
           onCompleted: async (result) => {
             console.log("hello");
-            await SecureStore.deleteItemAsync(tokenName);
             await SecureStore.deleteItemAsync("expoToken");
           },
         });
       }
     } else {
       // for not a real device
-      await SecureStore.deleteItemAsync(tokenName);
     }
 
-    await SecureStore.deleteItemAsync("user_action");
+    // await SecureStore.deleteItemAsync("user_action");
     console.log("logout");
     navigation.reset({ index: 0, routes: [{ name: "Root" }] });
     return false;
@@ -120,11 +118,18 @@ export const authSlice = createSlice({
     resetLoginState: (state) => {
       state.loginError = null;
     },
+    clearUserInfo: (state) => {
+      state.isLoading = true;
+      state.loginIsLoading = true;
+      state.userInfo = null;
+    },
   },
   extraReducers(builder) {
     builder
       .addCase(checkSignIn.pending, (state, action) => {
         state.isLoading = true;
+        state.userInfo = null;
+
         console.log("🚀 ~ file: checkSignIn.pending ~ action");
       })
       .addCase(checkSignIn.fulfilled, (state, action) => {
@@ -133,6 +138,10 @@ export const authSlice = createSlice({
         if (userInfo && token) {
           state.userToken = token;
           state.userInfo = userInfo;
+          // console.log(
+          //   "🚀 ~ file: AuthSlice.js:135 ~ .addCase ~ state.userInfo:",
+          //   state.userInfo
+          // );
           state.isLogin = true;
         } else {
           if (tokenExpiredMsg) alert(tokenExpiredMsg);
@@ -159,6 +168,10 @@ export const authSlice = createSlice({
         let { user_token } = action.payload;
         state.userToken = user_token;
         state.userInfo = null;
+        console.log(
+          "🚀 ~ file: AuthSlice.js:165 ~ .addCase ~ state.userInfo2222222222 :",
+          state.userInfo
+        );
         state.loginError = null;
         state.loginIsLoading = false;
         console.log("🚀 ~ file: appLogin.fulfilled ~ action");
@@ -169,6 +182,8 @@ export const authSlice = createSlice({
         console.log("🚀 ~ file: appLogin.rejected ~ action");
       })
       .addCase(appLogout.pending, (state, action) => {
+        state.loginIsLoading = true;
+        state.userInfo = null;
         console.log("🚀 ~ file: appLogout.pending ~ action");
       })
       .addCase(appLogout.rejected, (state, action) => {
@@ -178,12 +193,13 @@ export const authSlice = createSlice({
         state.userInfo = null;
         state.userToken = null;
         state.isLogin = action.payload;
+        state.loginIsLoading = false;
         console.log("🚀 ~ file: appLogout.fulfilled ~ action");
       });
   },
 });
 
-export const { resetLoginState } = authSlice.actions;
+export const { resetLoginState, clearUserInfo } = authSlice.actions;
 
 export const selectIsLoading = (state) => state.auth.isLoading;
 

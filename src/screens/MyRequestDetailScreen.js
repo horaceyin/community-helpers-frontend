@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, FlatList } from "react-native";
+import { StyleSheet, View, FlatList } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { SHADOWS, COLORS, SIZES, assets, FONTS } from "../../constants";
 import {
@@ -14,13 +14,15 @@ import {
   useTheme,
 } from "react-native-paper";
 import { createDataArrayOne } from "../../utilities";
-import { HELPER_ACCEPT_HELP_REQUEST } from "../gql/Mutation";
+import { SEEKER_ACCEPT_HELPER, SEEKER_COMPLETE_REQUEST } from "../gql/Mutation";
 import { useMutation } from "@apollo/client";
 import { useSelector, useDispatch } from "react-redux";
 import {
   findAndReplaceHelperList,
   selectMyRequests,
 } from "../features/UserActionSlice";
+import { Text } from "react-native-paper";
+import Spinner from "react-native-loading-spinner-overlay/lib";
 
 // var description =
 //   "I'm looking for someone who can give me a cooking lesson. I'm interested in learning how to cook Chinese food.";
@@ -56,18 +58,28 @@ const MyRequestDetailScreen = ({ route }) => {
   );
   const helpRequest = thisMyRequest;
 
+  const isOngoningOrCompleted = helpRequest.takenHelpRequests.filter(
+    (thr) => thr.is_taken === true
+  );
+
+  helpRequest.takenHelpRequests = isOngoningOrCompleted;
+
   console.log(helpRequest, "🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀");
 
   const [checked, setChecked] = useState(-1);
+  const [selectedDisplayName, setSelectedDisplayName] = useState(null);
+
   const [loading, setLoading] = useState(true);
-  const [buttonText, setbuttonText] = useState("Accept Helper");
+  // const [buttonText, setbuttonText] = useState("Accept Helper");
 
   const theme = useTheme();
 
   const [helperList, setHelperList] = useState([]);
 
-  const handleSetChecked = useCallback((userId) => {
+  const handleSetChecked = useCallback((userId, displayName) => {
     setChecked(userId);
+    setSelectedDisplayName(displayName);
+    console.log(displayName);
   }, []);
 
   // let helpRequestObj = route.params.data;
@@ -78,12 +90,18 @@ const MyRequestDetailScreen = ({ route }) => {
 
   // console.log(helpRequest, "🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀");
 
-  const [acceptHelper] = useMutation(HELPER_ACCEPT_HELP_REQUEST);
+  const [acceptHelper, acceptHelperResult] = useMutation(SEEKER_ACCEPT_HELPER);
+  const [seekerComplete, seekerCompleteResult] = useMutation(
+    SEEKER_COMPLETE_REQUEST
+  );
 
   useEffect(() => {
     const createHelpRequestObjAndSetDefaultChecked = () => {
       if (helpRequest.takenHelpRequests.length > 0) {
         setChecked(helpRequest.takenHelpRequests[0].userId);
+        setSelectedDisplayName(
+          helpRequest.takenHelpRequests[0].user.displayName
+        );
         // setHelperList(helpRequest.takenHelpRequests);
         console.log(checked);
       }
@@ -95,20 +113,20 @@ const MyRequestDetailScreen = ({ route }) => {
 
   const handleAcceptHelperPress = () => {
     console.log("Accept Helper Pressed");
-    // acceptHelper({
-    //   variables: {
-    //     // helpRequestId: helpRequest.helpRequestId,
-    //     // helperId: checked,
-    //     createTakenHelpRequestInput: {
-    //       helpRequestId: helpRequest.id,
-    //       helperId: checked,
-    //     },
-    //   },
-    //   // onCompleted: () => {
-    //   //   setHelperList(helperList.filter((helper) => helper.userId === checked));
-    //   //   setbuttonText("Complete");
-    //   // },
-    // });
+    acceptHelper({
+      variables: {
+        // helpRequestId: helpRequest.helpRequestId,
+        // helperId: checked,
+        helpRequestId: helpRequest.id,
+        userId: checked,
+      },
+      onCompleted: () => {
+        alert(`You have accepted ${selectedDisplayName} as your helper.`);
+      },
+      onError: (error) => {
+        console.log(JSON.stringify(error, null, 2));
+      },
+    });
     let newHelperList = JSON.stringify(thisMyRequest.takenHelpRequests);
     newHelperList = JSON.parse(newHelperList);
 
@@ -117,8 +135,47 @@ const MyRequestDetailScreen = ({ route }) => {
     );
     newHelperList[0].is_taken = true;
     newHelperList[0].state = "ongoing";
-    console.log("dispatch 1111111", reduxIndex, checked, newHelperList);
-    dispatch(findAndReplaceHelperList({ newHelperList, reduxIndex }));
+    // console.log("dispatch 1111111", reduxIndex, checked, newHelperList);
+    dispatch(
+      findAndReplaceHelperList({
+        oneHelperList: newHelperList,
+        index: reduxIndex,
+      })
+    );
+  };
+
+  // need to be tested, wait for more job acceptance
+  const handleCompletePress = () => {
+    console.log(
+      thisMyRequest.takenHelpRequests[0].userId,
+      thisMyRequest.id,
+      "+++++"
+    );
+
+    seekerComplete({
+      variables: {
+        helpRequestId: thisMyRequest.id,
+        userId: thisMyRequest.takenHelpRequests[0].userId,
+        state: "completed",
+      },
+      onCompleted: () => {
+        alert(`Your request has been completed.`);
+      },
+      onError: (error) => {
+        console.log(JSON.stringify(error, null, 2));
+      },
+    });
+
+    let oneHelperList = JSON.stringify(thisMyRequest.takenHelpRequests);
+    oneHelperList = JSON.parse(oneHelperList);
+    oneHelperList[0].state = "completed";
+
+    dispatch(
+      findAndReplaceHelperList({
+        oneHelperList: oneHelperList,
+        index: reduxIndex,
+      })
+    );
   };
 
   if (loading)
@@ -137,6 +194,13 @@ const MyRequestDetailScreen = ({ route }) => {
 
   return (
     <View style={styles.container}>
+      <Spinner
+        visible={acceptHelperResult.loading || seekerCompleteResult.loading}
+        textStyle={{ fontFamily: FONTS.medium }}
+        overlayColor="rgba(205, 215, 226, 0.8)"
+        color="#463451"
+        // textContent={"Loading...\nPlease wait..."}
+      />
       <FlatList
         data={helpRequest.takenHelpRequests}
         renderItem={({ item }) => (
@@ -152,16 +216,30 @@ const MyRequestDetailScreen = ({ route }) => {
         ListHeaderComponent={() => (
           <>
             <JobCardDetail helpRequest={helpRequest} />
+
             <View style={{ padding: SIZES.font }}>
-              <Text
-                style={{
-                  fontFamily: FONTS.bold,
-                  fontSize: SIZES.large,
-                  color: COLORS.primary,
-                }}
-              >
-                Matched Candidate Helper
-              </Text>
+              {helpRequest.takenHelpRequests.length === 1 &&
+              helpRequest.takenHelpRequests[0].is_taken === true ? (
+                <Text
+                  style={{
+                    fontFamily: FONTS.bold,
+                    fontSize: SIZES.large,
+                    color: COLORS.primary,
+                  }}
+                >
+                  Your Helper
+                </Text>
+              ) : (
+                <Text
+                  style={{
+                    fontFamily: FONTS.bold,
+                    fontSize: SIZES.large,
+                    color: COLORS.primary,
+                  }}
+                >
+                  Matched Candidate Helpers
+                </Text>
+              )}
             </View>
           </>
         )}
@@ -180,7 +258,7 @@ const MyRequestDetailScreen = ({ route }) => {
                 {helpRequest.takenHelpRequests[0].state !== "ongoing" &&
                   helpRequest.takenHelpRequests[0].state !== "completed" && (
                     <RectButton
-                      buttonText={buttonText}
+                      buttonText={"Accept Helper"}
                       minWidth={"100%"}
                       fontSize={SIZES.font}
                       // handlePress={
@@ -191,6 +269,26 @@ const MyRequestDetailScreen = ({ route }) => {
                       handlePress={handleAcceptHelperPress}
                     />
                   )}
+
+                {helpRequest.takenHelpRequests[0].state === "ongoing" && (
+                  <RectButton
+                    buttonText={"Complete"}
+                    minWidth={"100%"}
+                    fontSize={SIZES.font}
+                    // handlePress={
+                    //   buttonText == "Accept Helper"
+                    //   // ? handleAcceptHelperPress
+                    //   // : null
+                    // }
+                    handlePress={handleCompletePress}
+                  />
+                )}
+
+                {helpRequest.takenHelpRequests[0].state === "completed" && (
+                  <Text variant="titleMedium">
+                    This request has been completed.
+                  </Text>
+                )}
               </View>
             </>
           ) : (

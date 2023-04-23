@@ -40,7 +40,9 @@ const MyJobScreen = ({ navigation }) => {
   const [
     getMyJob,
     { loading: jobLoading, error: jobError, data: jobData, refetch, called },
-  ] = useLazyQuery(FIND_MATCH_BY_STATE);
+  ] = useLazyQuery(FIND_MATCH_BY_STATE, {
+    fetchPolicy: "cache-and-network",
+  });
 
   const [loadingToken, setLoadingToken] = useState(true);
   const [refresh, setRefresh] = useState(false);

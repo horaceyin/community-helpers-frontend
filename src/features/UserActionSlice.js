@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import * as SecureStore from "expo-secure-store";
 
 const initialState = {
-  helpRequestsAction: [],
+  // helpRequestsAction: [],
   requests: [],
   myRequests: [],
 };
@@ -46,16 +46,16 @@ export const userActionSlice = createSlice({
   name: "userAction",
   initialState,
   reducers: {
-    clearUserAction: (state, action) => {
-      state.helpRequestsAction = [];
-    },
-    addUserAction: (state, action) => {
-      state.helpRequestsAction.push(action.payload);
-    },
+    // clearUserAction: (state, action) => {
+    //   state.helpRequestsAction = [];
+    // },
+    // addUserAction: (state, action) => {
+    //   state.helpRequestsAction.push(action.payload);
+    // },
     addRequest: (state, action) => {
       let rawRequestArray = action.payload;
-      console.log("push....");
       state.requests.push(...rawRequestArray);
+      console.log("push....");
     },
     findAndReplace: (state, action) => {
       let { index, current } = action.payload;
@@ -66,11 +66,22 @@ export const userActionSlice = createSlice({
       let rawRequestArray = action.payload;
       console.log("push to my requests....");
       state.myRequests.push(...rawRequestArray);
+      // console.log("*/*/*/*/*", state.myRequests[3]);
     },
     // for the purpose of displaying the one that seeker accepted.
     findAndReplaceHelperList: (state, action) => {
       let { oneHelperList, index } = action.payload;
+      console.log(
+        "////////////////////",
+        oneHelperList,
+        "**********",
+        index,
+        state.myRequests[index]
+      );
       state.myRequests[index].takenHelpRequests = oneHelperList;
+    },
+    clearAllRequestsCache: (state, action) => {
+      state.requests = [];
     },
   },
   extraReducers(builder) {
@@ -85,12 +96,13 @@ export const userActionSlice = createSlice({
 });
 
 export const {
-  clearUserAction,
-  addUserAction,
+  // clearUserAction,
+  // addUserAction,
   addRequest,
   findAndReplace,
   addMyRequests,
   findAndReplaceHelperList,
+  clearAllRequestsCache,
 } = userActionSlice.actions;
 
 export const selectHelpRequestsAction = (state) =>

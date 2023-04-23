@@ -1,6 +1,6 @@
 import { React, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { SHADOWS, COLORS, SIZES, FONTS } from "../../constants";
+import { SHADOWS, COLORS, SIZES, FONTS, SPACING } from "../../constants";
 const MyJobCard = ({ data, navigation }) => {
   const [text, setText] = useState(data.helpRequest.description.slice(0, 100));
 
@@ -107,7 +107,8 @@ const styles = StyleSheet.create({
     padding: SIZES.small,
     alignItems: "center",
     alignSelf: "flex-end",
-    width: "25%",
+    width: "28%",
+    // marginRight: SPACING * 2,
   },
   jobStatusPending: {
     backgroundColor: COLORS.pending,

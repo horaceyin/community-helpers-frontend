@@ -25,10 +25,13 @@ import {
   selectUserToken,
   selectLoginIsLoading,
   resetLoginState,
+  clearUserInfo,
 } from "../features/AuthSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { ScrollView } from "react-native-gesture-handler";
 import { AntDesign, Entypo, Feather, MaterialIcons } from "@expo/vector-icons";
+import { clearAllRequestsCache } from "../features/UserActionSlice";
+import Spinner from "react-native-loading-spinner-overlay/lib";
 
 const SECTIONS = [
   // {
@@ -158,11 +161,40 @@ const LoginScreen = ({ navigation, route }) => {
     dispatch(resetLoginState());
   }, []);
 
+  const handleLogin = () => {
+    // dispatch(clearAllRequestsCache());
+    dispatch(appLogin({ loginMutation, navigation, username, password }));
+  };
+
+  const handleLogout = () => {
+    // dispatch(clearAllRequestsCache());
+    dispatch(clearUserInfo());
+    dispatch(
+      appLogout({
+        signoutMutation,
+        signOutRefetch,
+        signOutCalled,
+        navigation,
+      })
+    );
+  };
+
   if (loginIsLoading) {
     // return <Text>loading...</Text>; //while loading return this
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size={"large"} />
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(205, 215, 226, 0.8)",
+        }}
+      >
+        <ActivityIndicator
+          size={"large"}
+          style={{ backgroundColor: "rgba(205, 215, 226, 0.8)" }}
+          color="#463451"
+        />
       </View>
     );
   }
@@ -179,7 +211,7 @@ const LoginScreen = ({ navigation, route }) => {
       <View style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={loggedInStyles.container}>
           <View style={loggedInStyles.profile}>
-            <TouchableOpacity onPress={() => {}}>
+            <TouchableOpacity onPress={() => {}} disabled={true}>
               <View styles={loggedInStyles.profileAvatarWrapper}>
                 <Image
                   alt="Profile picture"
@@ -209,14 +241,7 @@ const LoginScreen = ({ navigation, route }) => {
                   key={icon}
                   onPress={() => {
                     if (label == "Logout") {
-                      return dispatch(
-                        appLogout({
-                          signoutMutation,
-                          signOutRefetch,
-                          signOutCalled,
-                          navigation,
-                        })
-                      );
+                      return handleLogout();
                     }
                   }}
                 >
@@ -312,11 +337,7 @@ const LoginScreen = ({ navigation, route }) => {
         <View style={styles.buttonContainer}>
           <RectButton
             buttonText={loginScreenConfig.loginButtonText}
-            handlePress={() =>
-              dispatch(
-                appLogin({ loginMutation, navigation, username, password })
-              )
-            }
+            handlePress={handleLogin}
             extraContainerStyle={styles.loginButtonExtraStyle}
             extraTextStyle={styles.loginButtonTextExtraStyle}
           />

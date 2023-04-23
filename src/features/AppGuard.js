@@ -1,18 +1,27 @@
 import { useEffect } from "react";
 import { StyleSheet, ActivityIndicator, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { checkSignIn, selectIsLoading } from "./AuthSlice";
+import {
+  checkSignIn,
+  selectIsLoading,
+  selectLoginIsLoading,
+} from "./AuthSlice";
 import { useNavigation } from "@react-navigation/native";
 import { useLazyQuery } from "@apollo/client";
 import { ME } from "../gql/Query";
 import { useTheme } from "react-native-paper";
+import Spinner from "react-native-loading-spinner-overlay/lib";
+import { FONTS } from "../../constants";
 
 export const AppGuard = ({ children }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const isLoading = useSelector(selectIsLoading);
+  const loginIsLoading = useSelector(selectLoginIsLoading);
   const navigation = useNavigation();
-  const [getMyInfo, getMyInfoResult] = useLazyQuery(ME);
+  const [getMyInfo, getMyInfoResult] = useLazyQuery(ME, {
+    fetchPolicy: "cache-and-network",
+  });
 
   useEffect(() => {
     dispatch(checkSignIn({ navigation, getMyInfo }));
@@ -27,10 +36,14 @@ export const AppGuard = ({ children }) => {
     },
   });
 
-  if (isLoading)
+  if (isLoading || loginIsLoading)
     return (
       <View style={styles.container}>
-        <ActivityIndicator size={"large"} />
+        <ActivityIndicator
+          size={"large"}
+          style={{ backgroundColor: "rgba(205, 215, 226, 0.8)" }}
+          color="#463451"
+        />
       </View>
     );
 

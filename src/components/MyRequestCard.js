@@ -1,9 +1,14 @@
 import { React, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { SHADOWS, COLORS, SIZES, FONTS } from "../../constants";
+import { SHADOWS, COLORS, SIZES, FONTS, SPACING } from "../../constants";
 import { useSelector, useDispatch } from "react-redux";
-import { findAndReplace, selectMyRequests } from "../features/UserActionSlice";
+import {
+  findAndReplace,
+  selectMyRequests,
+  findAndReplaceHelperList,
+} from "../features/UserActionSlice";
 const MyRequestCard = ({ navigation, reduxIndex }) => {
+  // const reduxIndex = myRequest.requestIndex
   const data = useSelector((state) => selectMyRequests(state, reduxIndex));
   const dispatch = useDispatch();
   const [text, setText] = useState(data.description.slice(0, 50));
@@ -35,7 +40,12 @@ const MyRequestCard = ({ navigation, reduxIndex }) => {
       stateStyles = styles.jobStatusPending;
     } else {
       // replace takenHelpRequests array with one helper element
-      dispatch(findAndReplaceHelperList({ isTakenHelpRequst, reduxIndex }));
+      // dispatch(
+      //   findAndReplaceHelperList({
+      //     oneHelperList: isTakenHelpRequst,
+      //     index: reduxIndex,
+      //   })
+      // );
       const theMatch = isTakenHelpRequst[0];
       state = theMatch.state === "ongoing" ? "Ongoing" : "Completed";
 
@@ -114,7 +124,7 @@ const styles = StyleSheet.create({
     borderRadius: SIZES.extraLarge,
     padding: SIZES.small,
     alignItems: "center",
-    width: "25%",
+    width: "30%",
   },
   jobStatusPending: {
     backgroundColor: COLORS.pending,
