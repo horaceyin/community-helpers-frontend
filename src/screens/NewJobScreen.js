@@ -7,6 +7,7 @@ import {
   Pressable,
   ScrollView,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import { COLORS, FONTS, SIZES } from "../../constants";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -140,7 +141,7 @@ const NewJobScreen = () => {
     new Date(new Date().toDateString())
   );
 
-  const [createHelpRequest, { data, loading, error }] =
+  const [createHelpRequest, createHelpRequestResult] =
     useMutation(CREATE_HELP_REQUEST);
 
   const [createCategoryWithString, createCategoryWithStringResult] =
@@ -260,6 +261,24 @@ const NewJobScreen = () => {
     setScheduledDatetime(scheduledDatetime);
     hideTimePicker();
   };
+
+  if (createHelpRequestResult.loading || createCategoryWithStringResult.loading)
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgba(205, 215, 226, 0.8)",
+        }}
+      >
+        <ActivityIndicator
+          size="large"
+          // style={{ backgroundColor: "rgba(205, 215, 226, 0.8)" }}
+          color="#463451"
+        />
+      </View>
+    );
 
   return (
     <View style={styles.container}>

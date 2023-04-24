@@ -20,7 +20,8 @@ export const COLORS = {
   tabBar: "#ebf5ee",
   plusSelected: "#c0c0c0",
   plusNotSelected: "#ebebeb",
-  tabButton: "#ee6c4d",
+  // tabButton: "#ee6c4d",
+  tabButton: "#355070",
   green: "#3dff71",
 };
 

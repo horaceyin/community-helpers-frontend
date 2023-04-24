@@ -39,11 +39,7 @@ export const AppGuard = ({ children }) => {
   if (isLoading || loginIsLoading)
     return (
       <View style={styles.container}>
-        <ActivityIndicator
-          size={"large"}
-          style={{ backgroundColor: "rgba(205, 215, 226, 0.8)" }}
-          color="#463451"
-        />
+        <ActivityIndicator size={"large"} color="#463451" />
       </View>
     );
 
