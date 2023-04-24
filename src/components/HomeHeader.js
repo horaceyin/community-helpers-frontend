@@ -23,9 +23,9 @@ const HomeHeader = ({ onSearch, ...props }) => {
         }}
       >
         <Image
-          source={assets.placeholder}
-          resizeMode="contain"
-          style={{ width: 90, height: 25 }}
+        // source={assets.placeholder}
+        // resizeMode="contain"
+        // style={{ width: 90, height: 25 }}
         />
 
         <IconButton
