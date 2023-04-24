@@ -105,14 +105,16 @@ const styles = StyleSheet.create({
   tabBar: {
     backgroundColor: COLORS.tabBar,
     borderTopColor: "transparent",
-    position: "absolute",
+    // position: "absolute",
     padding: 0,
-    left: 16,
-    right: 16,
+    // left: 16,
+    // right: 16,
     //bottom: 16, //can be 32
     bottom: 0, //can be 32
     height: 56,
-    borderRadius: 16,
+    // borderRadius: 16,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
     shadowColor: COLORS.dark,
     shadowOffset: {
       height: 6,
@@ -133,7 +135,7 @@ const styles = StyleSheet.create({
     top: 12,
   },
   tabBarButtonContainer: {
-    // top: -20,
+    // top: -5,
     alignItems: "center",
     justifyContent: "center", //
     shadowColor: COLORS.dark,
@@ -152,8 +154,8 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.tabButton,
   },
   plus: {
-    width: 32,
-    height: 32,
+    width: 24,
+    height: 24,
   },
 });
 

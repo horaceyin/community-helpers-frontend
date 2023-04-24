@@ -279,7 +279,7 @@ const HomeScreen = () => {
         }}
       >
         <View style={{ height: 300, backgroundColor: COLORS.primary }} />
-        <View style={{ flex: 1, backgroundColor: COLORS.white }} />
+        <View style={{ flex: 1, backgroundColor: "#eaf4f4" }} />
       </View>
     </View>
   );
