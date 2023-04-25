@@ -53,6 +53,8 @@ export const appLogin = createAsyncThunk(
       expoToken = null;
     }
 
+    //console.log("This is token:" + expoToken)
+
     await loginMutation({
       variables: {
         username: username,
@@ -93,7 +95,8 @@ export const appLogout = createAsyncThunk(
             console.log(`Apollo error: ${error.message}`);
           },
           onCompleted: async (result) => {
-            await SecureStore.deleteItemAsync("expoToken");
+            //await SecureStore.deleteItemAsync("expoToken");
+            console.log("Logged out")
           },
         });
       }
