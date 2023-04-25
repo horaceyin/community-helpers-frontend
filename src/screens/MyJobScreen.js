@@ -62,7 +62,9 @@ const MyJobScreen = ({ navigation }) => {
         if (called) {
           refetch();
         } else {
-          getMyJob({ variables: { state: ["pending", "ongoing", "done"] } });
+          getMyJob({
+            variables: { state: ["pending", "ongoing", "completed"] },
+          });
         }
         // setIsLogin(true);
       }

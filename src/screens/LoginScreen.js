@@ -225,7 +225,9 @@ const LoginScreen = ({ navigation, route }) => {
             </Text>
             {/** Street Name */}
             <Text style={loggedInStyles.profileAddress}>
-              123 Maple Street, Anytown, 17010
+              {userInfo.address
+                ? userInfo.address
+                : "123 Maple Street, Anytown, 17010"}
             </Text>
           </View>
 
