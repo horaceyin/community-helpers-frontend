@@ -1,5 +1,5 @@
 import { useFonts } from "expo-font";
-import { StyleSheet, Text, View, SafeAreaView } from "react-native";
+import { StyleSheet, Text, View, SafeAreaView, LogBox } from "react-native";
 import { COLORS } from "./constants";
 import {
   ApolloClient,
@@ -29,6 +29,8 @@ import { createUploadLink } from "apollo-upload-client";
 import { selectHelpRequestsAction } from "./src/features/UserActionSlice";
 import { FocusedStatusBar } from "./src/components";
 import { StatusBar } from "expo-status-bar";
+
+LogBox.ignoreAllLogs();
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({

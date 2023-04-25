@@ -5,6 +5,7 @@ import {
   FlatList,
   RefreshControl,
   ActivityIndicator,
+  LogBox,
 } from "react-native";
 import {
   COLORS,
@@ -30,6 +31,8 @@ import { Text } from "react-native-paper";
 import { FlashList } from "@shopify/flash-list";
 import { addRequest, clearAllRequestsCache } from "../features/UserActionSlice";
 
+LogBox.ignoreAllLogs();
+
 //should be fetched the real from backend
 const randomPics = [
   assets.english,
@@ -39,7 +42,7 @@ const randomPics = [
   assets.tv,
 ];
 
-const BATCH_NUM = 10;
+const BATCH_NUM = 20;
 var requestIndex = 0;
 
 const HomeScreen = () => {
