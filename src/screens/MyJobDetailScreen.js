@@ -1,13 +1,7 @@
 import { StyleSheet, Text, View, FlatList } from "react-native";
 import React from "react";
 import { SHADOWS, COLORS, SIZES, assets, FONTS } from "../../constants";
-import {
-  RectButton,
-  JobCardDetail,
-  JobsDetails,
-  CandidateHelper,
-} from "../components";
-import { RadioButton } from "react-native-paper";
+import { JobCardDetail } from "../components";
 import { createDataArrayOne } from "../../utilities";
 
 // var description =
@@ -38,17 +32,12 @@ const randomPics = [
 
 const MyJobDetailScreen = ({ route, navigation }) => {
   let helpRequest = route.params.data;
-  // const [checked, setChecked] = React.useState(
-  //   helpRequest.takenHelpRequest[0].userId
-  // );
-  // console.log(checked);
+
   let helpRequestsArray = createDataArrayOne(
     helpRequest.helpRequest,
     true,
     randomPics
   );
-
-  // console.log(helpRequestsArray, "#$#$#$#$#$#$#$");
 
   var state = null;
   var stateStyles = null;
@@ -89,42 +78,6 @@ const MyJobDetailScreen = ({ route, navigation }) => {
           </Text>
         </View>
       </View>
-
-      {/* <FlatList
-        data={helpRequest.takenHelpRequest}
-        renderItem={({ item }) => <CandidateHelper helper={item} checked={checked} setChecked={setChecked}/>}
-        keyExtractor={(item) => item.userId}
-        showsVerticalScrollIndicator={false}
-        // contentContainerStyle={{ paddingBottom: SIZES.base }}
-        ListHeaderComponent={() => (
-          <>
-            <JobCardDetail helpRequest={helpRequest} />
-          </>
-        )}
-        ListFooterComponent={()=> (
-          <>
-            <View
-              style={{
-                width: "100%",
-                padding: SIZES.base,
-                justifyContent: "center",
-                alignItems: "center",
-                zIndex: 1,
-              }}
-            >
-              <RectButton
-                buttonText={"Accept Helper"}
-                minWidth={"100%"}
-                fontSize={SIZES.font}
-                handlePress={() =>
-                  {}
-                }
-              />
-            </View>
-
-          </>
-        )}
-      /> */}
     </View>
   );
 };
@@ -134,8 +87,6 @@ export default MyJobDetailScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: "center",
-    // alignItems: "center",
   },
   jobStatus: {
     borderRadius: SIZES.base,

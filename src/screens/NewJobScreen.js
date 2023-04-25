@@ -388,7 +388,6 @@ const NewJobScreen = () => {
                 })
                   .then((result) => {
                     let requestId = result.data.createHelpRequest.id;
-                    console.log(categoryArrayTrimmed);
                     createCategoryWithString({
                       variables: {
                         categories: categoryArrayTrimmed,
@@ -397,7 +396,6 @@ const NewJobScreen = () => {
                     })
                       .then((result) => {
                         alert("Create success!");
-                        console.log(result);
                       })
                       .catch((e) => {
                         console.error(e);

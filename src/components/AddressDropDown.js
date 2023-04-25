@@ -159,7 +159,7 @@ const AddressDropDown = () => {
       <Button
         disabled={!selectedCity}
         onPress={() => {
-          console.log(selectedCity, selectedCountryText);
+          // console.log(selectedCity, selectedCountryText);
         }}
       >
         Confirm

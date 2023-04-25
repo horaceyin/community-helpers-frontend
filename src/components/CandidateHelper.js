@@ -12,7 +12,7 @@ import { IconButton } from "./Button";
 import { MD2Colors, RadioButton } from "react-native-paper";
 
 const CandidateHelper = ({ helper, checked, handleSetChecked }) => {
-  console.log("{{{{{{{{{{", helper);
+  // console.log("{{{{{{{{{{", helper);
   return (
     <TouchableOpacity
       onPress={() => handleSetChecked(helper.userId, helper.user.displayName)}

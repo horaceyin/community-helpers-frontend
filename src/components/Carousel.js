@@ -5,7 +5,6 @@ const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 function Slide({ data }) {
-  console.log(data);
   return (
     <Image
       source={{ uri: data }}

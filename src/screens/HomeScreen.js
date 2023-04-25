@@ -21,8 +21,6 @@ import { createRenderDataArray } from "../../utilities";
 
 import { Text } from "react-native-paper";
 
-import uuid from "react-native-uuid";
-
 import { FlashList } from "@shopify/flash-list";
 import { addRequest, clearAllRequestsCache } from "../features/UserActionSlice";
 
@@ -35,7 +33,7 @@ const randomPics = [
   assets.tv,
 ];
 
-const BATCH_NUM = 3;
+const BATCH_NUM = 10;
 var requestIndex = 0;
 
 const HomeScreen = () => {

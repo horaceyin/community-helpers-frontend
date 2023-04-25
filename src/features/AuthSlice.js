@@ -26,7 +26,7 @@ export const checkSignIn = createAsyncThunk(
       },
       onCompleted: (result) => {
         userInfo = result.me;
-        console.log("🚀 ~ file: AuthSlice.js:29 ~ result.me:", result.me);
+        // console.log("🚀 ~ file: AuthSlice.js:29 ~ result.me:", result.me);
         if (!userInfo.district) {
           navigation.reset({ index: 0, routes: [{ name: "District" }] });
         } else if (userInfo.interests.length === 0) {
@@ -91,11 +91,9 @@ export const appLogout = createAsyncThunk(
             expoPushToken: expoToken,
           },
           onError: (error) => {
-            console.log("bye");
             console.log(`Apollo error: ${error.message}`);
           },
           onCompleted: async (result) => {
-            console.log("hello");
             await SecureStore.deleteItemAsync("expoToken");
           },
         });
@@ -103,9 +101,6 @@ export const appLogout = createAsyncThunk(
     } else {
       // for not a real device
     }
-
-    // await SecureStore.deleteItemAsync("user_action");
-    console.log("logout");
     navigation.reset({ index: 0, routes: [{ name: "Root" }] });
     return false;
   }
@@ -130,7 +125,7 @@ export const authSlice = createSlice({
         state.isLoading = true;
         state.userInfo = null;
 
-        console.log("🚀 ~ file: checkSignIn.pending ~ action");
+        // console.log("🚀 ~ file: checkSignIn.pending ~ action");
       })
       .addCase(checkSignIn.fulfilled, (state, action) => {
         let { token, userInfo, tokenExpiredMsg } = action.payload;
@@ -138,10 +133,6 @@ export const authSlice = createSlice({
         if (userInfo && token) {
           state.userToken = token;
           state.userInfo = userInfo;
-          // console.log(
-          //   "🚀 ~ file: AuthSlice.js:135 ~ .addCase ~ state.userInfo:",
-          //   state.userInfo
-          // );
           state.isLogin = true;
         } else {
           if (tokenExpiredMsg) alert(tokenExpiredMsg);
@@ -150,51 +141,41 @@ export const authSlice = createSlice({
           state.isLogin = false;
         }
         state.isLoading = false;
-        console.log("🚀 ~ file: checkSignIn.fulfilled ~ action");
+        // console.log("🚀 ~ file: checkSignIn.fulfilled ~ action");
       })
-      // .addCase(checkSignIn.rejected, (state, action) => {
-      //   // action.payload = "Fail to fetch user token and info"
-      //   console.log(`${JSON.stringify(action.error.message)}`);
-      //   alert(`${JSON.stringify(action.error.message)}`);
-      //   console.log("🚀 ~ file: checkSignIn.rejected ~ action");
-      // })
       .addCase(appLogin.pending, (state, action) => {
         state.loginIsLoading = true;
         state.loginError = null;
-        console.log("🚀 ~ file: appLogin.pending ~ action");
+        // console.log("🚀 ~ file: appLogin.pending ~ action");
       })
       .addCase(appLogin.fulfilled, (state, action) => {
         // let { user_token, user_info } = action.payload;
         let { user_token } = action.payload;
         state.userToken = user_token;
         state.userInfo = null;
-        console.log(
-          "🚀 ~ file: AuthSlice.js:165 ~ .addCase ~ state.userInfo2222222222 :",
-          state.userInfo
-        );
         state.loginError = null;
         state.loginIsLoading = false;
-        console.log("🚀 ~ file: appLogin.fulfilled ~ action");
+        // console.log("🚀 ~ file: appLogin.fulfilled ~ action");
       })
       .addCase(appLogin.rejected, (state, action) => {
         state.loginError = action.payload;
         state.loginIsLoading = false;
-        console.log("🚀 ~ file: appLogin.rejected ~ action");
+        // console.log("🚀 ~ file: appLogin.rejected ~ action");
       })
       .addCase(appLogout.pending, (state, action) => {
         state.loginIsLoading = true;
         state.userInfo = null;
-        console.log("🚀 ~ file: appLogout.pending ~ action");
+        // console.log("🚀 ~ file: appLogout.pending ~ action");
       })
       .addCase(appLogout.rejected, (state, action) => {
-        console.log("🚀 ~ file: appLogout.rejected ~ action");
+        // console.log("🚀 ~ file: appLogout.rejected ~ action");
       })
       .addCase(appLogout.fulfilled, (state, action) => {
         state.userInfo = null;
         state.userToken = null;
         state.isLogin = action.payload;
         state.loginIsLoading = false;
-        console.log("🚀 ~ file: appLogout.fulfilled ~ action");
+        // console.log("🚀 ~ file: appLogout.fulfilled ~ action");
       });
   },
 });
@@ -212,4 +193,3 @@ export const selectUserToken = (state) => state.auth.userToken;
 export const selectUserInfo = (state) => state.auth.userInfo;
 
 export default authSlice.reducer;
-console.log("authSlice.reducer");

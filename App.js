@@ -80,7 +80,7 @@ async function registerForPushNotificationsAsync() {
       return;
     }
     token = (await Notifications.getExpoPushTokenAsync()).data;
-    console.log("This is the token: " + token);
+    // console.log("This is the token: " + token);
     await SecureStore.setItemAsync("expoToken", token);
   } else {
     // alert("Must use physical device for Push Notifications");
@@ -151,7 +151,7 @@ export default function App() {
 
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log(response);
+        // console.log(response);
       });
 
     return () => {
@@ -171,7 +171,7 @@ export default function App() {
   });
 
   if (!appLoaded) return null;
-  console.log("App loaded");
+  // console.log("App loaded");
   return (
     <ApolloProvider client={client}>
       <PaperProvider theme={theme}>

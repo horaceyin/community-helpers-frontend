@@ -70,8 +70,6 @@ const MyRequestsScreen = () => {
   const pull = async () => {
     setRefresh(true);
 
-    console.log("calledMyRequest");
-
     refetchMyRequest();
     setTimeout(() => {
       setRefresh(false);
@@ -121,30 +119,8 @@ const MyRequestsScreen = () => {
 
     if (isFocused) {
       fetchMyRequests();
-      console.log("I am focused");
     }
   }, [isFocused]);
-
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     console.log("MyScreen focused");
-  //     return () => {
-  //       console.log("MyScreen blurred");
-  //       navigation.pop();
-  //       // Here, you can add code to destroy the screen, such as removing it from the navigation stack
-  //     };
-  //   }, [])
-  // );
-
-  // if (loadingToken) {
-  //   return (
-  //     <ScrollView
-  //       style={{ backgroundColor: COLORS.white }}
-  //       contentContainerStyle={styles.scrollView}
-  //       refreshControl={<RefreshControl refreshing={true} />}
-  //     ></ScrollView>
-  //   );
-  // }
 
   // it says that fetching the data
   if (refresh) {

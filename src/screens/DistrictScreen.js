@@ -23,11 +23,10 @@ const DistrictScreen = ({ route, navigation }) => {
   const [updateUserMutation, updateUserResult] = useMutation(UPDATE_USER);
 
   const handleDoneButtonPress = async () => {
-    console.log(typeof(selectedDistrict))
     await updateUserMutation({
       variables: {
         updateUserInput: {
-          district: selectedDistrict ,
+          district: selectedDistrict,
         },
         userId: userInfo.id,
       },

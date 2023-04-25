@@ -30,11 +30,9 @@ export const saveUserAction = createAsyncThunk(
 
     let userActionArray = await SecureStore.getItemAsync("user_action");
     userActionArray = JSON.parse(userActionArray);
+
     userActionArray.push(userAction);
-    console.log(
-      "🚀 ~ file: UserActionSlice.js:34 ~ userActionArray:",
-      userActionArray
-    );
+
     await SecureStore.setItemAsync(
       "user_action",
       JSON.stringify(userActionArray)
@@ -64,20 +62,12 @@ export const userActionSlice = createSlice({
     addMyRequests: (state, action) => {
       state.myRequests = [];
       let rawRequestArray = action.payload;
-      console.log("push to my requests....");
+      // console.log("push to my requests....");
       state.myRequests.push(...rawRequestArray);
-      // console.log("*/*/*/*/*", state.myRequests[3]);
     },
     // for the purpose of displaying the one that seeker accepted.
     findAndReplaceHelperList: (state, action) => {
       let { oneHelperList, index } = action.payload;
-      console.log(
-        "////////////////////",
-        oneHelperList,
-        "**********",
-        index,
-        state.myRequests[index]
-      );
       state.myRequests[index].takenHelpRequests = oneHelperList;
     },
     clearAllRequestsCache: (state, action) => {
@@ -87,10 +77,10 @@ export const userActionSlice = createSlice({
   extraReducers(builder) {
     builder
       .addCase(saveUserAction.pending, (state, action) => {
-        console.log("saving user action...");
+        // console.log("saving user action...");
       })
       .addCase(saveUserAction.fulfilled, (state, action) => {
-        console.log("fufilled, saved user action");
+        // console.log("fufilled, saved user action");
       });
   },
 });

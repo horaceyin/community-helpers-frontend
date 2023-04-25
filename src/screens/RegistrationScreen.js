@@ -213,7 +213,6 @@ const RegistrationScreen = ({ navigation }) => {
     }
 
     if (!result.canceled) {
-      console.log(result);
       setImage(result);
     }
   };
@@ -315,24 +314,24 @@ const RegistrationScreen = ({ navigation }) => {
 
   const handleNextButtonPress = async () => {
     setNextButtonDisabled(true);
-    console.log(
-      username,
-      password,
-      confirmPassword,
-      email,
-      tel,
-      birthday,
-      birthdayUTC,
-      gender,
-      displayName
-    );
+    // console.log(
+    //   username,
+    //   password,
+    //   confirmPassword,
+    //   email,
+    //   tel,
+    //   birthday,
+    //   birthdayUTC,
+    //   gender,
+    //   displayName
+    // );
 
-    console.log(
-      isUsernameFormatValid,
-      isPasswordFormatValid,
-      isConfirmPasswordMatch,
-      isEmailFormatValid
-    );
+    // console.log(
+    //   isUsernameFormatValid,
+    //   isPasswordFormatValid,
+    //   isConfirmPasswordMatch,
+    //   isEmailFormatValid
+    // );
 
     const file = generateRNFile(image.assets[0].uri);
 

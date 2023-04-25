@@ -1,19 +1,8 @@
 import { StyleSheet, View, FlatList } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { SHADOWS, COLORS, SIZES, assets, FONTS } from "../../constants";
-import {
-  RectButton,
-  JobCardDetail,
-  JobsDetails,
-  CandidateHelper,
-} from "../components";
-import {
-  RadioButton,
-  ActivityIndicator,
-  MD2Colors,
-  useTheme,
-} from "react-native-paper";
-import { createDataArrayOne } from "../../utilities";
+import { RectButton, JobCardDetail, CandidateHelper } from "../components";
+import { ActivityIndicator, MD2Colors, useTheme } from "react-native-paper";
 import { SEEKER_ACCEPT_HELPER, SEEKER_COMPLETE_REQUEST } from "../gql/Mutation";
 import { useMutation } from "@apollo/client";
 import { useSelector, useDispatch } from "react-redux";
@@ -65,8 +54,6 @@ const MyRequestDetailScreen = ({ route }) => {
   if (isOngoningOrCompleted[0])
     helpRequest.takenHelpRequests = isOngoningOrCompleted;
 
-  console.log(helpRequest, "🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀");
-
   const [checked, setChecked] = useState(-1);
   const [selectedDisplayName, setSelectedDisplayName] = useState(null);
 
@@ -80,16 +67,7 @@ const MyRequestDetailScreen = ({ route }) => {
   const handleSetChecked = useCallback((userId, displayName) => {
     setChecked(userId);
     setSelectedDisplayName(displayName);
-    console.log(displayName);
   }, []);
-
-  // let helpRequestObj = route.params.data;
-
-  // let helpRequestsArray = createDataArrayOne(helpRequestObj, true, randomPics);
-
-  // const helpRequest = helpRequestsArray[0];
-
-  // console.log(helpRequest, "🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀");
 
   const [acceptHelper, acceptHelperResult] = useMutation(SEEKER_ACCEPT_HELPER);
   const [seekerComplete, seekerCompleteResult] = useMutation(
@@ -103,8 +81,6 @@ const MyRequestDetailScreen = ({ route }) => {
         setSelectedDisplayName(
           helpRequest.takenHelpRequests[0].user.displayName
         );
-        // setHelperList(helpRequest.takenHelpRequests);
-        console.log(checked);
       }
       setLoading(false);
     };
@@ -113,11 +89,8 @@ const MyRequestDetailScreen = ({ route }) => {
   }, []);
 
   const handleAcceptHelperPress = () => {
-    console.log("Accept Helper Pressed");
     acceptHelper({
       variables: {
-        // helpRequestId: helpRequest.helpRequestId,
-        // helperId: checked,
         helpRequestId: helpRequest.id,
         userId: checked,
       },
@@ -136,7 +109,7 @@ const MyRequestDetailScreen = ({ route }) => {
     );
     newHelperList[0].is_taken = true;
     newHelperList[0].state = "ongoing";
-    // console.log("dispatch 1111111", reduxIndex, checked, newHelperList);
+
     dispatch(
       findAndReplaceHelperList({
         oneHelperList: newHelperList,
@@ -145,14 +118,7 @@ const MyRequestDetailScreen = ({ route }) => {
     );
   };
 
-  // need to be tested, wait for more job acceptance
   const handleCompletePress = () => {
-    console.log(
-      thisMyRequest.takenHelpRequests[0].userId,
-      thisMyRequest.id,
-      "+++++"
-    );
-
     seekerComplete({
       variables: {
         helpRequestId: thisMyRequest.id,
@@ -262,11 +228,6 @@ const MyRequestDetailScreen = ({ route }) => {
                       buttonText={"Accept Helper"}
                       minWidth={"100%"}
                       fontSize={SIZES.font}
-                      // handlePress={
-                      //   buttonText == "Accept Helper"
-                      //   // ? handleAcceptHelperPress
-                      //   // : null
-                      // }
                       handlePress={handleAcceptHelperPress}
                     />
                   )}
@@ -276,11 +237,6 @@ const MyRequestDetailScreen = ({ route }) => {
                     buttonText={"Complete"}
                     minWidth={"100%"}
                     fontSize={SIZES.font}
-                    // handlePress={
-                    //   buttonText == "Accept Helper"
-                    //   // ? handleAcceptHelperPress
-                    //   // : null
-                    // }
                     handlePress={handleCompletePress}
                   />
                 )}
@@ -308,7 +264,5 @@ export default MyRequestDetailScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: "center",
-    // alignItems: "center",
   },
 });

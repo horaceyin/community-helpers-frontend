@@ -7,4 +7,3 @@ export const store = configureStore({
     userAction: userActionSlice,
   },
 });
-console.log("store.js loaded");

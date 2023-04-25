@@ -26,7 +26,6 @@ import {
 import { selectIsLogin, selectUserInfo } from "../features/AuthSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { selectRequest, findAndReplace } from "../features/UserActionSlice";
-import { FIND_MATCH_BY_STATE } from "../gql/Query";
 import { useNavigation } from "@react-navigation/native";
 import { MD2Colors, useTheme } from "react-native-paper";
 import Spinner from "react-native-loading-spinner-overlay/lib";
@@ -76,17 +75,6 @@ const JobsDetails = ({ route }) => {
   const [sendUserActionMutation, sendUserActionResult] =
     useMutation(SEND_USER_ACTION);
 
-  // const [
-  //   getCommitJob,
-  //   {
-  //     loading: getCommitLoading,
-  //     error: getCommitError,
-  //     data: getCommitData,
-  //     refetch: getCommitRefetch,
-  //     called: getCommitCalled,
-  //   },
-  // ] = useLazyQuery(FIND_MATCH_BY_STATE);
-
   const handleSendUserAction = useCallback(async (actionType) => {
     await sendUserActionMutation({
       variables: {
@@ -123,7 +111,6 @@ const JobsDetails = ({ route }) => {
   }, []);
 
   const handleCommitRequest = useCallback(async () => {
-    console.log(thisRequest.id, userId);
     await commitRequest({
       variables: {
         takenHelpRequestUncheckedCreateInput: {

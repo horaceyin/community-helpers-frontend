@@ -72,7 +72,7 @@ const InterestsScreen = ({ navigation }) => {
     } else {
       setSelectedInterests([...selectedInterests, interest]);
     }
-    console.log(selectedInterests);
+    // console.log(selectedInterests);
   };
 
   const renderInterestItem = ({ item, index }) => {

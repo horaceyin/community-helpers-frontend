@@ -202,7 +202,7 @@ const LoginScreen = ({ navigation, route }) => {
     if (userInfo) {
       PROFILE_PIC = userInfo.avatar;
     }
-    console.log("enter is login");
+
     return (
       <View style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={loggedInStyles.container}>

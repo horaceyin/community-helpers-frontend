@@ -49,9 +49,6 @@ const MyJobScreen = ({ navigation }) => {
 
   const pull = async () => {
     setRefresh(true);
-
-    console.log("called");
-
     refetch();
     setTimeout(() => {
       setRefresh(false);
@@ -62,7 +59,6 @@ const MyJobScreen = ({ navigation }) => {
     const getToken = async () => {
       const token = await getValueFor("token");
       if (token !== null) {
-        console.log("called");
         if (called) {
           refetch();
         } else {

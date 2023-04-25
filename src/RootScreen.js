@@ -7,7 +7,7 @@ import { FocusedStatusBar } from "./components";
 import { AppGuard } from "./features/AppGuard";
 
 const RootScreen = () => {
-  console.log("enter RootScreen");
+  // console.log("enter RootScreen");
   return (
     // <SafeAreaView style={styles.root}>
     //   <FocusedStatusBar style='auto'/>
