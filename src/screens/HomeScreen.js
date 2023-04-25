@@ -6,7 +6,13 @@ import {
   RefreshControl,
   ActivityIndicator,
 } from "react-native";
-import { COLORS, FakeData, RecommendedData, assets } from "../../constants";
+import {
+  COLORS,
+  FakeData,
+  RecommendedData,
+  SPACING,
+  assets,
+} from "../../constants";
 import { HomeHeader, JobCard } from "../components";
 import { useMutation, useLazyQuery } from "@apollo/client";
 import { FIND_ALL_JOBS_IN_HOME, GET_RECOMMENDED_JOBS } from "../gql/Query";
@@ -202,9 +208,14 @@ const HomeScreen = () => {
     if (isNoMoreRequests) {
       return (
         <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            paddingBottom: SPACING * 3,
+          }}
         >
-          <Text variant="bodyMedium">
+          <Text variant="titleMedium">
             No more requests, please check back later.
           </Text>
         </View>
@@ -236,8 +247,8 @@ const HomeScreen = () => {
         {/* <Text style={{backgroundColor: COLORS.gray}}>{called && !jobLoading? JSON.stringify(data) : "no"}</Text> */}
         {/* <Text style={{backgroundColor: COLORS.gray}}>{isLogin} || {userToken}</Text> */}
         {!isFetching ? (
-          <FlashList
-            estimatedItemSize={100}
+          <FlatList
+            // estimatedItemSize={100}
             data={renderData}
             renderItem={({ item, index }) => (
               <JobCard helpRequestData={item} reduxIndex={index} />
