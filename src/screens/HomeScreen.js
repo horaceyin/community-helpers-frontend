@@ -74,7 +74,7 @@ const HomeScreen = () => {
       console.log("fetchJobOnCompleted");
       setRenderData([...renderData, ...retDataArray]);
     }
-    setGetRequestsLoading(false);
+    // setGetRequestsLoading(false);
     // console.log("hi", skip, renderData.length);
   };
 
@@ -127,6 +127,7 @@ const HomeScreen = () => {
     } else {
       fetchJobOnCompleted(result.data.helpRequests, isLogin, randomPics);
     }
+    setGetRequestsLoading(false);
   };
 
   const getRequests = async () => {
@@ -241,7 +242,7 @@ const HomeScreen = () => {
             renderItem={({ item, index }) => (
               <JobCard helpRequestData={item} reduxIndex={index} />
             )}
-            keyExtractor={(item, index) => item.id}
+            keyExtractor={(item, index) => item.id + item.title + index}
             showsVerticalScrollIndicator={false}
             ListHeaderComponent={<HomeHeader />}
             ListFooterComponent={renderFooter}
@@ -250,7 +251,7 @@ const HomeScreen = () => {
                 ? handleLoadMore
                 : null
             }
-            onEndReachedThreshold={0.8}
+            onEndReachedThreshold={0.5}
             removeClippedSubviews={true}
             refreshControl={
               <RefreshControl

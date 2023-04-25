@@ -51,12 +51,12 @@ const DetailsHeader = ({ reduxIndex }) => {
         top={StatusBar.currentHeight + 10}
       />
 
-      <CircleButton
+      {/* <CircleButton
         imgUrl={assets.check}
         handlePress={() => {}}
         right={15}
         top={StatusBar.currentHeight + 10}
-      />
+      /> */}
     </View>
   );
 };
