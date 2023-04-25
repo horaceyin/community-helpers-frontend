@@ -74,32 +74,7 @@ const JobCard = ({ helpRequestData, reduxIndex }) => {
     }
   };
 
-  // const handleLikeButtonPress = async () => {
-  //   if (thisRequest && !thisRequest.isLike && !thisRequest.isDislike) {
-  //     updateRequestInRedux("like");
-  //     handleSendUserAction("like");
-  //     // dispatch(
-  //     //   saveUserAction({ userId, helpRequestId, actionType: "liked" })
-  //     // );
-  //   } else {
-  //     alert("You have already liked/disliked this request");
-  //   }
-  // };
-
-  // const handleDislikeButtonPress = async () => {
-  //   if (thisRequest && !thisRequest.isLike && !thisRequest.isDislike) {
-  //     updateRequestInRedux("dislike");
-  //     handleSendUserAction("dislike");
-  //     // dispatch(
-  //     //   saveUserAction({ userId, helpRequestId, actionType: "liked" })
-  //     // );
-  //   } else {
-  //     alert("You have already liked/disliked this request");
-  //   }
-  // };
-
   handleNavigation = () => {
-    // dispatch(setLikeDislikeFunc({ setIsLikePress, setIsDislikePress }));
     navigation.navigate("JobsDetails", {
       reduxIndex,
     });

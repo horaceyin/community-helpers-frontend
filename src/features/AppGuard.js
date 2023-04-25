@@ -20,7 +20,7 @@ export const AppGuard = ({ children }) => {
   const loginIsLoading = useSelector(selectLoginIsLoading);
   const navigation = useNavigation();
   const [getMyInfo, getMyInfoResult] = useLazyQuery(ME, {
-    fetchPolicy: "cache-and-network",
+    fetchPolicy: "no-cache",
   });
 
   useEffect(() => {

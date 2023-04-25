@@ -1,4 +1,11 @@
-import { View, Text, Image, StatusBar, FlatList, Alert } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StatusBar,
+  FlatList,
+  ActivityIndicator,
+} from "react-native";
 import React, { useState, useEffect, useCallback } from "react";
 import { COLORS, SIZES, SHADOWS, FONTS, assets } from "../../constants";
 import {
@@ -21,7 +28,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectRequest, findAndReplace } from "../features/UserActionSlice";
 import { FIND_MATCH_BY_STATE } from "../gql/Query";
 import { useNavigation } from "@react-navigation/native";
-import { ActivityIndicator, MD2Colors, useTheme } from "react-native-paper";
+import { MD2Colors, useTheme } from "react-native-paper";
 import Spinner from "react-native-loading-spinner-overlay/lib";
 
 const DetailsHeader = ({ reduxIndex }) => {
@@ -57,8 +64,6 @@ const DetailsHeader = ({ reduxIndex }) => {
 
 const JobsDetails = ({ route }) => {
   const theme = useTheme();
-  const [sendViewedAction, setSendViewedAction] = useState(true);
-
   const reduxIndex = route.params.reduxIndex;
   const thisRequest = useSelector((state) => selectRequest(state, reduxIndex));
 
@@ -91,9 +96,9 @@ const JobsDetails = ({ route }) => {
       },
       onCompleted: (result) => {
         console.log("sendUserActionMutation completed", actionType);
-        if (actionType === "view") {
-          setSendViewedAction(false);
-        }
+        // if (actionType === "view") {
+        //   setSendViewedAction(false);
+        // }
       },
       onError: (error) => {
         console.log(`Apollo error: ${error.message}`);
@@ -144,7 +149,7 @@ const JobsDetails = ({ route }) => {
     handleCommitRequest();
   }, []);
 
-  if (sendViewedAction)
+  if (sendUserActionResult.loading) {
     return (
       <View
         style={{
@@ -157,6 +162,7 @@ const JobsDetails = ({ route }) => {
         <ActivityIndicator color={MD2Colors.blueGrey600} size="large" />
       </View>
     );
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: COLORS.white }}>
@@ -176,7 +182,7 @@ const JobsDetails = ({ route }) => {
           paddingVertical: SIZES.font,
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: "rgba(255, 255, 255, 0.5)",
+          // backgroundColor: "rgba(255, 255, 255, 0.5)",
           zIndex: 1,
         }}
       >
