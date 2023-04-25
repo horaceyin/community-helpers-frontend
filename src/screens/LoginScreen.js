@@ -142,8 +142,8 @@ const LoginScreen = ({ navigation, route }) => {
       loading: signOutLoading,
       error: signOutError,
       data: jobData,
-      signOutRefetch,
-      signOutCalled,
+      refetch: signOutRefetch,
+      called: signOutCalled,
     },
   ] = useMutation(SIGNOUT);
   const [username, setUsername] = useState("");

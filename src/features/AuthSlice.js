@@ -80,7 +80,6 @@ export const appLogout = createAsyncThunk(
   "auth/appLogout",
   async ({ signoutMutation, signOutRefetch, signOutCalled, navigation }) => {
     let expoToken = await SecureStore.getItemAsync("expoToken");
-    await SecureStore.deleteItemAsync(tokenName);
 
     if (expoToken) {
       if (signOutCalled) {
@@ -101,6 +100,9 @@ export const appLogout = createAsyncThunk(
     } else {
       // for not a real device
     }
+
+    await SecureStore.deleteItemAsync(tokenName);
+    console.log("Token delete.....")
     navigation.reset({ index: 0, routes: [{ name: "Root" }] });
     return false;
   }
