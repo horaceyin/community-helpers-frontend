@@ -497,7 +497,8 @@ const RegistrationScreen = ({ navigation }) => {
               </TouchableWithoutFeedback>
               <DateTimePickerModal
                 style={styles.datePicker}
-                mode={"date"}
+                mode="date"
+                display={Platform.OS === "ios" ? "inline" : "default"}
                 date={new Date()}
                 isVisible={daypickerOpen}
                 onConfirm={onDateConfirmHandler}
@@ -641,7 +642,7 @@ const styles = StyleSheet.create({
   },
   datePicker: {
     borderRadius: SPACING * 2,
-    backgroundColor: "rgba(0,0,0,0.5)",
+    // backgroundColor: "rgba(0,0,0,0.5)",
   },
   buttonContainer: {
     display: "flex",
