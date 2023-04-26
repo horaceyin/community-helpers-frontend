@@ -42,7 +42,7 @@ const randomPics = [
   assets.tv,
 ];
 
-const BATCH_NUM = 20;
+const BATCH_NUM = 10;
 var requestIndex = 0;
 
 const HomeScreen = () => {
