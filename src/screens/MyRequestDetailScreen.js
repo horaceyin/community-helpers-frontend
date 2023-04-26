@@ -62,7 +62,7 @@ const MyRequestDetailScreen = ({ route }) => {
 
   const theme = useTheme();
 
-  const [helperList, setHelperList] = useState([]);
+  // const [helperList, setHelperList] = useState([]);
 
   const handleSetChecked = useCallback((userId, displayName) => {
     setChecked(userId);
@@ -163,8 +163,9 @@ const MyRequestDetailScreen = ({ route }) => {
     <View style={styles.container}>
       <Spinner
         visible={acceptHelperResult.loading || seekerCompleteResult.loading}
+        // visible={true}
         textStyle={{ fontFamily: FONTS.medium }}
-        overlayColor="rgba(205, 215, 226, 0.8)"
+        overlayColor="rgba(205, 215, 226, 1)"
         color="#463451"
         // textContent={"Loading...\nPlease wait..."}
       />
